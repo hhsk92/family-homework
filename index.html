@@ -522,11 +522,11 @@
   <div class="tab-container">
     <button class="tab-btn active mj" id="tabMj" onclick="switchTab('mj')">
       <span>💜 MJ</span>
-      <span style="font-size: 11px; opacity: 0.8;">(4학년 · 300원)</span>
+      <span style="font-size: 11px; opacity: 0.8;">(4학년)</span>
     </button>
     <button class="tab-btn bc" id="tabBc" onclick="switchTab('bc')">
       <span>💙 BC</span>
-      <span style="font-size: 11px; opacity: 0.8;">(2학년 · 400원)</span>
+      <span style="font-size: 11px; opacity: 0.8;">(2학년)</span>
     </button>
   </div>
 
@@ -629,7 +629,6 @@
 
     function calculateTossSavings(target) {
       const isMj = target === 'mj';
-      const baseSavings = isMj ? 300 : 400;
       const tasks = s.tasks[target];
       const doneCount = tasks.filter(t => t.done).length;
       const isAllDone = doneCount === tasks.length && tasks.length > 0;
@@ -647,10 +646,10 @@
       }
 
       return {
-        base: baseSavings,
+        base: 0,
         completion: completionBonus,
         extra: extraBonus,
-        total: baseSavings + completionBonus + extraBonus,
+        total: completionBonus + extraBonus,
         isAllDone: isAllDone
       };
     }
@@ -785,9 +784,15 @@
       tossTargetLabel.textContent = isMj ? 'MJ의 토스 31일 적금 목표!' : 'BC의 토스 적금 목표!';
       tossCurAmount.textContent = toss.total.toLocaleString();
 
-      let breakdownText = `기본 저금 ${toss.base}원`;
-      if (toss.completion > 0) breakdownText += ` + 올클리어 보너스 100원!`;
-      if (toss.extra > 0) breakdownText += ` + 추가 보너스 ${toss.extra}원`;
+      let breakdownText = '';
+      if (toss.completion > 0) {
+        breakdownText = '🎉 오늘 올클리어 달성 보너스 100원!';
+      } else {
+        breakdownText = '자기 전 리스트 100% 완료 시 보너스 100원 적립!';
+      }
+      if (toss.extra > 0) {
+        breakdownText += ` + 추가 보너스 ${toss.extra.toLocaleString()}원`;
+      }
       tossBreakdown.textContent = breakdownText;
 
       if (!isMj) {
