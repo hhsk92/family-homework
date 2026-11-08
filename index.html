@@ -799,9 +799,14 @@
       if (!task) return;
 
       if (!task.reactions) task.reactions = {};
-      task.reactions[emoji] = (task.reactions[emoji] || 0) + 1;
 
-      triggerEmojiBurst(event.clientX, event.clientY, emoji);
+      // 한 숙제당 응원 스티커 딱 1개만! (이미 누른 것 다시 누르면 취소, 다른 것 누르면 변경)
+      if (task.reactions[emoji] > 0) {
+        task.reactions = {};
+      } else {
+        task.reactions = { [emoji]: 1 };
+        triggerEmojiBurst(event.clientX, event.clientY, emoji);
+      }
       commit(s, true);
     }
 
