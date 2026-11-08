@@ -507,6 +507,18 @@
     </div>
   </div>
 
+  <!-- PWA Quick Install Banner -->
+  <div id="installBanner" style="display:none; margin-bottom: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 12px 14px; border-radius: 16px; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="font-size: 22px;">📲</span>
+      <div>
+        <div style="font-weight: 800; font-size: 13px;">바탕화면에 앱 설치하기</div>
+        <div style="font-size: 11px; opacity: 0.9;">터치 한 번으로 홈 화면에 아이콘 쏙!</div>
+      </div>
+    </div>
+    <button id="installBtn" style="background: white; color: #065f46; border: none; padding: 7px 14px; border-radius: 9999px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">설치</button>
+  </div>
+
   <div class="tab-container">
     <button class="tab-btn active mj" id="tabMj" onclick="switchTab('mj')">
       <span>💜 MJ</span>
@@ -908,6 +920,28 @@
       requestAnimationFrame(animateParticles);
     }
     animateParticles();
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const banner = document.getElementById('installBanner');
+      if (banner) banner.style.display = 'flex';
+    });
+
+    document.getElementById('installBtn')?.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          const banner = document.getElementById('installBanner');
+          if (banner) banner.style.display = 'none';
+        }
+        deferredPrompt = null;
+      } else {
+        alert("브라우저 오른쪽 위 메뉴(점 3개 ⋮)를 누르고 [홈 화면에 추가] 또는 [앱 설치]를 눌러주세요!");
+      }
+    });
 
     render();
   </script>
