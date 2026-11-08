@@ -243,15 +243,89 @@
       background: linear-gradient(90deg, #2563eb, #06b6d4);
     }
 
+    /* Chick Incubator Stage Box */
+    .chick-stage-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(254, 252, 232, 0.92);
+      border-radius: 16px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      border: 1.5px solid #fde047;
+      box-shadow: 0 2px 8px rgba(234, 179, 8, 0.12);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+    .chick-stage-box:active {
+      transform: scale(0.98);
+    }
+    .chick-stage-box.stage-3 {
+      background: linear-gradient(135deg, #fef08a, #fde047);
+      border-color: #eab308;
+      box-shadow: 0 4px 14px rgba(234, 179, 8, 0.3);
+    }
+    .chick-avatar {
+      font-size: 38px;
+      line-height: 1;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      flex-shrink: 0;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .chick-avatar.wiggle {
+      animation: chickWiggle 1.8s ease-in-out infinite;
+    }
+    .chick-avatar.jump {
+      animation: chickJump 0.8s ease-in-out infinite alternate;
+    }
+    @keyframes chickWiggle {
+      0%, 100% { transform: rotate(0deg); }
+      20% { transform: rotate(-10deg) scale(1.05); }
+      40% { transform: rotate(10deg) scale(1.05); }
+      60% { transform: rotate(0deg); }
+    }
+    @keyframes chickJump {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-7px) scale(1.12); }
+    }
+    .chick-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .chick-name {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #854d0e;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chick-speech {
+      font-size: 12px;
+      color: #713f12;
+      margin-top: 2px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
     .all-done-banner {
       display: none;
       margin-top: 10px;
-      padding: 8px 12px;
-      background: #ecfdf5;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
       color: #065f46;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
+      border: 1.5px solid #6ee7b7;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
       text-align: center;
       animation: popIn 0.3s ease-out;
     }
@@ -623,16 +697,23 @@
     </div>
   </div>
 
-  <!-- Progress Bar -->
+  <!-- Progress Bar & Chick Incubator -->
   <div class="progress-card">
+    <div class="chick-stage-box" id="chickBox" onclick="pokeChick(event)">
+      <div class="chick-avatar" id="chickAvatar">🥚</div>
+      <div class="chick-info">
+        <div class="chick-name" id="chickName">신비한 잠자는 알</div>
+        <div class="chick-speech" id="chickSpeech">"오늘치 숙제를 시작하면 내가 깨어날지도 몰라... 쿨쿨 zZ"</div>
+      </div>
+    </div>
     <div class="progress-header">
-      <span class="progress-title">오늘 숙제 & 루틴 달성률</span>
+      <span class="progress-title">⚡ 오늘 꼭 해야 하는 숙제 달성률</span>
       <span class="progress-count" id="progressCount">0 / 0 (0%)</span>
     </div>
     <div class="progress-bar-bg">
       <div class="progress-bar-fill" id="progressBar"></div>
     </div>
-    <div class="all-done-banner" id="doneBanner">🎉 오늘 목표 100% 올클리어! 토스 보너스 +100원 획득! 🏆</div>
+    <div class="all-done-banner" id="doneBanner">🎉 와아! 오늘 숙제 100% 올클리어! 삐약이가 태어났어요! 🐥👑 (+100원 획득)</div>
   </div>
 
   <!-- Section 1: School Homework -->
@@ -709,11 +790,26 @@
     const saved = localStorage.getItem('family_integrated_homework_state');
     let s = saved ? JSON.parse(saved) : freshState();
 
+    function isTodayMandatory(task) {
+      if (task.dday) {
+        const d = task.dday;
+        if (d.includes('D-1') || d.includes('오늘') || d.includes('내일') || d.includes('11/9') || task.urgent) {
+          return true;
+        }
+        if (d.includes('D-2') || d.includes('D-3') || d.includes('D-4') || d.includes('D-5') ||
+            d.includes('11/10') || d.includes('11/11') || d.includes('11/12') || d.includes('11/13')) {
+          return false;
+        }
+      }
+      return true;
+    }
+
     function calculateTossSavings(target) {
       const isMj = target === 'mj';
       const tasks = s.tasks[target];
-      const doneCount = tasks.filter(t => t.done).length;
-      const isAllDone = doneCount === tasks.length && tasks.length > 0;
+      const mandatoryTasks = tasks.filter(isTodayMandatory);
+      const doneMandatory = mandatoryTasks.filter(t => t.done).length;
+      const isAllDone = mandatoryTasks.length > 0 && doneMandatory === mandatoryTasks.length;
       const completionBonus = isAllDone ? 100 : 0;
 
       let extraBonus = 0;
@@ -935,6 +1031,27 @@
       });
     }
 
+    function pokeChick(event) {
+      event.stopPropagation();
+      const curList = s.tasks[s.activeTab];
+      const mandatoryTasks = curList.filter(isTodayMandatory);
+      const doneMandatory = mandatoryTasks.filter(t => t.done).length;
+      const totalMandatory = mandatoryTasks.length;
+      const pct = totalMandatory > 0 ? Math.round((doneMandatory / totalMandatory) * 100) : 0;
+
+      triggerEmojiBurst(event.clientX, event.clientY, pct === 100 ? '🐥' : (pct >= 50 ? '🐣' : '✨'));
+
+      const chickSpeech = document.getElementById('chickSpeech');
+      if (!chickSpeech) return;
+      const messages = pct === 100
+        ? ['"삐약삐약! 오늘 100% 해낸 네가 최고야! 💖"', '"황금 왕관 선물 삐약! 토스 100원 챙겼지? 👑"', '"내일도 나랑 같이 놀자 삐약! 🐥"']
+        : (pct >= 50
+          ? ['"껍질 밀어내는 중이야! 힘을 줘 삐약! 🐣"', '"조금만 더 하면 부화 성공이야! 🔥"', '"삐약! 밖이 조금 보인다!"']
+          : ['"알 속이 따뜻해... 얼른 숙제해줘! 🥚"', '"톡톡! 누가 밖에서 부르는 거야?"', '"꼬물꼬물... 힘을 내는 중이야!"']);
+
+      chickSpeech.textContent = messages[Math.floor(Math.random() * messages.length)];
+    }
+
     function render() {
       const isMj = s.activeTab === 'mj';
       const curTasks = s.tasks[s.activeTab];
@@ -975,15 +1092,23 @@
         tossCard.style.background = 'linear-gradient(135deg, #0064FF, #7c3aed)';
       }
 
-      const doneCount = curTasks.filter(t => t.done).length;
-      const totalCount = curTasks.length;
-      const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+      const mandatoryTasks = curTasks.filter(isTodayMandatory);
+      const doneMandatory = mandatoryTasks.filter(t => t.done).length;
+      const totalMandatory = mandatoryTasks.length;
+      const pct = totalMandatory > 0 ? Math.round((doneMandatory / totalMandatory) * 100) : 0;
+
+      const futureTasks = curTasks.filter(t => !isTodayMandatory(t));
+      const doneFuture = futureTasks.filter(t => t.done).length;
 
       const progressCount = document.getElementById('progressCount');
       const progressBar = document.getElementById('progressBar');
       const doneBanner = document.getElementById('doneBanner');
 
-      progressCount.textContent = `${doneCount} / ${totalCount} (${pct}%)`;
+      let countHtml = `${doneMandatory} / ${totalMandatory} (${pct}%)`;
+      if (doneFuture > 0) {
+        countHtml += ` <span style="font-size:11px; color:#10b981; font-weight:700;">+미리한 숙제 ${doneFuture}개 👏</span>`;
+      }
+      progressCount.innerHTML = countHtml;
       progressCount.style.color = isMj ? 'var(--app-purple)' : 'var(--app-blue)';
       progressBar.style.width = pct + '%';
       if (!isMj) {
@@ -993,6 +1118,40 @@
       }
 
       doneBanner.style.display = toss.isAllDone ? 'block' : 'none';
+
+      // Chick Incubator Stage
+      const chickBox = document.getElementById('chickBox');
+      const chickAvatar = document.getElementById('chickAvatar');
+      const chickName = document.getElementById('chickName');
+      const chickSpeech = document.getElementById('chickSpeech');
+
+      if (chickBox && chickAvatar && chickName && chickSpeech) {
+        chickAvatar.className = 'chick-avatar';
+        chickBox.className = 'chick-stage-box';
+
+        if (pct === 0) {
+          chickAvatar.textContent = '🥚';
+          chickAvatar.classList.add('wiggle');
+          chickName.innerHTML = '잠자는 알 <span style="font-size:10.5px; font-weight:700; background:#fef3c7; color:#92400e; padding:1px 6px; border-radius:10px;">0%</span>';
+          chickSpeech.textContent = '"오늘치 숙제를 시작하면 내가 깨어날지도 몰라... 쿨쿨 zZ"';
+        } else if (pct < 50) {
+          chickAvatar.textContent = '🥚💥';
+          chickAvatar.classList.add('wiggle');
+          chickName.innerHTML = '금이 가기 시작한 알! <span style="font-size:10.5px; font-weight:700; background:#fed7aa; color:#9a3412; padding:1px 6px; border-radius:10px;">' + pct + '%</span>';
+          chickSpeech.textContent = '"우와! 숙제하니까 알에 금이 쩍쩍 가고 있어! 꼬물꼬물..."';
+        } else if (pct < 100) {
+          chickAvatar.textContent = '🐣';
+          chickAvatar.classList.add('jump');
+          chickName.innerHTML = '빼꼼 나온 아기 병아리! <span style="font-size:10.5px; font-weight:700; background:#fef08a; color:#854d0e; padding:1px 6px; border-radius:10px;">' + pct + '%</span>';
+          chickSpeech.textContent = '"거의 다 왔어 삐약! 조금만 더 하면 세상 밖으로 나갈래!"';
+        } else {
+          chickAvatar.textContent = '🐥👑';
+          chickAvatar.classList.add('jump');
+          chickBox.classList.add('stage-3');
+          chickName.innerHTML = '✨ 축 부화! 황금 왕관 삐약이 ✨';
+          chickSpeech.textContent = '"만세! 오늘 숙제 100% 올클리어! 삐약이가 태어났어요! 💛"';
+        }
+      }
 
       const schoolTasks = curTasks.filter(t => t.section === 'school');
       const academyTasks = curTasks.filter(t => t.section === 'academy');
