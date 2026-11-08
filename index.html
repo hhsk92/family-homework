@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>⭐ 우리 가족 숙제 & 토스방</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <meta name="theme-color" content="#0064FF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="숙제방">
+  <meta name="mobile-web-app-capable" content="yes">
+  <style>
+    :root {
+      --app-purple: #8b5cf6;
+      --app-purple-light: #f3e8ff;
+      --app-blue: #2563eb;
+      --app-blue-light: #eff6ff;
+      --toss-blue: #0064FF;
+      --toss-gold: #f59e0b;
+      --app-green: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, sans-serif;
+      padding: 16px 16px 56px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .title-group h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .date-badge {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    .tab-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 9999px;
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      border: none;
+      padding: 10px 12px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 700;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active.mj {
+      background: #ffffff;
+      color: var(--app-purple);
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+    }
+
+    .tab-btn.active.bc {
+      background: #ffffff;
+      color: var(--app-blue);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    .toss-card {
+      background: linear-gradient(135deg, #0064FF, #1e40af);
+      color: #ffffff;
+      border-radius: 20px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 20px rgba(0, 100, 255, 0.25);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s ease;
+    }
+
+    .toss-card::after {
+      content: "🪙";
+      position: absolute;
+      right: 14px;
+      bottom: -6px;
+      font-size: 64px;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    .toss-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .toss-tag {
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 3px 8px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .toss-target-desc {
+      font-size: 11px;
+      opacity: 0.85;
+    }
+
+    .toss-amount {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin: 4px 0 6px;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .toss-amount span {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .toss-breakdown {
+      font-size: 11px;
+      opacity: 0.9;
+      line-height: 1.4;
+      background: rgba(0, 0, 0, 0.12);
+      padding: 6px 10px;
+      border-radius: 10px;
+    }
+
+    .progress-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .progress-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .progress-count {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      background: #f1f5f9;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, #8b5cf6, #ec4899);
+      transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .progress-bar-fill.bc-theme {
+      background: linear-gradient(90deg, #2563eb, #06b6d4);
+    }
+
+    .all-done-banner {
+      display: none;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: #ecfdf5;
+      color: #065f46;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      animation: popIn 0.3s ease-out;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 18px 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .task-item {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0,0,0,0.06);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .task-item:active {
+      transform: scale(0.98);
+    }
+
+    .task-item.completed {
+      background: #f8fafc;
+      opacity: 0.75;
+    }
+
+    .task-checkbox {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      border: 2px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: #ffffff;
+    }
+
+    .task-item.completed .task-checkbox {
+      background: var(--app-purple);
+      border-color: var(--app-purple);
+      transform: scale(1.05);
+    }
+
+    .task-item.completed.bc-theme .task-checkbox {
+      background: var(--app-blue);
+      border-color: var(--app-blue);
+    }
+
+    .task-checkbox svg {
+      width: 14px;
+      height: 14px;
+      stroke: #ffffff;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .task-item.completed .task-checkbox svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .task-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .task-item.completed .task-title {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 3px;
+    }
+
+    .dday-chip {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .dday-chip.urgent {
+      background: #ef4444;
+      color: #ffffff;
+      animation: pulse 2s infinite;
+    }
+
+    .sub-note {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    .bonus-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0,0,0,0.06);
+      margin-bottom: 8px;
+    }
+
+    .bonus-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bonus-icon {
+      font-size: 22px;
+    }
+
+    .bonus-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .bonus-rate {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--toss-blue);
+      margin-top: 2px;
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      font-size: 16px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .step-btn:active {
+      transform: scale(0.9);
+      background: #e2e8f0;
+    }
+
+    .step-count {
+      font-size: 14px;
+      font-weight: 800;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .quick-add-box {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .quick-add-input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 9999px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .quick-add-input:focus {
+      border-color: var(--toss-blue);
+    }
+
+    .quick-add-btn {
+      background: #1e293b;
+      color: #ffffff;
+      border: none;
+      padding: 0 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .footer-actions {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .reset-btn {
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      color: #64748b;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="header">
+    <div class="title-group">
+      <h1>⭐ 우리 가족 숙제 & 토스방</h1>
+      <div class="date-badge" id="currentDate">2026년 11월 8일 일요일</div>
+    </div>
+  </div>
+
+  <div class="tab-container">
+    <button class="tab-btn active mj" id="tabMj" onclick="switchTab('mj')">
+      <span>💜 민정이</span>
+      <span style="font-size: 11px; opacity: 0.8;">(4학년 · 300원)</span>
+    </button>
+    <button class="tab-btn bc" id="tabBc" onclick="switchTab('bc')">
+      <span>💙 병찬이</span>
+      <span style="font-size: 11px; opacity: 0.8;">(2학년 · 400원)</span>
+    </button>
+  </div>
+
+  <!-- Toss Piggy Bank Card -->
+  <div class="toss-card" id="tossCard">
+    <div class="toss-header">
+      <span class="toss-tag">🏦 토스 적금 저금통</span>
+      <span class="toss-target-desc" id="tossTargetLabel">민정이의 토스 31일 적금 목표!</span>
+    </div>
+    <div class="toss-amount">
+      <span id="tossCurAmount">0</span><span>원 적립 예정</span>
+    </div>
+    <div class="toss-breakdown" id="tossBreakdown">
+      기본 저금 300원 대기 중 (100% 완료 시 보너스 +100원)
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-card">
+    <div class="progress-header">
+      <span class="progress-title">오늘 숙제 & 루틴 달성률</span>
+      <span class="progress-count" id="progressCount">0 / 0 (0%)</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+    <div class="all-done-banner" id="doneBanner">🎉 오늘 목표 100% 올클리어! 토스 보너스 +100원 획득! 🏆</div>
+  </div>
+
+  <!-- Section 1: School Homework -->
+  <div class="section-title">🎒 하이클래스 학교 숙제 & 준비물 (이번 주)</div>
+  <div class="task-list" id="schoolTaskList"></div>
+
+  <!-- Section 2: Academy & Study -->
+  <div class="section-title" style="margin-top: 20px;">🏫 학원 숙제 & 시험 대비</div>
+  <div class="task-list" id="academyTaskList"></div>
+
+  <!-- Section 3: Daily Routine -->
+  <div class="section-title" style="margin-top: 20px;">✨ 매일 필수 루틴 (냉장고 표)</div>
+  <div class="task-list" id="routineTaskList"></div>
+
+  <!-- Quick Add Custom Task -->
+  <div class="quick-add-box">
+    <input type="text" id="quickInput" class="quick-add-input" placeholder="새 숙제나 할 일 직접 추가..." onkeypress="handleEnter(event)">
+    <button class="quick-add-btn" onclick="addCustomTask()">+ 추가</button>
+  </div>
+
+  <!-- Section 4: Toss Extra Bonus -->
+  <div class="section-title" style="margin-top: 24px;">💰 추가 토스 보너스 적립 (화이트보드)</div>
+  <div id="bonusSection"></div>
+
+  <div class="footer-actions">
+    <button class="reset-btn" onclick="confirmReset()">🔄 오늘 체크 및 저금 초기화</button>
+  </div>
+
+  <script>
+    function freshState() {
+      return {
+        activeTab: 'mj',
+        tasks: {
+          mj: [
+            { id: 'mj-s1', section: 'school', title: '[CIE 영어 Adventure] Homework Packet p.20~21', dday: 'D-2 (11/10 화)', note: 'Adventure반 전용 과제', done: false },
+            { id: 'mj-s2', section: 'school', title: '[CIE 영어 Adventure] Past Tense Obligations 워크시트', dday: 'D-2 (11/10 화)', note: '과거시제 의무표현 워크시트', done: false },
+            { id: 'mj-s3', section: 'school', title: '[CIE 영어 공통] Weekly Diary #7 작성하기', dday: 'D-1 (11/9 월 내일)', urgent: true, note: 'Toddle 프롬프트 확인 후 작성', done: false },
+            { id: 'mj-s4', section: 'school', title: '[CIE 수학] Math Workbook Q3:7 채점 및 제출', dday: 'D-3 (11/11 수)', note: 'Toddle 정답지로 채점', done: false },
+            { id: 'mj-s5', section: 'school', title: '[체험학습 등교] 4학년 창의융합체험학습', dday: '11/9 (월) 오전', note: '알로이시오기지', done: false },
+            { id: 'mj-s6', section: 'school', title: '[학교 제출] 국가유산 굿즈 구매 봉투 제출', dday: '11/11 (수) 마감', note: '현금 밀봉 봉투', done: false },
+            { id: 'mj-a1', section: 'academy', title: 'TOPIA 학원 숙제 & 라이브 준비', icon: '🏫', done: false },
+            { id: 'mj-a2', section: 'academy', title: '영재원 시험공부 (남성초/서부영재원)', icon: '💡', note: '12/5 선발시험 대비', done: false },
+            { id: 'mj-a3', section: 'academy', title: '수학 3단원 단원평가 대비 (11/11 수 3교시)', icon: '📐', done: false },
+            { id: 'mj-r1', section: 'routine', title: '르네상스 (AR 영어 독서 & 퀴즈)', icon: '📖', done: false },
+            { id: 'mj-r2', section: 'routine', title: 'VOCA (보카 영단어 암기)', icon: '🔤', done: false },
+            { id: 'mj-r3', section: 'routine', title: '5학년 원리셈 연산 풀기', icon: '🔢', done: false },
+            { id: 'mj-r4', section: 'routine', title: '악기 연습하기 (바이올린/피아노)', icon: '🎻', done: false }
+          ],
+          bc: [
+            { id: 'bc-s1', section: 'school', title: '[학교 과제] 주말 한글 일기장 쓰기', dday: 'D-1 (11/9 월 내일)', urgent: true, note: '월요일 등교 시 제출', done: false },
+            { id: 'bc-s2', section: 'school', title: '[CIE 영어] Weekly Diary 작성하기', dday: 'D-1 (11/9 월 내일)', urgent: true, note: 'Toddle 2학년 프롬프트 확인', done: false },
+            { id: 'bc-s3', section: 'school', title: '[학교 필수] 낙동강 답사 안전서약서 가방에 챙기기', dday: 'D-1 (11/9 월 필수)', urgent: true, note: '월요일 미제출자 필수 제출!', done: false },
+            { id: 'bc-s4', section: 'school', title: '[학교 과제] 책나무꿈나무 독서록 p.36~37', dday: 'D-3 (11/11 수)', note: '엉뚱한 수리점', done: false },
+            { id: 'bc-s5', section: 'school', title: '[CIE 수학] Math Workbook Q3:7 채점 및 제출', dday: 'D-3 (11/11 수)', note: 'Toddle 정답지로 채점', done: false },
+            { id: 'bc-s6', section: 'school', title: '[답사 준비물] 낙동강 하구 답사 준비', dday: '11/10 (화)', note: '체육복, 외투, 운동화, 멀미약 (9시 출발)', done: false },
+            { id: 'bc-a1', section: 'academy', title: '눈높이 학습지 (한자 / 한국사)', icon: '📚', done: false },
+            { id: 'bc-a2', section: 'academy', title: '병찬이 치과 재내원 (11/9 월 16:30)', icon: '🦷', note: '발치 소독 및 경과 확인', done: false },
+            { id: 'bc-r1', section: 'routine', title: '르네상스 (AR 영어 독서 & 퀴즈)', icon: '📖', done: false },
+            { id: 'bc-r2', section: 'routine', title: 'LINK (링크 학습)', icon: '🔗', done: false },
+            { id: 'bc-r3', section: 'routine', title: '교과셈 연산 풀기', icon: '🔢', done: false },
+            { id: 'bc-r4', section: 'routine', title: '악기 연습하기 (첼로)', icon: '🎻', done: false }
+          ]
+        },
+        bonus: {
+          mj: { extraWorksheet: 0, thickKoreanBook: 0, englishBook: 0 },
+          bc: { englishBook: 0, normalKoreanBook: 0, extraWorksheet: 0 }
+        }
+      };
+    }
+
+    const saved = localStorage.getItem('family_integrated_homework_state');
+    let s = saved ? JSON.parse(saved) : freshState();
+
+    function calculateTossSavings(target) {
+      const isMj = target === 'mj';
+      const baseSavings = isMj ? 300 : 400;
+      const tasks = s.tasks[target];
+      const doneCount = tasks.filter(t => t.done).length;
+      const isAllDone = doneCount === tasks.length && tasks.length > 0;
+      const completionBonus = isAllDone ? 100 : 0;
+
+      let extraBonus = 0;
+      if (isMj) {
+        extraBonus += (s.bonus.mj.extraWorksheet || 0) * 100;
+        extraBonus += (s.bonus.mj.thickKoreanBook || 0) * 500;
+        extraBonus += (s.bonus.mj.englishBook || 0) * 500;
+      } else {
+        extraBonus += (s.bonus.bc.englishBook || 0) * 500;
+        extraBonus += (s.bonus.bc.normalKoreanBook || 0) * 200;
+        extraBonus += (s.bonus.bc.extraWorksheet || 0) * 100;
+      }
+
+      return {
+        base: baseSavings,
+        completion: completionBonus,
+        extra: extraBonus,
+        total: baseSavings + completionBonus + extraBonus,
+        isAllDone: isAllDone
+      };
+    }
+
+    function commit(next) {
+      s = next;
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+      render();
+    }
+
+    function switchTab(tab) {
+      s.activeTab = tab;
+      commit(s);
+    }
+
+    function toggleTask(id, event) {
+      const curList = s.tasks[s.activeTab];
+      const task = curList.find(t => t.id === id);
+      if (!task) return;
+
+      task.done = !task.done;
+      if (task.done) {
+        triggerParticles(event.clientX, event.clientY);
+      }
+      commit(s);
+    }
+
+    function changeBonus(key, delta, event) {
+      const curBonus = s.bonus[s.activeTab];
+      curBonus[key] = Math.max(0, (curBonus[key] || 0) + delta);
+      if (delta > 0 && event) {
+        triggerParticles(event.clientX, event.clientY, true);
+      }
+      commit(s);
+    }
+
+    function addCustomTask() {
+      const input = document.getElementById('quickInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      s.tasks[s.activeTab].push({
+        id: 'custom-' + Date.now(),
+        section: 'school',
+        title: text,
+        icon: '📌',
+        done: false
+      });
+      input.value = '';
+      commit(s);
+    }
+
+    function handleEnter(e) {
+      if (e.key === 'Enter') {
+        addCustomTask();
+      }
+    }
+
+    function confirmReset() {
+      if (confirm("오늘 완료한 체크와 추가 보너스를 모두 초기화할까요?")) {
+        s.tasks[s.activeTab].forEach(t => t.done = false);
+        if (s.activeTab === 'mj') {
+          s.bonus.mj = { extraWorksheet: 0, thickKoreanBook: 0, englishBook: 0 };
+        } else {
+          s.bonus.bc = { englishBook: 0, normalKoreanBook: 0, extraWorksheet: 0 };
+        }
+        commit(s);
+      }
+    }
+
+    function renderTaskList(containerId, list) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      const isMj = s.activeTab === 'mj';
+
+      list.forEach(task => {
+        const item = document.createElement('div');
+        item.className = 'task-item' + (task.done ? ' completed' : '') + (!isMj ? ' bc-theme' : '');
+        item.onclick = (e) => toggleTask(task.id, e);
+
+        const checkIcon = `
+          <div class="task-checkbox">
+            <svg viewBox="0 0 24 24">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+        `;
+
+        let metaHtml = '';
+        if (task.dday || task.note) {
+          const ddayTag = task.dday ? `<span class="${task.urgent ? 'dday-chip urgent' : 'dday-chip'}">${task.dday}</span>` : '';
+          const noteTag = task.note ? `<span class="sub-note">${task.note}</span>` : '';
+          metaHtml = `
+            <div class="task-meta">
+              ${ddayTag}
+              ${noteTag}
+            </div>
+          `;
+        }
+
+        item.innerHTML = `
+          ${checkIcon}
+          <div class="task-content">
+            <div class="task-title">${task.icon ? task.icon + ' ' : ''}${task.title}</div>
+            ${metaHtml}
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function render() {
+      const isMj = s.activeTab === 'mj';
+      const curTasks = s.tasks[s.activeTab];
+      const toss = calculateTossSavings(s.activeTab);
+
+      const tabMj = document.getElementById('tabMj');
+      const tabBc = document.getElementById('tabBc');
+      if (isMj) {
+        tabMj.className = 'tab-btn active mj';
+        tabBc.className = 'tab-btn';
+      } else {
+        tabMj.className = 'tab-btn';
+        tabBc.className = 'tab-btn active bc';
+      }
+
+      const tossTargetLabel = document.getElementById('tossTargetLabel');
+      const tossCurAmount = document.getElementById('tossCurAmount');
+      const tossBreakdown = document.getElementById('tossBreakdown');
+      const tossCard = document.getElementById('tossCard');
+
+      tossTargetLabel.textContent = isMj ? '민정이의 토스 31일 적금 목표!' : '병찬이 토스 적금 목표!';
+      tossCurAmount.textContent = toss.total.toLocaleString();
+
+      let breakdownText = `기본 저금 ${toss.base}원`;
+      if (toss.completion > 0) breakdownText += ` + 올클리어 보너스 100원!`;
+      if (toss.extra > 0) breakdownText += ` + 추가 보너스 ${toss.extra}원`;
+      tossBreakdown.textContent = breakdownText;
+
+      if (!isMj) {
+        tossCard.style.background = 'linear-gradient(135deg, #2563eb, #0284c7)';
+      } else {
+        tossCard.style.background = 'linear-gradient(135deg, #0064FF, #7c3aed)';
+      }
+
+      const doneCount = curTasks.filter(t => t.done).length;
+      const totalCount = curTasks.length;
+      const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+
+      const progressCount = document.getElementById('progressCount');
+      const progressBar = document.getElementById('progressBar');
+      const doneBanner = document.getElementById('doneBanner');
+
+      progressCount.textContent = `${doneCount} / ${totalCount} (${pct}%)`;
+      progressCount.style.color = isMj ? 'var(--app-purple)' : 'var(--app-blue)';
+      progressBar.style.width = pct + '%';
+      if (!isMj) {
+        progressBar.classList.add('bc-theme');
+      } else {
+        progressBar.classList.remove('bc-theme');
+      }
+
+      doneBanner.style.display = toss.isAllDone ? 'block' : 'none';
+
+      const schoolTasks = curTasks.filter(t => t.section === 'school');
+      const academyTasks = curTasks.filter(t => t.section === 'academy');
+      const routineTasks = curTasks.filter(t => t.section === 'routine' || !t.section);
+
+      renderTaskList('schoolTaskList', schoolTasks);
+      renderTaskList('academyTaskList', academyTasks);
+      renderTaskList('routineTaskList', routineTasks);
+
+      const bonusSec = document.getElementById('bonusSection');
+      bonusSec.innerHTML = '';
+
+      if (isMj) {
+        const cur = s.bonus.mj;
+        bonusSec.appendChild(createBonusRow('추가 문제집 풀기', '1장당 +100원', '📝', cur.extraWorksheet || 0, 'extraWorksheet'));
+        bonusSec.appendChild(createBonusRow('두꺼운 책(한글) 읽기', '1권당 +500원', '📚', cur.thickKoreanBook || 0, 'thickKoreanBook'));
+        bonusSec.appendChild(createBonusRow('영어책 읽기 (예: 호양이달)', '1권당 +500원', '📕', cur.englishBook || 0, 'englishBook'));
+      } else {
+        const cur = s.bonus.bc;
+        bonusSec.appendChild(createBonusRow('영어 책 한 권 읽기', '1권당 +500원', '📕', cur.englishBook || 0, 'englishBook'));
+        bonusSec.appendChild(createBonusRow('보통 한글 책 읽기', '1권당 +200원', '📖', cur.normalKoreanBook || 0, 'normalKoreanBook'));
+        bonusSec.appendChild(createBonusRow('추가 문제집 풀기', '1장당 +100원', '📝', cur.extraWorksheet || 0, 'extraWorksheet'));
+      }
+    }
+
+    function createBonusRow(title, rate, icon, count, key) {
+      const row = document.createElement('div');
+      row.className = 'bonus-card';
+      row.innerHTML = `
+        <div class="bonus-info">
+          <span class="bonus-icon">${icon}</span>
+          <div>
+            <div class="bonus-title">${title}</div>
+            <div class="bonus-rate">${rate}</div>
+          </div>
+        </div>
+        <div class="stepper">
+          <button class="step-btn" onclick="changeBonus('${key}', -1, event)">-</button>
+          <span class="step-count">${count}</span>
+          <button class="step-btn" onclick="changeBonus('${key}', 1, event)">+</button>
+        </div>
+      `;
+      return row;
+    }
+
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerParticles(x, y, isCoin) {
+      if (!x || !y) {
+        x = window.innerWidth / 2;
+        y = window.innerHeight / 2;
+      }
+      const colors = isCoin 
+        ? ['#f59e0b', '#fbbf24', '#fde047', '#d97706']
+        : ['#8b5cf6', '#ec4899', '#2563eb', '#10b981', '#f59e0b'];
+
+      for (let i = 0; i < 28; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 6 + 2;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1.5,
+          size: Math.random() * 5 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.15;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    render();
+  </script>
+</body>
+</html>
