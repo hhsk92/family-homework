@@ -1335,8 +1335,8 @@
             { id: 'mj-s3', section: 'school', title: '[CIE 영어 공통] Weekly Diary #7 작성하기', dday: 'D-Day (오늘 11/9 월 마감)', urgent: true, note: 'Toddle 프롬프트 확인 후 제출', done: true, reactions: { '💖': 1 } },
             { id: 'mj-s5', section: 'school', title: '[체험학습 등교] 창의융합체험학습 (알로이시오기지)', dday: 'D-Day (오늘 11/9 월 09:00 등교)', urgent: true, note: '09:00~12:30 체험학습 참여', done: true, reactions: { '💖': 1 } },
             { id: 'mj-a1', section: 'academy', title: 'TOPIA 학원 숙제 & 라이브 준비', dday: 'D-Day (오늘 11/9 월 17:30)', urgent: true, icon: '🏫', note: '월 17:30~19:15 라이브 수업 / 숙제 7건 제출 완료!', done: true, reactions: { '💖': 1 } },
-            { id: 'mj-s1', section: 'school', title: '[CIE 영어 Adventure] Homework Packet p.20~21', dday: 'D-1 (11/10 화 내일 마감)', note: 'Adventure반 전용 과제', done: false, reactions: {} },
-            { id: 'mj-s2', section: 'school', title: '[CIE 영어 Adventure] Past Tense Obligations 워크시트', dday: 'D-1 (11/10 화 내일 마감)', note: '과거시제 의무표현 워크시트', done: false, reactions: {} },
+            { id: 'mj-s1', section: 'school', title: '[CIE 영어 Adventure] Homework Packet p.20~21', dday: 'D-Day (내일 11/10 화 마감 - 오늘 완료!)', urgent: true, note: 'Adventure반 전용 과제', done: false, reactions: {} },
+            { id: 'mj-s2', section: 'school', title: '[CIE 영어 Adventure] Past Tense Obligations 워크시트', dday: 'D-Day (내일 11/10 화 마감 - 오늘 완료!)', urgent: true, note: '과거시제 의무표현 워크시트', done: false, reactions: {} },
             { id: 'mj-s4', section: 'school', title: '[CIE 수학] Math Workbook Q3:7 채점 및 제출', dday: 'D-2 (11/11 수 마감)', note: 'Toddle 정답지로 채점', done: false, reactions: {} },
             { id: 'mj-a3', section: 'school', title: '[학교 시험] 수학 3단원 단원평가 대비 (11/11 수 3교시)', dday: 'D-2 (11/11 수)', note: '시험 대비 (수요일 교복 착용 필수)', done: false, reactions: {} },
             { id: 'mj-s7', section: 'school', title: '[학교 시험] 수학 1~3단원 중간평가 대비 (11/12 목 7~8교시)', dday: 'D-3 (11/12 목)', note: '30문제 (60분) / 1~3단원 총괄 중간평가 대비', done: false, reactions: {} },
@@ -1353,7 +1353,7 @@
             { id: 'bc-s2', section: 'school', title: '[CIE 영어] Weekly Diary 작성하기', dday: 'D-Day (오늘 11/9 월 제출)', urgent: true, note: 'Toddle 2학년 프롬프트 확인', done: false, reactions: {} },
             { id: 'bc-a2', section: 'academy', title: '[일정] 치과 방문 (과잉치 발치 소독 16:30)', dday: 'D-Day (오늘 11/9 월 16:30)', urgent: true, icon: '🦷', note: '발치 부위 소독 및 상태 확인 완료!', done: true, reactions: { '💖': 1 } },
             { id: 'bc-a1', section: 'academy', title: '눈높이 한자 학습지', dday: 'D-Day (매주 월요일 마감)', icon: '📚', note: '매주 월요일 제출 / 완료!', done: true, reactions: { '💖': 1 } },
-            { id: 'bc-s6', section: 'school', title: '[답사 준비물] 낙동강 하구 야외 답사 준비', dday: 'D-1 (11/10 화 내일 답사)', note: '체육복·운동화·외투, 멀미약 사전복용, 태블릿 완충, 물통·필통·우산 (★9시 정각 단체출발-개별등교 금지!)', done: false, reactions: {} },
+            { id: 'bc-s6', section: 'school', title: '[답사 준비물] 낙동강 하구 야외 답사 준비', dday: 'D-Day (내일 11/10 화 답사 준비물 가방에 챙기기!)', urgent: true, note: '체육복·운동화·외투, 멀미약 사전복용, 태블릿 완충, 물통·필통·우산 (★9시 정각 단체출발-개별등교 금지!)', done: false, reactions: {} },
             { id: 'bc-s4', section: 'school', title: '[학교 과제] 책나무꿈나무 독서록 p.36~37', dday: 'D-2 (11/11 수 마감)', note: '엉뚱한 수리점', done: false, reactions: {} },
             { id: 'bc-s5', section: 'school', title: '[CIE 수학] Math Workbook Q3:7 채점 및 제출', dday: 'D-2 (11/11 수 마감)', note: 'Toddle 정답지로 채점', done: false, reactions: {} },
             { id: 'bc-s7', section: 'school', title: '[CIE 영어] Dictation 단어·문장 듣고쓰기 연습', dday: 'D-2 (11/11 수 & 11/12 목 시험)', note: '11/11(수): balloon, flower, cloud 등 / 11/12(목): seesaw, football 등', done: false, reactions: {} },
@@ -1616,11 +1616,12 @@
     function isTodayMandatory(task) {
       if (task.dday) {
         const d = task.dday;
-        if (d.includes('D-Day') || d.includes('오늘') || d.includes('11/9') || task.urgent) {
+        // 오늘 마감(D-Day) 및 내일 마감/등교 제출(D-1)은 오늘 밤까지 끝내야 하므로 오늘 필수!
+        if (d.includes('D-Day') || d.includes('오늘') || d.includes('내일') || d.includes('D-1') || d.includes('11/9') || d.includes('11/10') || task.urgent) {
           return true;
         }
-        if (d.includes('D-1') || d.includes('D-2') || d.includes('D-3') || d.includes('D-4') || d.includes('D-5') ||
-            d.includes('11/10') || d.includes('11/11') || d.includes('11/12') || d.includes('11/13') || d.includes('내일')) {
+        if (d.includes('D-2') || d.includes('D-3') || d.includes('D-4') || d.includes('D-5') ||
+            d.includes('11/11') || d.includes('11/12') || d.includes('11/13')) {
           return false;
         }
       }
@@ -1792,11 +1793,10 @@
     function getDueDateWeight(task) {
       if (!task.dday) return 999;
       const d = task.dday;
-      if (d.includes('D-Day') || d.includes('오늘') || d.includes('11/9') || task.urgent) return 1;
-      if (d.includes('D-1') || d.includes('11/10') || d.includes('내일')) return 2;
-      if (d.includes('D-2') || d.includes('11/11')) return 3;
-      if (d.includes('D-3') || d.includes('11/12')) return 4;
-      if (d.includes('D-4') || d.includes('11/13')) return 5;
+      if (d.includes('D-Day') || d.includes('오늘') || d.includes('11/9') || d.includes('내일') || d.includes('D-1') || d.includes('11/10') || task.urgent) return 1;
+      if (d.includes('D-2') || d.includes('11/11')) return 2;
+      if (d.includes('D-3') || d.includes('11/12')) return 3;
+      if (d.includes('D-4') || d.includes('11/13')) return 4;
       return 100;
     }
 
@@ -1808,7 +1808,7 @@
       const sortedList = [...list].sort((a, b) => getDueDateWeight(a) - getDueDateWeight(b));
 
       sortedList.forEach(task => {
-        const isTodayDue = task.dday && (task.dday.includes('D-Day') || task.dday.includes('오늘') || task.urgent);
+        const isTodayDue = task.dday && (task.dday.includes('D-Day') || task.dday.includes('오늘') || task.dday.includes('내일') || task.dday.includes('D-1') || task.urgent);
         const item = document.createElement('div');
         item.className = 'task-item' + (task.done ? ' completed' : '') + (!isMj ? ' bc-theme' : '') + (isTodayDue ? ' today-urgent' : '');
 
