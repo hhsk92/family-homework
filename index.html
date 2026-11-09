@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>⭐ 우리 가족 숙제 & 토스방</title>
+  <title>⭐ 우리 가족 숙제 모음</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-512.png">
@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#0064FF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="숙제방">
+  <meta name="apple-mobile-web-app-title" content="우리 가족 숙제 모음">
   <meta name="mobile-web-app-capable" content="yes">
   <style>
     :root {
@@ -126,6 +126,360 @@
       background: #ffffff;
       color: var(--app-blue);
       box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    /* View Switcher */
+    .view-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+
+    .view-btn {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 9999px;
+      font-size: 13.5px;
+      font-weight: 800;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .view-btn.active {
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .streak-badge {
+      font-size: 11px;
+      background: #fef3c7;
+      color: #b45309;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+
+    /* Month Preview Banner */
+    .month-preview-banner {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border: 1.5px solid #86efac;
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .month-preview-banner:active {
+      transform: scale(0.98);
+    }
+
+    .banner-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .banner-icon {
+      font-size: 24px;
+    }
+
+    .banner-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #166534;
+    }
+
+    .banner-sub {
+      font-size: 11px;
+      color: #15803d;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .banner-stamp {
+      font-size: 12px;
+      font-weight: 800;
+      background: #22c55e;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+      white-space: nowrap;
+    }
+
+    /* Calendar Card */
+    .calendar-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 18px 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 14px;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding: 0 4px;
+    }
+
+    .calendar-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .child-indicator {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    .child-indicator.mj {
+      background: var(--app-purple-light);
+      color: var(--app-purple);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .child-indicator.bc {
+      background: var(--app-blue-light);
+      color: var(--app-blue);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    .calendar-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .stat-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+
+    .stat-box-val {
+      font-size: 16px;
+      font-weight: 900;
+      margin-top: 3px;
+    }
+
+    .stat-box-label {
+      font-size: 10.5px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #64748b;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .calendar-weekdays span:first-child { color: #ef4444; }
+    .calendar-weekdays span:last-child { color: #3b82f6; }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    .cal-day {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      min-height: 60px;
+      padding: 4px 3px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s ease;
+    }
+
+    .cal-day:active {
+      transform: scale(0.96);
+    }
+
+    .cal-day-num {
+      font-size: 11px;
+      font-weight: 800;
+      color: #64748b;
+      align-self: flex-start;
+      line-height: 1;
+      padding: 1px 2px;
+    }
+
+    .cal-day.sunday .cal-day-num { color: #ef4444; }
+    .cal-day.saturday .cal-day-num { color: #3b82f6; }
+
+    .cal-day.today {
+      border: 2px solid #0064FF;
+      box-shadow: 0 0 0 2px rgba(0, 100, 255, 0.2);
+      background: #eff6ff;
+    }
+
+    .cal-day.today .cal-day-num {
+      background: #0064FF;
+      color: white;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 9.5px;
+    }
+
+    .cal-stamp {
+      font-size: 16px;
+      line-height: 1;
+      margin: 1px 0;
+    }
+
+    .cal-pct {
+      font-size: 9px;
+      font-weight: 800;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .cal-day.completed {
+      background: linear-gradient(135deg, #fef9c3, #fef08a);
+      border-color: #facc15;
+      box-shadow: 0 2px 8px rgba(234, 179, 8, 0.2);
+    }
+
+    .cal-day.completed .cal-pct {
+      color: #854d0e;
+      font-weight: 900;
+    }
+
+    .cal-day.future {
+      opacity: 0.55;
+      cursor: default;
+      background: #f1f5f9;
+      border-style: dashed;
+    }
+
+    /* Badges Card */
+    .badges-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 16px 14px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .badge-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f8fafc;
+    }
+
+    .badge-item.achieved {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+
+    .badge-icon {
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    .badge-info-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .badge-info-desc {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .badge-item.achieved .badge-info-name {
+      color: #065f46;
+    }
+
+    .badge-status-tag {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .badge-item.achieved .badge-status-tag {
+      background: #10b981;
+      color: white;
+    }
+
+    .badge-item:not(.achieved) .badge-status-tag {
+      background: #e2e8f0;
+      color: #64748b;
+    }
+
+    .back-to-today-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #0064FF, #2563eb);
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 100, 255, 0.3);
+      transition: transform 0.15s ease;
+    }
+
+    .back-to-today-btn:active {
+      transform: scale(0.98);
     }
 
     .toss-card {
@@ -380,6 +734,78 @@
     .task-item.completed {
       background: #f8fafc;
       opacity: 0.85;
+    }
+
+    /* D-Day Today Urgent Style: Red Background & White Text */
+    .task-item.today-urgent {
+      background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+      color: #ffffff !important;
+      border: 1.5px solid #b91c1c !important;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3) !important;
+    }
+
+    .task-item.today-urgent .task-title {
+      color: #ffffff !important;
+      font-weight: 700 !important;
+    }
+
+    .task-item.today-urgent .sub-note {
+      color: rgba(255, 255, 255, 0.92) !important;
+      font-weight: 600 !important;
+    }
+
+    .task-item.today-urgent .dday-chip {
+      background: #ffffff !important;
+      color: #dc2626 !important;
+      font-weight: 800 !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .task-item.today-urgent .task-checkbox {
+      background: rgba(255, 255, 255, 0.25) !important;
+      border-color: #ffffff !important;
+    }
+
+    .task-item.today-urgent.completed {
+      background: linear-gradient(135deg, #b91c1c, #991b1b) !important;
+      opacity: 0.88 !important;
+      border-color: #7f1d1d !important;
+    }
+
+    .task-item.today-urgent.completed .task-title {
+      color: rgba(255, 255, 255, 0.75) !important;
+      text-decoration: line-through !important;
+    }
+
+    .task-item.today-urgent.completed .task-checkbox {
+      background: #ffffff !important;
+      border-color: #ffffff !important;
+    }
+
+    .task-item.today-urgent.completed .task-checkbox svg {
+      stroke: #dc2626 !important;
+      opacity: 1 !important;
+      transform: scale(1) !important;
+    }
+
+    .task-item.today-urgent .cheer-bar {
+      border-top: 1px dashed rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .task-item.today-urgent .cheer-bar span {
+      color: rgba(255, 255, 255, 0.95) !important;
+    }
+
+    .task-item.today-urgent .cheer-btn {
+      background: rgba(255, 255, 255, 0.2) !important;
+      border-color: rgba(255, 255, 255, 0.4) !important;
+      color: #ffffff !important;
+    }
+
+    .task-item.today-urgent .cheer-btn.active {
+      background: #ffffff !important;
+      color: #dc2626 !important;
+      border-color: #ffffff !important;
     }
 
     .task-checkbox {
@@ -651,7 +1077,7 @@
 
   <div class="header">
     <div class="title-group">
-      <h1>⭐ 우리 가족 숙제 & 토스방</h1>
+      <h1>⭐ 우리 가족 숙제 모음</h1>
       <div class="date-badge" id="currentDate">2026년 11월 9일 월요일</div>
     </div>
     <div class="sync-status" id="syncStatus">
@@ -672,6 +1098,17 @@
     <button id="installBtn" style="background: white; color: #065f46; border: none; padding: 7px 14px; border-radius: 9999px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">설치</button>
   </div>
 
+  <!-- View Switcher (Today's Tasks vs Monthly Achievement) -->
+  <div class="view-switcher">
+    <button class="view-btn active" id="viewBtnToday" onclick="switchView('today')">
+      <span>📝 오늘 숙제</span>
+    </button>
+    <button class="view-btn" id="viewBtnMonth" onclick="switchView('month')">
+      <span>📅 11월 한 달 성취표</span>
+      <span class="streak-badge" id="navStreakBadge">🔥 8일 연속</span>
+    </button>
+  </div>
+
   <div class="tab-container">
     <button class="tab-btn active mj" id="tabMj" onclick="switchTab('mj')">
       <span>💜 MJ</span>
@@ -682,6 +1119,20 @@
       <span style="font-size: 11px; opacity: 0.8;">(2학년)</span>
     </button>
   </div>
+
+  <!-- Today's Tasks View -->
+  <div id="todayView">
+    <!-- Month Preview Mini Banner -->
+    <div class="month-preview-banner" onclick="switchView('month')">
+      <div class="banner-left">
+        <span class="banner-icon">📅</span>
+        <div>
+          <div class="banner-title">11월 성취 달력: <span id="bannerStreakText">8일 연속 100% 달성 중!</span> 🔥</div>
+          <div class="banner-sub">어제까지 8일 전원 100% 올클리어 완료 · 달력 보기 ➔</div>
+        </div>
+      </div>
+      <div class="banner-stamp">🌟 100%</div>
+    </div>
 
   <!-- Toss Piggy Bank Card -->
   <div class="toss-card" id="tossCard">
@@ -738,9 +1189,75 @@
   <div class="section-title" style="margin-top: 24px;">💰 추가 토스 보너스 적립 (화이트보드)</div>
   <div id="bonusSection"></div>
 
-  <div class="footer-actions">
-    <button class="reset-btn" onclick="confirmReset()">🔄 오늘 체크 및 저금 초기화</button>
-  </div>
+    <div class="footer-actions">
+      <button class="reset-btn" onclick="confirmReset()">🔄 오늘 체크 및 저금 초기화</button>
+    </div>
+  </div> <!-- /#todayView -->
+
+  <!-- Monthly Achievement View -->
+  <div id="monthView" style="display:none;">
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <div class="calendar-title">
+          <span>📅 2026년 11월 성취 달력</span>
+        </div>
+        <div class="child-indicator mj" id="calChildLabel">
+          💜 MJ (4학년)
+        </div>
+      </div>
+
+      <!-- Stats Summary -->
+      <div class="calendar-stats-row">
+        <div class="stat-box">
+          <div class="stat-box-label">🔥 연속 올클리어</div>
+          <div class="stat-box-val" id="calStatStreak" style="color:#d97706;">8일째</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">🌟 100% 달성일</div>
+          <div class="stat-box-val" id="calStatDays" style="color:#059669;">8 / 30일</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">🪙 누적 100% 상금</div>
+          <div class="stat-box-val" id="calStatMoney" style="color:#2563eb;">800원</div>
+        </div>
+      </div>
+
+      <div class="calendar-weekdays">
+        <span>일</span>
+        <span>월</span>
+        <span>화</span>
+        <span>수</span>
+        <span>목</span>
+        <span>금</span>
+        <span>토</span>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid">
+        <!-- Rendered by JS -->
+      </div>
+      
+      <div style="margin-top:14px; font-size:11.5px; color:#64748b; text-align:center; background:#f8fafc; padding:10px; border-radius:12px; line-height: 1.5;">
+        💡 <b>11/1 ~ 11/8(어제)</b>까지는 100% 올클리어로 기록되어 있어요!<br>
+        날짜 칸을 터치하면 완료 여부를 직접 수정할 수도 있어요.
+      </div>
+    </div>
+
+    <!-- Milestone Badges -->
+    <div class="badges-card">
+      <div style="font-size: 15px; font-weight: 800; color: #0f172a; display:flex; align-items:center; gap:6px;">
+        <span>🏆 11월 성취 배지 컬렉션</span>
+      </div>
+      <div class="badges-grid" id="badgesGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <div style="margin-top: 14px; text-align: center;">
+      <button class="back-to-today-btn" onclick="switchView('today')">
+        📝 오늘 숙제 체크하러 가기
+      </button>
+    </div>
+  </div> <!-- /#monthView -->
 
   <script>
     const CLOUD_URL = 'https://mantledb.sh/v2/hhsk92-family-homework/state';
@@ -797,10 +1314,22 @@
       return false;
     }
 
+    function getDefaultHistory() {
+      const hist = { mj: {}, bc: {} };
+      // 11월 1일부터 11월 8일(어제)까지 100% 올클리어로 초기 세팅
+      for (let day = 1; day <= 8; day++) {
+        const dStr = `2026-11-${String(day).padStart(2, '0')}`;
+        hist.mj[dStr] = { done: true, pct: 100, doneCount: 8, totalCount: 8 };
+        hist.bc[dStr] = { done: true, pct: 100, doneCount: 7, totalCount: 7 };
+      }
+      return hist;
+    }
+
     function freshState() {
       return {
         lastDate: '2026-11-09',
         activeTab: 'mj',
+        history: getDefaultHistory(),
         tasks: {
           mj: [
             { id: 'mj-s3', section: 'school', title: '[CIE 영어 공통] Weekly Diary #7 작성하기', dday: 'D-Day (오늘 11/9 월 마감)', urgent: true, note: 'Toddle 프롬프트 확인 후 제출', done: true, reactions: { '💖': 1 } },
@@ -844,6 +1373,245 @@
 
     const saved = localStorage.getItem('family_integrated_homework_state');
     let s = saved ? JSON.parse(saved) : freshState();
+    if (!s.history || !s.history.mj || Object.keys(s.history.mj).length === 0) {
+      s.history = getDefaultHistory();
+    }
+
+    let currentView = 'today';
+
+    function switchView(view) {
+      currentView = view;
+      const todayEl = document.getElementById('todayView');
+      const monthEl = document.getElementById('monthView');
+      const btnToday = document.getElementById('viewBtnToday');
+      const btnMonth = document.getElementById('viewBtnMonth');
+
+      if (view === 'today') {
+        todayEl.style.display = 'block';
+        monthEl.style.display = 'none';
+        btnToday.classList.add('active');
+        btnMonth.classList.remove('active');
+      } else {
+        todayEl.style.display = 'none';
+        monthEl.style.display = 'block';
+        btnToday.classList.remove('active');
+        btnMonth.classList.add('active');
+        renderCalendar();
+      }
+    }
+
+    function calculateStreak(child) {
+      if (!s.history || !s.history[child]) return 0;
+      const h = s.history[child];
+      let streak = 0;
+      const todayDone = h['2026-11-09'] && h['2026-11-09'].done;
+      const startDay = todayDone ? 9 : 8;
+
+      for (let day = startDay; day >= 1; day--) {
+        const dStr = `2026-11-${String(day).padStart(2, '0')}`;
+        if (h[dStr] && h[dStr].done) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+      return streak;
+    }
+
+    function updateTodayHistory() {
+      if (!s.history) s.history = getDefaultHistory();
+      if (!s.history.mj) s.history.mj = {};
+      if (!s.history.bc) s.history.bc = {};
+
+      const todayStr = getTodayDateStr();
+      ['mj', 'bc'].forEach(child => {
+        const tasks = (s.tasks && s.tasks[child]) ? s.tasks[child] : [];
+        const mandatory = tasks.filter(isTodayMandatory);
+        const doneCount = mandatory.filter(t => t.done).length;
+        const totalCount = mandatory.length;
+        const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+        const isAllDone = totalCount > 0 && doneCount === totalCount;
+
+        s.history[child][todayStr] = {
+          done: isAllDone,
+          pct: pct,
+          doneCount: doneCount,
+          totalCount: totalCount
+        };
+      });
+
+      const curChild = s.activeTab || 'mj';
+      const streak = calculateStreak(curChild);
+      const navStreak = document.getElementById('navStreakBadge');
+      if (navStreak) navStreak.textContent = `🔥 ${streak}일 연속`;
+      const bannerStreak = document.getElementById('bannerStreakText');
+      if (bannerStreak) bannerStreak.textContent = `${streak}일 연속 100% 달성 중!`;
+    }
+
+    function toggleHistoryDay(child, dateStr, dayNum) {
+      if (dayNum > 9) {
+        alert("아직 다가오지 않은 날짜예요! 오늘 숙제부터 차근차근 해봐요 😊");
+        return;
+      }
+      if (dayNum === 9) {
+        switchView('today');
+        return;
+      }
+      if (!s.history[child]) s.history[child] = {};
+      const cur = s.history[child][dateStr];
+      const newDone = !(cur && cur.done);
+      s.history[child][dateStr] = {
+        done: newDone,
+        pct: newDone ? 100 : 0
+      };
+      if (newDone) {
+        triggerParticles();
+      }
+      commit(s, true);
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const child = s.activeTab || 'mj';
+      const isMj = child === 'mj';
+      const calLabel = document.getElementById('calChildLabel');
+      if (calLabel) {
+        calLabel.className = 'child-indicator ' + (isMj ? 'mj' : 'bc');
+        calLabel.textContent = isMj ? '💜 MJ (4학년)' : '💙 BC (2학년)';
+      }
+
+      const streak = calculateStreak(child);
+      let completedDays = 0;
+      const h = (s.history && s.history[child]) ? s.history[child] : {};
+      for (let d = 1; d <= 30; d++) {
+        const dStr = `2026-11-${String(d).padStart(2, '0')}`;
+        if (h[dStr] && h[dStr].done) completedDays++;
+      }
+
+      const statStreak = document.getElementById('calStatStreak');
+      const statDays = document.getElementById('calStatDays');
+      const statMoney = document.getElementById('calStatMoney');
+      if (statStreak) statStreak.textContent = `${streak}일째`;
+      if (statDays) statDays.textContent = `${completedDays} / 30일`;
+      if (statMoney) statMoney.textContent = `${(completedDays * 100).toLocaleString()}원`;
+
+      const grid = document.getElementById('calendarGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      for (let day = 1; day <= 30; day++) {
+        const dStr = `2026-11-${String(day).padStart(2, '0')}`;
+        const dayOfWeek = (day - 1) % 7; // 0 = Sunday, 6 = Saturday
+        const isSunday = dayOfWeek === 0;
+        const isSaturday = dayOfWeek === 6;
+        const isPast = day < 9;
+        const isToday = day === 9;
+        const isFuture = day > 9;
+
+        const cell = document.createElement('div');
+        let classes = ['cal-day'];
+        if (isSunday) classes.push('sunday');
+        if (isSaturday) classes.push('saturday');
+        if (isToday) classes.push('today');
+        if (isFuture) classes.push('future');
+
+        let stamp = '';
+        let pctLabel = '';
+
+        if (isPast) {
+          const record = h[dStr];
+          if (record && record.done) {
+            classes.push('completed');
+            stamp = '🌟';
+            pctLabel = '100%';
+          } else {
+            stamp = '⏳';
+            pctLabel = '미완료';
+          }
+        } else if (isToday) {
+          const record = h[dStr];
+          if (record && record.done) {
+            classes.push('completed');
+            stamp = '🐥👑';
+            pctLabel = '100% 완료!';
+          } else if (record && record.pct > 0) {
+            stamp = '🐣';
+            pctLabel = `${record.pct}% 진행`;
+          } else {
+            stamp = '🥚';
+            pctLabel = '오늘 대기';
+          }
+        } else {
+          stamp = '⚪';
+          pctLabel = '예정';
+        }
+
+        cell.className = classes.join(' ');
+        cell.onclick = () => toggleHistoryDay(child, dStr, day);
+        cell.innerHTML = `
+          <span class="cal-day-num">${day}${isToday ? ' (오늘)' : ''}</span>
+          <span class="cal-stamp">${stamp}</span>
+          <span class="cal-pct">${pctLabel}</span>
+        `;
+        grid.appendChild(cell);
+      }
+
+      renderBadges(child, streak, completedDays);
+    }
+
+    function renderBadges(child, streak, completedDays) {
+      const badgesGrid = document.getElementById('badgesGrid');
+      if (!badgesGrid) return;
+
+      const badges = [
+        {
+          icon: '🐣',
+          name: '첫 걸음 달성!',
+          desc: '11월 100% 올클리어 첫 날 달성',
+          achieved: completedDays >= 1,
+          progress: `${Math.min(completedDays, 1)} / 1`
+        },
+        {
+          icon: '🥉',
+          name: '작심삼일 탈출 배지',
+          desc: '연속 3일 100% 달성 성공',
+          achieved: streak >= 3,
+          progress: `${Math.min(streak, 3)} / 3`
+        },
+        {
+          icon: '🥈',
+          name: '완벽한 1주일 배지',
+          desc: '연속 7일 100% 달성 마스터 (어제까지 완벽 달성!)',
+          achieved: streak >= 7,
+          progress: `${Math.min(streak, 7)} / 7`
+        },
+        {
+          icon: '🥇',
+          name: '2주 챔피언 배지',
+          desc: '연속 14일 동안 매일 100% 달성하기',
+          achieved: streak >= 14,
+          progress: `${streak} / 14`
+        },
+        {
+          icon: '👑',
+          name: '11월 올클리어 마스터 킹',
+          desc: '한 달 30일 전체 100% 숙제 올클리어!',
+          achieved: completedDays >= 30,
+          progress: `${completedDays} / 30`
+        }
+      ];
+
+      badgesGrid.innerHTML = badges.map(b => `
+        <div class="badge-item ${b.achieved ? 'achieved' : ''}">
+          <span class="badge-icon">${b.icon}</span>
+          <div style="flex:1;">
+            <div class="badge-info-name">${b.name}</div>
+            <div class="badge-info-desc">${b.desc}</div>
+          </div>
+          <div class="badge-status-tag">${b.achieved ? '획득 완료 🎉' : b.progress}</div>
+        </div>
+      `).join('');
+    }
 
     function isTodayMandatory(task) {
       if (task.dday) {
@@ -912,9 +1680,15 @@
             s.tasks = remote.tasks;
             if (remote.bonus) s.bonus = remote.bonus;
             if (remote.lastDate) s.lastDate = remote.lastDate;
+            if (remote.history) {
+              s.history = remote.history;
+            } else if (!s.history) {
+              s.history = getDefaultHistory();
+            }
+            updateTodayHistory();
             localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
             render();
-            if (rolled) syncToCloud();
+            if (rolled || !remote.history) syncToCloud();
           }
         }
       } catch (e) {
@@ -924,6 +1698,7 @@
 
     function commit(next, sync = true) {
       s = next;
+      updateTodayHistory();
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
       render();
       if (sync) syncToCloud();
@@ -932,6 +1707,9 @@
     function switchTab(tab) {
       s.activeTab = tab;
       commit(s, false);
+      if (currentView === 'month') {
+        renderCalendar();
+      }
     }
 
     function toggleTask(id, event) {
@@ -1030,8 +1808,9 @@
       const sortedList = [...list].sort((a, b) => getDueDateWeight(a) - getDueDateWeight(b));
 
       sortedList.forEach(task => {
+        const isTodayDue = task.dday && (task.dday.includes('D-Day') || task.dday.includes('오늘') || task.urgent);
         const item = document.createElement('div');
-        item.className = 'task-item' + (task.done ? ' completed' : '') + (!isMj ? ' bc-theme' : '');
+        item.className = 'task-item' + (task.done ? ' completed' : '') + (!isMj ? ' bc-theme' : '') + (isTodayDue ? ' today-urgent' : '');
 
         const checkIcon = `
           <div class="task-checkbox">
@@ -1112,6 +1891,10 @@
 
     function render() {
       updateDateDisplay();
+      updateTodayHistory();
+      if (currentView === 'month') {
+        renderCalendar();
+      }
       const isMj = s.activeTab === 'mj';
       const curTasks = s.tasks[s.activeTab];
       const toss = calculateTossSavings(s.activeTab);
