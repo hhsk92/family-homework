@@ -736,76 +736,154 @@
       opacity: 0.85;
     }
 
-    /* D-Day Today Urgent Style: Red Background & White Text */
+    /* 1. D-Day Urgent: Soft Pastel Rose / Coral */
     .task-item.today-urgent {
-      background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-      color: #ffffff !important;
-      border: 1.5px solid #b91c1c !important;
-      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3) !important;
+      background: linear-gradient(135deg, #fff1f2, #ffe4e6) !important;
+      border: 1.5px solid #fecdd3 !important;
+      box-shadow: 0 3px 10px rgba(244, 63, 94, 0.08) !important;
     }
 
     .task-item.today-urgent .task-title {
-      color: #ffffff !important;
-      font-weight: 700 !important;
+      color: #9f1239 !important;
+      font-weight: 750 !important;
     }
 
     .task-item.today-urgent .sub-note {
-      color: rgba(255, 255, 255, 0.92) !important;
+      color: #be123c !important;
       font-weight: 600 !important;
     }
 
     .task-item.today-urgent .dday-chip {
-      background: #ffffff !important;
-      color: #dc2626 !important;
+      background: #f43f5e !important;
+      color: #ffffff !important;
       font-weight: 800 !important;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+      box-shadow: 0 2px 6px rgba(244, 63, 94, 0.22) !important;
     }
 
     .task-item.today-urgent .task-checkbox {
-      background: rgba(255, 255, 255, 0.25) !important;
-      border-color: #ffffff !important;
+      background: #ffffff !important;
+      border: 2px solid #fda4af !important;
     }
 
     .task-item.today-urgent.completed {
-      background: linear-gradient(135deg, #b91c1c, #991b1b) !important;
-      opacity: 0.88 !important;
-      border-color: #7f1d1d !important;
+      background: #fff5f5 !important;
+      opacity: 0.72 !important;
+      border-color: #ffe4e6 !important;
+      box-shadow: none !important;
     }
 
     .task-item.today-urgent.completed .task-title {
-      color: rgba(255, 255, 255, 0.75) !important;
+      color: #9ca3af !important;
       text-decoration: line-through !important;
     }
 
     .task-item.today-urgent.completed .task-checkbox {
-      background: #ffffff !important;
-      border-color: #ffffff !important;
+      background: #fb7185 !important;
+      border-color: #fb7185 !important;
     }
 
     .task-item.today-urgent.completed .task-checkbox svg {
-      stroke: #dc2626 !important;
+      stroke: #ffffff !important;
       opacity: 1 !important;
       transform: scale(1) !important;
     }
 
     .task-item.today-urgent .cheer-bar {
-      border-top: 1px dashed rgba(255, 255, 255, 0.3) !important;
+      border-top: 1px dashed #fecdd3 !important;
     }
 
     .task-item.today-urgent .cheer-bar span {
-      color: rgba(255, 255, 255, 0.95) !important;
+      color: #be123c !important;
     }
 
     .task-item.today-urgent .cheer-btn {
-      background: rgba(255, 255, 255, 0.2) !important;
-      border-color: rgba(255, 255, 255, 0.4) !important;
-      color: #ffffff !important;
+      background: #ffffff !important;
+      border-color: #fecdd3 !important;
+      color: #9f1239 !important;
     }
 
     .task-item.today-urgent .cheer-btn.active {
+      background: #f43f5e !important;
+      color: #ffffff !important;
+      border-color: #f43f5e !important;
+    }
+
+    /* 2. Daily Routine: Soft Pastel Butter / Sunshine Cream */
+    .task-item.today-routine {
+      background: linear-gradient(135deg, #fefce8, #fef9c3) !important;
+      border: 1.5px solid #fde047 !important;
+      box-shadow: 0 3px 10px rgba(234, 179, 8, 0.08) !important;
+    }
+
+    .task-item.today-routine .task-title {
+      color: #713f12 !important;
+      font-weight: 750 !important;
+    }
+
+    .task-item.today-routine .sub-note {
+      color: #854d0e !important;
+      font-weight: 600 !important;
+    }
+
+    .routine-chip {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #fef08a;
+      color: #854d0e;
+      border: 1px solid #facc15;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .task-item.today-routine .task-checkbox {
       background: #ffffff !important;
-      color: #dc2626 !important;
-      border-color: #ffffff !important;
+      border: 2px solid #facc15 !important;
+    }
+
+    .task-item.today-routine.completed {
+      background: #fefce8 !important;
+      opacity: 0.72 !important;
+      border-color: #fef9c3 !important;
+      box-shadow: none !important;
+    }
+
+    .task-item.today-routine.completed .task-title {
+      color: #9ca3af !important;
+      text-decoration: line-through !important;
+    }
+
+    .task-item.today-routine.completed .task-checkbox {
+      background: #eab308 !important;
+      border-color: #eab308 !important;
+    }
+
+    .task-item.today-routine.completed .task-checkbox svg {
+      stroke: #ffffff !important;
+      opacity: 1 !important;
+      transform: scale(1) !important;
+    }
+
+    .task-item.today-routine .cheer-bar {
+      border-top: 1px dashed #fef08a !important;
+    }
+
+    .task-item.today-routine .cheer-bar span {
+      color: #854d0e !important;
+    }
+
+    .task-item.today-routine .cheer-btn {
+      background: #ffffff !important;
+      border-color: #fef08a !important;
+      color: #854d0e !important;
+    }
+
+    .task-item.today-routine .cheer-btn.active {
+      background: #eab308 !important;
+      color: #ffffff !important;
+      border-color: #eab308 !important;
     }
 
     .task-checkbox {
@@ -1809,8 +1887,17 @@
 
       sortedList.forEach(task => {
         const isTodayDue = task.dday && (task.dday.includes('D-Day') || task.dday.includes('오늘') || task.dday.includes('내일') || task.dday.includes('D-1') || task.urgent);
+        const isRoutine = task.section === 'routine' || (!task.section && !task.dday);
         const item = document.createElement('div');
-        item.className = 'task-item' + (task.done ? ' completed' : '') + (!isMj ? ' bc-theme' : '') + (isTodayDue ? ' today-urgent' : '');
+        let classes = ['task-item'];
+        if (task.done) classes.push('completed');
+        if (!isMj) classes.push('bc-theme');
+        if (isTodayDue) {
+          classes.push('today-urgent');
+        } else if (isRoutine) {
+          classes.push('today-routine');
+        }
+        item.className = classes.join(' ');
 
         const checkIcon = `
           <div class="task-checkbox">
@@ -1821,8 +1908,13 @@
         `;
 
         let metaHtml = '';
-        if (task.dday || task.note) {
-          const ddayTag = task.dday ? `<span class="${task.urgent ? 'dday-chip urgent' : 'dday-chip'}">${task.dday}</span>` : '';
+        if (task.dday || task.note || isRoutine) {
+          let ddayTag = '';
+          if (task.dday) {
+            ddayTag = `<span class="${task.urgent ? 'dday-chip urgent' : 'dday-chip'}">${task.dday}</span>`;
+          } else if (isRoutine) {
+            ddayTag = `<span class="routine-chip">✨ 오늘 매일 루틴</span>`;
+          }
           const noteTag = task.note ? `<span class="sub-note">${task.note}</span>` : '';
           metaHtml = `
             <div class="task-meta">
