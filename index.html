@@ -2034,12 +2034,28 @@
       return streak;
     }
 
+    // 11/1~11/9는 100% 올클리어로만 기록돼 있어서, 현재 매일 루틴 항목을 '완료'로 채워 넣는다 (한 번만 실행됨)
+    function backfillLegacyRoutines(todayStr) {
+      ['mj', 'bc'].forEach(child => {
+        const routines = ((s.tasks && s.tasks[child]) || []).filter(t => t.section === 'routine');
+        if (!routines.length || !s.history || !s.history[child]) return;
+        for (let day = 1; day <= 9; day++) {
+          const dStr = makeDateStr(2026, 11, day);
+          const rec = s.history[child][dStr];
+          if (dStr >= todayStr || !rec || !rec.done || Array.isArray(rec.items)) continue;
+          rec.items = routines.map(t => ({ t: String(t.title || '').slice(0, 40), d: 1, r: 1 }));
+          rec.legacy = 1;
+        }
+      });
+    }
+
     function updateTodayHistory() {
       if (!s.history) s.history = getDefaultHistory();
       if (!s.history.mj) s.history.mj = {};
       if (!s.history.bc) s.history.bc = {};
 
       const todayStr = getTodayDateStr();
+      backfillLegacyRoutines(todayStr);
       ['mj', 'bc'].forEach(child => {
         const tasks = (s.tasks && s.tasks[child]) ? s.tasks[child] : [];
         const mandatory = tasks.filter(isTodayMandatory);
@@ -2088,6 +2104,18 @@
       switchView('day');
     }
 
+    // 그날 화면에 보여줄 항목: 저장된 항목 + (아직 기록에 없는) 현재 매일 루틴
+    function getDayItems(child, dStr) {
+      const rec = (s.history && s.history[child]) ? s.history[child][dStr] : null;
+      const saved = (rec && Array.isArray(rec.items)) ? rec.items : [];
+      const list = saved.map(it => ({ t: it.t, d: it.d ? 1 : 0, r: it.r ? 1 : 0, saved: true }));
+      ((s.tasks && s.tasks[child]) || []).filter(t => t.section === 'routine').forEach(t => {
+        const name = String(t.title || '').slice(0, 40);
+        if (!list.some(i => i.t === name)) list.push({ t: name, d: 0, r: 1, saved: false });
+      });
+      return { rec, list };
+    }
+
     function renderDayView() {
       const body = document.getElementById('dayViewBody');
       if (!body || !selectedDay) return;
@@ -2103,25 +2131,26 @@
       const title = document.getElementById('dayViewTitle');
       if (title) title.textContent = `📅 ${calYear}년 ${calMonth}월 ${selectedDay}일 (${dow}) 숙제 체크`;
 
-      const rec = (s.history && s.history[child]) ? s.history[child][ymd(selectedDay)] : null;
+      const { rec, list } = getDayItems(child, ymd(selectedDay));
       let html = '';
 
-      if (rec && Array.isArray(rec.items) && rec.items.length) {
-        const doneCount = rec.items.filter(i => i.d).length;
-        const pct = Math.round((doneCount / rec.items.length) * 100);
-        html += `<div class="day-summary">${doneCount} / ${rec.items.length} 완료 (${pct}%)${rec.done ? ' · 🌟 100% 올클리어' : ''}</div>`;
-        html += '<div class="task-list">' + rec.items.map((it, i) => `
+      if (list.length) {
+        const doneCount = list.filter(i => i.d).length;
+        const pct = Math.round((doneCount / list.length) * 100);
+        if (!rec || !rec.items || rec.legacy) html += '<div class="day-note">이 날은 매일 루틴 항목만 기록할 수 있어요.<br>빠뜨린 루틴은 지금 체크해서 채워 넣을 수 있어요.</div>';
+        html += `<div class="day-summary">${doneCount} / ${list.length} 완료 (${pct}%)${(rec && rec.done) ? ' · 🌟 100% 올클리어' : ''}</div>`;
+        html += '<div class="task-list">' + list.map((it, i) => `
           <div class="task-item ${it.d ? 'completed' : ''} ${isMj ? '' : 'bc-theme'}">
             <div class="task-main-row" onclick="toggleDayItem(${i})">
               <div class="task-checkbox">
                 <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </div>
-              <div class="task-content"><div class="task-title">${escapeHtml(it.t)}</div></div>
+              <div class="task-content"><div class="task-title">${it.r ? '🔁 ' : ''}${escapeHtml(it.t)}</div></div>
             </div>
           </div>`).join('') + '</div>';
       } else {
         const done = !!(rec && rec.done);
-        html += `<div class="day-note">이 날은 숙제 항목별 기록이 없어요.<br>(항목별 기록은 이번 업데이트 이후 날짜부터 저장돼요)<br>대신 전체 올클리어 여부를 직접 고칠 수 있어요.</div>
+        html += `<div class="day-note">이 날은 숙제 항목별 기록이 없어요.<br>대신 전체 올클리어 여부를 직접 고칠 수 있어요.</div>
           <button class="day-toggle-btn ${done ? 'on' : ''}" onclick="toggleDayManual()">${done ? '🌟 100% 올클리어 · 눌러서 해제' : '⏳ 미완료 · 눌러서 100% 올클리어로 기록'}</button>`;
       }
       body.innerHTML = html;
@@ -2129,18 +2158,31 @@
 
     function toggleDayItem(idx) {
       const child = s.activeTab || 'mj';
-      const rec = (s.history && s.history[child]) ? s.history[child][ymd(selectedDay)] : null;
-      if (!rec || !rec.items || !rec.items[idx]) return;
-      const it = rec.items[idx];
+      const dStr = ymd(selectedDay);
+      const { list } = getDayItems(child, dStr);
+      const target = list[idx];
+      if (!target) return;
 
-      if (it.d && !confirm('이미 체크한 숙제예요.\n체크를 해제할까요?')) return;
+      if (target.d && !confirm('이미 체크한 숙제예요.\\n체크를 해제할까요?')) return;
 
-      it.d = it.d ? 0 : 1;
+      if (!s.history) s.history = { mj: {}, bc: {} };
+      if (!s.history[child]) s.history[child] = {};
+      let rec = s.history[child][dStr];
+      if (!rec) { rec = { done: false, pct: 0, items: [], legacy: 1 }; s.history[child][dStr] = rec; }
+      if (!Array.isArray(rec.items)) { rec.items = []; rec.legacy = 1; }
+
+      // 아직 기록에 없던 루틴들도 함께 저장해서 목록 순서와 전체 달성률이 어긋나지 않게 한다
+      list.forEach(li => {
+        if (!rec.items.some(i => i.t === li.t)) rec.items.push({ t: li.t, d: 0, r: li.r });
+      });
+      const item = rec.items.find(i => i.t === target.t);
+      item.d = item.d ? 0 : 1;
+
       rec.totalCount = rec.items.length;
       rec.doneCount = rec.items.filter(i => i.d).length;
       rec.pct = rec.totalCount > 0 ? Math.round((rec.doneCount / rec.totalCount) * 100) : 0;
       rec.done = rec.totalCount > 0 && rec.doneCount === rec.totalCount;
-      if (it.d) triggerParticles();
+      if (item.d) triggerParticles();
       commit(s, true);
     }
 
