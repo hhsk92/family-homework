@@ -1578,6 +1578,28 @@
       return false;
     }
 
+    // 항목 이름 일괄 변경 (이미 저장된 상태·클라우드·지난 기록에도 적용)
+    const TITLE_RENAMES = {
+      '악기 연습하기 (바이올린/피아노)': '바이올린',
+      'LINK (링크 학습)': 'EASY LINK'
+    };
+    function applyTitleRenames(st) {
+      let changed = false;
+      if (st && st.tasks) {
+        ['mj', 'bc'].forEach(c => (st.tasks[c] || []).forEach(t => {
+          if (TITLE_RENAMES[t.title]) { t.title = TITLE_RENAMES[t.title]; changed = true; }
+        }));
+      }
+      if (st && st.history) {
+        ['mj', 'bc'].forEach(c => Object.values(st.history[c] || {}).forEach(rec => {
+          if (rec && Array.isArray(rec.items)) rec.items.forEach(it => {
+            if (TITLE_RENAMES[it.t]) { it.t = TITLE_RENAMES[it.t]; changed = true; }
+          });
+        }));
+      }
+      return changed;
+    }
+
     function getDefaultHistory() {
       const hist = { mj: {}, bc: {} };
       // 11월 1일부터 오늘 전날까지 100% 올클리어로 초기 세팅
@@ -1727,7 +1749,7 @@
                   {
                         "id": "mj-r4",
                         "section": "routine",
-                        "title": "악기 연습하기 (바이올린/피아노)",
+                        "title": "바이올린",
                         "icon": "🎻",
                         "done": false,
                         "reactions": {}
@@ -1859,7 +1881,7 @@
                   {
                         "id": "bc-r2",
                         "section": "routine",
-                        "title": "LINK (링크 학습)",
+                        "title": "EASY LINK",
                         "icon": "🔗",
                         "done": false,
                         "reactions": {}
@@ -1986,6 +2008,9 @@
     }
 
     // 이 기기에 저장된 어제 상태가 오늘 기록으로 잘못 들어가지 않도록, 시작할 때 먼저 날짜 넘김 처리
+    if (applyTitleRenames(s)) {
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+    }
     if (s.tasks && checkAndApplyDailyRollover(s)) {
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
     }
@@ -2477,6 +2502,7 @@
           const remote = await res.json();
           if (remote && remote.tasks) {
             const rolled = checkAndApplyDailyRollover(remote);
+            const renamed = applyTitleRenames(remote);
             s.tasks = remote.tasks;
             if (remote.bonus) s.bonus = remote.bonus;
             if (remote.lastDate) s.lastDate = remote.lastDate;
@@ -2488,7 +2514,7 @@
             updateTodayHistory();
             localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
             render();
-            if (rolled || !remote.history) syncToCloud();
+            if (rolled || renamed || !remote.history) syncToCloud();
           }
         }
       } catch (e) {
