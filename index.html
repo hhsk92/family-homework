@@ -1122,6 +1122,114 @@
       cursor: pointer;
     }
 
+    .month-nav-btn {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      border-radius: 9999px;
+      min-width: 30px;
+      height: 30px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 0 8px;
+    }
+    .month-nav-btn:active { transform: scale(0.94); }
+    .month-today-btn { font-size: 11px; margin-left: 2px; }
+    .calendar-title { flex-wrap: wrap; }
+
+    .rs-row { padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+    .rs-row:last-child { border-bottom: none; }
+    .rs-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .rs-name { font-size: 13.5px; font-weight: 800; color: #0f172a; }
+    .rs-meta { font-size: 12px; font-weight: 800; color: #475569; white-space: nowrap; }
+    .rs-bar { height: 8px; background: #e2e8f0; border-radius: 9999px; margin: 7px 0 6px; overflow: hidden; }
+    .rs-bar > div { height: 100%; background: #10b981; border-radius: 9999px; }
+    .rs-sub { font-size: 11.5px; color: #64748b; font-weight: 700; }
+    .rs-dots { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+    .rs-dot { width: 9px; height: 9px; border-radius: 3px; background: #e2e8f0; }
+    .rs-dot.on { background: #10b981; }
+    .rs-dot.off { background: #fca5a5; }
+    .rs-dot.today { outline: 2px solid #94a3b8; }
+    .rs-empty { font-size: 12.5px; color: #64748b; text-align: center; padding: 14px 6px; line-height: 1.6; }
+
+    .quick-add-select {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      border-radius: 9999px;
+      padding: 0 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #334155;
+      outline: none;
+    }
+
+    .routine-toggle-btn {
+      margin-left: auto;
+      background: #ffffff;
+      border: 1px dashed #cbd5e1;
+      color: #64748b;
+      border-radius: 9999px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .routine-toggle-btn:active { transform: scale(0.96); }
+
+    .day-nav-btn {
+      flex: 1;
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 14px 12px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .day-summary {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    .day-note {
+      font-size: 12.5px;
+      color: #64748b;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 12px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .day-toggle-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      color: #475569;
+      cursor: pointer;
+    }
+
+    .day-toggle-btn.on {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      color: #047857;
+    }
+
     #confettiCanvas {
       position: fixed;
       top: 0;
@@ -1182,7 +1290,7 @@
       <span>📝 오늘 숙제</span>
     </button>
     <button class="view-btn" id="viewBtnMonth" onclick="switchView('month')">
-      <span>📅 11월 한 달 성취표</span>
+      <span>📅 한 달 성취표</span>
       <span class="streak-badge" id="navStreakBadge">🔥 8일 연속</span>
     </button>
   </div>
@@ -1205,11 +1313,11 @@
       <div class="banner-left">
         <span class="banner-icon">📅</span>
         <div>
-          <div class="banner-title">11월 성취 달력: <span id="bannerStreakText">8일 연속 100% 달성 중!</span> 🔥</div>
-          <div class="banner-sub">어제까지 8일 전원 100% 올클리어 완료 · 달력 보기 ➔</div>
+          <div class="banner-title">이번 달 성취: <span id="bannerStreakText">8일 연속 100% 달성 중!</span> 🔥</div>
+          <div class="banner-sub" id="bannerSubText">달력 보기 ➔</div>
         </div>
       </div>
-      <div class="banner-stamp">🌟 100%</div>
+      <div class="banner-stamp" id="bannerStamp">🌟 0%</div>
     </div>
 
   <!-- Toss Piggy Bank Card -->
@@ -1259,6 +1367,10 @@
 
   <!-- Quick Add Custom Task -->
   <div class="quick-add-box">
+    <select id="quickType" class="quick-add-select" aria-label="추가할 종류">
+      <option value="school">📌 일반 숙제</option>
+      <option value="routine">✨ 매일 루틴</option>
+    </select>
     <input type="text" id="quickInput" class="quick-add-input" placeholder="새 숙제나 할 일 직접 추가..." onkeypress="handleEnter(event)">
     <button class="quick-add-btn" onclick="addCustomTask()">+ 추가</button>
   </div>
@@ -1277,7 +1389,10 @@
     <div class="calendar-card">
       <div class="calendar-header">
         <div class="calendar-title">
-          <span>📅 2026년 11월 성취 달력</span>
+          <button class="month-nav-btn" onclick="changeMonth(-1)" aria-label="이전 달">◀</button>
+          <span id="calTitle">📅 성취 달력</span>
+          <button class="month-nav-btn" onclick="changeMonth(1)" aria-label="다음 달">▶</button>
+          <button class="month-nav-btn month-today-btn" onclick="goThisMonth()">이번 달</button>
         </div>
         <div class="child-indicator mj" id="calChildLabel">
           💜 MJ (4학년)
@@ -1315,15 +1430,21 @@
       </div>
       
       <div style="margin-top:14px; font-size:11.5px; color:#64748b; text-align:center; background:#f8fafc; padding:10px; border-radius:12px; line-height: 1.5;">
-        💡 <b>11/1 ~ 11/8(어제)</b>까지는 100% 올클리어로 기록되어 있어요!<br>
-        날짜 칸을 터치하면 완료 여부를 직접 수정할 수도 있어요.
+        💡 <b>날짜 칸을 누르면</b> 그날의 숙제를 확인하고 체크할 수 있어요.<br>
+        오늘 칸은 오늘 숙제 화면으로 이동해요. 한 번 체크한 숙제를 해제할 땐 한 번 더 물어봐요.
       </div>
+    </div>
+
+    <!-- Daily routine statistics -->
+    <div class="badges-card" id="routineStatsCard">
+      <div style="font-size: 15px; font-weight: 800; color: #0f172a;" id="routineStatsTitle">🔁 매일 루틴 통계</div>
+      <div id="routineStatsBody"></div>
     </div>
 
     <!-- Milestone Badges -->
     <div class="badges-card">
       <div style="font-size: 15px; font-weight: 800; color: #0f172a; display:flex; align-items:center; gap:6px;">
-        <span>🏆 11월 성취 배지 컬렉션</span>
+        <span id="badgesTitle">🏆 성취 배지 컬렉션</span>
       </div>
       <div class="badges-grid" id="badgesGrid">
         <!-- Rendered by JS -->
@@ -1337,19 +1458,82 @@
     </div>
   </div> <!-- /#monthView -->
 
+  <!-- Day Detail View (달력에서 지난 날짜를 누르면 열림) -->
+  <div id="dayView" style="display:none;">
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <div class="calendar-title">
+          <span id="dayViewTitle">📅 숙제 체크</span>
+        </div>
+        <div class="child-indicator mj" id="dayChildLabel">💜 MJ (4학년)</div>
+      </div>
+      <div id="dayViewBody"></div>
+    </div>
+    <div style="display:flex; gap:8px; margin-top:14px;">
+      <button class="day-nav-btn" onclick="switchView('month')">← 성취 달력</button>
+      <button class="back-to-today-btn" style="width:auto; flex:1.4;" onclick="switchView('today')">📝 오늘 숙제 체크하러 가기</button>
+    </div>
+  </div> <!-- /#dayView -->
+
   <script>
     const CLOUD_URL = 'https://mantledb.sh/v2/hhsk92-family-homework/state';
     const EMOJI_OPTIONS = ['💖', '👏', '🔥', '💯', '⭐', '👑', '👍'];
 
+    // ===== 달력 설정 (한 달 성취표: 달 이동 가능) =====
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    function makeDateStr(y, m, d) { return `${y}-${pad2(m)}-${pad2(d)}`; }
+    function daysInMonth(y, m) { return new Date(y, m, 0).getDate(); }
+
+    let calYear = 2026;
+    let calMonth = 11;
+    let CAL_DAYS = 30;
+
+    function setCalMonth(y, m) {
+      calYear = y; calMonth = m; CAL_DAYS = daysInMonth(y, m);
+    }
+
+    // 보고 있는 달의 날짜 문자열
+    function ymd(day) { return makeDateStr(calYear, calMonth, day); }
+
+    // 오늘이 보고 있는 달의 며칠째인지 (달이 오늘보다 미래면 0, 과거면 CAL_DAYS + 1)
+    function getTodayDayNum() {
+      const [y, m, d] = getTodayDateStr().split('-').map(Number);
+      if (y < calYear || (y === calYear && m < calMonth)) return 0;
+      if (y > calYear || m > calMonth) return CAL_DAYS + 1;
+      return d;
+    }
+
+    function countCompletedDays(child, y = calYear, m = calMonth) {
+      const h = (s.history && s.history[child]) ? s.history[child] : {};
+      let n = 0;
+      for (let d = 1; d <= daysInMonth(y, m); d++) {
+        const r = h[makeDateStr(y, m, d)];
+        if (r && r.done) n++;
+      }
+      return n;
+    }
+
+    function changeMonth(delta) {
+      let m = calMonth + delta, y = calYear;
+      if (m < 1) { m = 12; y--; }
+      if (m > 12) { m = 1; y++; }
+      setCalMonth(y, m);
+      renderCalendar();
+    }
+
+    function goThisMonth() {
+      const [y, m] = getTodayDateStr().split('-').map(Number);
+      setCalMonth(y, m);
+      renderCalendar();
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
     function getTodayDateStr() {
       const now = new Date();
-      if (now.getFullYear() === 2026) {
-        const y = now.getFullYear();
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        const d = String(now.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
-      }
-      return '2026-11-10';
+      return makeDateStr(now.getFullYear(), now.getMonth() + 1, now.getDate());
     }
 
     function getFormattedDateKorean() {
@@ -1396,9 +1580,11 @@
 
     function getDefaultHistory() {
       const hist = { mj: {}, bc: {} };
-      // 11월 1일부터 11월 8일(어제)까지 100% 올클리어로 초기 세팅
-      for (let day = 1; day <= 9; day++) {
-        const dStr = `2026-11-${String(day).padStart(2, '0')}`;
+      // 11월 1일부터 오늘 전날까지 100% 올클리어로 초기 세팅
+      const todayStr = getTodayDateStr();
+      for (let day = 1; day <= 30; day++) {
+        const dStr = makeDateStr(2026, 11, day);
+        if (dStr >= todayStr) break;
         hist.mj[dStr] = { done: true, pct: 100, doneCount: 8, totalCount: 8 };
         hist.bc[dStr] = { done: true, pct: 100, doneCount: 7, totalCount: 7 };
       }
@@ -1799,43 +1985,51 @@
       s.history = getDefaultHistory();
     }
 
+    // 이 기기에 저장된 어제 상태가 오늘 기록으로 잘못 들어가지 않도록, 시작할 때 먼저 날짜 넘김 처리
+    if (s.tasks && checkAndApplyDailyRollover(s)) {
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+    }
+
     let currentView = 'today';
+    let selectedDay = null;
+    goThisMonthInit();
+    function goThisMonthInit() {
+      const [y, m] = getTodayDateStr().split('-').map(Number);
+      setCalMonth(y, m);
+    }
 
     function switchView(view) {
       currentView = view;
       const todayEl = document.getElementById('todayView');
       const monthEl = document.getElementById('monthView');
+      const dayEl = document.getElementById('dayView');
       const btnToday = document.getElementById('viewBtnToday');
       const btnMonth = document.getElementById('viewBtnMonth');
 
-      if (view === 'today') {
-        todayEl.style.display = 'block';
-        monthEl.style.display = 'none';
-        btnToday.classList.add('active');
-        btnMonth.classList.remove('active');
-      } else {
-        todayEl.style.display = 'none';
-        monthEl.style.display = 'block';
-        btnToday.classList.remove('active');
-        btnMonth.classList.add('active');
-        renderCalendar();
-      }
+      todayEl.style.display = view === 'today' ? 'block' : 'none';
+      monthEl.style.display = view === 'month' ? 'block' : 'none';
+      if (dayEl) dayEl.style.display = view === 'day' ? 'block' : 'none';
+      btnToday.classList.toggle('active', view === 'today');
+      btnMonth.classList.toggle('active', view !== 'today');
+
+      if (view === 'month') renderCalendar();
+      if (view === 'day') renderDayView();
+      window.scrollTo({ top: 0 });
     }
 
+    // 연속 올클리어 일수: 오늘이 100%면 오늘부터, 아니면 어제부터 거꾸로 센다 (달이 바뀌어도 이어짐)
     function calculateStreak(child) {
       if (!s.history || !s.history[child]) return 0;
       const h = s.history[child];
+      const [ty, tm, td] = getTodayDateStr().split('-').map(Number);
+      const cur = new Date(ty, tm - 1, td);
+      const key = () => makeDateStr(cur.getFullYear(), cur.getMonth() + 1, cur.getDate());
+      const todayRec = h[key()];
+      if (!(todayRec && todayRec.done)) cur.setDate(cur.getDate() - 1);
       let streak = 0;
-      const todayDone = h['2026-11-09'] && h['2026-11-09'].done;
-      const startDay = todayDone ? 9 : 8;
-
-      for (let day = startDay; day >= 1; day--) {
-        const dStr = `2026-11-${String(day).padStart(2, '0')}`;
-        if (h[dStr] && h[dStr].done) {
-          streak++;
-        } else {
-          break;
-        }
+      for (let i = 0; i < 400; i++) {
+        const rec = h[key()];
+        if (rec && rec.done) { streak++; cur.setDate(cur.getDate() - 1); } else break;
       }
       return streak;
     }
@@ -1858,7 +2052,9 @@
           done: isAllDone,
           pct: pct,
           doneCount: doneCount,
-          totalCount: totalCount
+          totalCount: totalCount,
+          // 날짜별 숙제 체크 화면용 기록 (t: 제목, d: 완료 여부)
+          items: mandatory.map(t => ({ t: String(t.title || '').slice(0, 40), d: t.done ? 1 : 0, r: t.section === 'routine' ? 1 : 0 }))
         };
       });
 
@@ -1868,29 +2064,99 @@
       if (navStreak) navStreak.textContent = `🔥 ${streak}일 연속`;
       const bannerStreak = document.getElementById('bannerStreakText');
       if (bannerStreak) bannerStreak.textContent = `${streak}일 연속 100% 달성 중!`;
+      const bannerSub = document.getElementById('bannerSubText');
+      if (bannerSub) bannerSub.textContent = `이번 달 ${countCompletedDays(curChild, ...getTodayDateStr().split('-').slice(0, 2).map(Number))}일 100% 달성 · 달력 보기 ➔`;
+      const bannerStamp = document.getElementById('bannerStamp');
+      if (bannerStamp) {
+        const todayRec = s.history[curChild] ? s.history[curChild][todayStr] : null;
+        bannerStamp.textContent = `🌟 ${todayRec ? todayRec.pct : 0}%`;
+      }
     }
 
-    function toggleHistoryDay(child, dateStr, dayNum) {
-      if (dayNum > 9) {
+    // 달력 날짜 칸 클릭: 오늘이면 오늘 숙제 화면, 지난 날이면 그날 숙제 체크 화면
+    function openDay(day) {
+      const todayNum = getTodayDayNum();
+      if (day > todayNum) {
         alert("아직 다가오지 않은 날짜예요! 오늘 숙제부터 차근차근 해봐요 😊");
         return;
       }
-      if (dayNum === 9) {
+      if (day === todayNum) {
         switchView('today');
         return;
       }
-      if (!s.history[child]) s.history[child] = {};
-      const cur = s.history[child][dateStr];
-      const newDone = !(cur && cur.done);
-      s.history[child][dateStr] = {
-        done: newDone,
-        pct: newDone ? 100 : 0
-      };
-      if (newDone) {
-        triggerParticles();
+      selectedDay = day;
+      switchView('day');
+    }
+
+    function renderDayView() {
+      const body = document.getElementById('dayViewBody');
+      if (!body || !selectedDay) return;
+      const child = s.activeTab || 'mj';
+      const isMj = child === 'mj';
+
+      const label = document.getElementById('dayChildLabel');
+      if (label) {
+        label.className = 'child-indicator ' + (isMj ? 'mj' : 'bc');
+        label.textContent = isMj ? '💜 MJ (4학년)' : '💙 BC (2학년)';
       }
+      const dow = ['일', '월', '화', '수', '목', '금', '토'][new Date(calYear, calMonth - 1, selectedDay).getDay()];
+      const title = document.getElementById('dayViewTitle');
+      if (title) title.textContent = `📅 ${calYear}년 ${calMonth}월 ${selectedDay}일 (${dow}) 숙제 체크`;
+
+      const rec = (s.history && s.history[child]) ? s.history[child][ymd(selectedDay)] : null;
+      let html = '';
+
+      if (rec && Array.isArray(rec.items) && rec.items.length) {
+        const doneCount = rec.items.filter(i => i.d).length;
+        const pct = Math.round((doneCount / rec.items.length) * 100);
+        html += `<div class="day-summary">${doneCount} / ${rec.items.length} 완료 (${pct}%)${rec.done ? ' · 🌟 100% 올클리어' : ''}</div>`;
+        html += '<div class="task-list">' + rec.items.map((it, i) => `
+          <div class="task-item ${it.d ? 'completed' : ''} ${isMj ? '' : 'bc-theme'}">
+            <div class="task-main-row" onclick="toggleDayItem(${i})">
+              <div class="task-checkbox">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="task-content"><div class="task-title">${escapeHtml(it.t)}</div></div>
+            </div>
+          </div>`).join('') + '</div>';
+      } else {
+        const done = !!(rec && rec.done);
+        html += `<div class="day-note">이 날은 숙제 항목별 기록이 없어요.<br>(항목별 기록은 이번 업데이트 이후 날짜부터 저장돼요)<br>대신 전체 올클리어 여부를 직접 고칠 수 있어요.</div>
+          <button class="day-toggle-btn ${done ? 'on' : ''}" onclick="toggleDayManual()">${done ? '🌟 100% 올클리어 · 눌러서 해제' : '⏳ 미완료 · 눌러서 100% 올클리어로 기록'}</button>`;
+      }
+      body.innerHTML = html;
+    }
+
+    function toggleDayItem(idx) {
+      const child = s.activeTab || 'mj';
+      const rec = (s.history && s.history[child]) ? s.history[child][ymd(selectedDay)] : null;
+      if (!rec || !rec.items || !rec.items[idx]) return;
+      const it = rec.items[idx];
+
+      if (it.d && !confirm('이미 체크한 숙제예요.\n체크를 해제할까요?')) return;
+
+      it.d = it.d ? 0 : 1;
+      rec.totalCount = rec.items.length;
+      rec.doneCount = rec.items.filter(i => i.d).length;
+      rec.pct = rec.totalCount > 0 ? Math.round((rec.doneCount / rec.totalCount) * 100) : 0;
+      rec.done = rec.totalCount > 0 && rec.doneCount === rec.totalCount;
+      if (it.d) triggerParticles();
       commit(s, true);
-      renderCalendar();
+    }
+
+    // 항목별 기록이 없는 옛 날짜: 전체 올클리어 여부만 직접 수정
+    function toggleDayManual() {
+      const child = s.activeTab || 'mj';
+      const dStr = ymd(selectedDay);
+      if (!s.history[child]) s.history[child] = {};
+      const cur = s.history[child][dStr];
+      const wasDone = !!(cur && cur.done);
+
+      if (wasDone && !confirm('이미 100% 올클리어로 기록된 날이에요.\n정말 해제할까요?')) return;
+
+      s.history[child][dStr] = { done: !wasDone, pct: wasDone ? 0 : 100 };
+      if (!wasDone) triggerParticles();
+      commit(s, true);
     }
 
     function renderCalendar() {
@@ -1903,32 +2169,33 @@
       }
 
       const streak = calculateStreak(child);
-      let completedDays = 0;
       const h = (s.history && s.history[child]) ? s.history[child] : {};
-      for (let d = 1; d <= 30; d++) {
-        const dStr = `2026-11-${String(d).padStart(2, '0')}`;
-        if (h[dStr] && h[dStr].done) completedDays++;
-      }
+      const completedDays = countCompletedDays(child);
+      const todayNum = getTodayDayNum();
 
       const statStreak = document.getElementById('calStatStreak');
       const statDays = document.getElementById('calStatDays');
       const statMoney = document.getElementById('calStatMoney');
       if (statStreak) statStreak.textContent = `${streak}일째`;
-      if (statDays) statDays.textContent = `${completedDays} / 30일`;
+      if (statDays) statDays.textContent = `${completedDays} / ${CAL_DAYS}일`;
+      const calTitle = document.getElementById('calTitle');
+      if (calTitle) calTitle.textContent = `📅 ${calYear}년 ${calMonth}월`;
+      const badgesTitle = document.getElementById('badgesTitle');
+      if (badgesTitle) badgesTitle.textContent = `🏆 ${calMonth}월 성취 배지 컬렉션`;
       if (statMoney) statMoney.textContent = `${(completedDays * 100).toLocaleString()}원`;
 
       const grid = document.getElementById('calendarGrid');
       if (!grid) return;
       grid.innerHTML = '';
 
-      for (let day = 1; day <= 30; day++) {
-        const dStr = `2026-11-${String(day).padStart(2, '0')}`;
-        const dayOfWeek = (day - 1) % 7; // 0 = Sunday, 6 = Saturday
+      for (let day = 1; day <= CAL_DAYS; day++) {
+        const dStr = ymd(day);
+        const dayOfWeek = new Date(calYear, calMonth - 1, day).getDay(); // 0 = Sunday, 6 = Saturday
         const isSunday = dayOfWeek === 0;
         const isSaturday = dayOfWeek === 6;
-        const isPast = day < 9;
-        const isToday = day === 9;
-        const isFuture = day > 9;
+        const isPast = day < todayNum;
+        const isToday = day === todayNum;
+        const isFuture = day > todayNum;
 
         const cell = document.createElement('div');
         let classes = ['cal-day'];
@@ -1946,6 +2213,9 @@
             classes.push('completed');
             stamp = '🌟';
             pctLabel = '100%';
+          } else if (record && record.pct > 0) {
+            stamp = '🌗';
+            pctLabel = `${record.pct}%`;
           } else {
             stamp = '⏳';
             pctLabel = '미완료';
@@ -1969,7 +2239,7 @@
         }
 
         cell.className = classes.join(' ');
-        cell.onclick = () => toggleHistoryDay(child, dStr, day);
+        cell.onclick = () => openDay(day);
         cell.innerHTML = `
           <span class="cal-day-num">${day}${isToday ? ' (오늘)' : ''}</span>
           <span class="cal-stamp">${stamp}</span>
@@ -1979,6 +2249,71 @@
       }
 
       renderBadges(child, streak, completedDays);
+      renderRoutineStats(child);
+    }
+
+    // 매일 루틴 항목별 통계 (보고 있는 달 기준)
+    function renderRoutineStats(child) {
+      const body = document.getElementById('routineStatsBody');
+      if (!body) return;
+      const title = document.getElementById('routineStatsTitle');
+      if (title) title.textContent = `🔁 ${calMonth}월 매일 루틴 통계`;
+      const h = (s.history && s.history[child]) ? s.history[child] : {};
+      const todayStr = getTodayDateStr();
+
+      // 이번 달 기록 + 현재 루틴 목록에서 항목 이름 수집
+      const names = [];
+      const addName = n => { if (n && !names.includes(n)) names.push(n); };
+      ((s.tasks && s.tasks[child]) || []).filter(t => t.section === 'routine').forEach(t => addName(String(t.title || '').slice(0, 40)));
+      for (let d = 1; d <= CAL_DAYS; d++) {
+        const rec = h[ymd(d)];
+        if (rec && Array.isArray(rec.items)) rec.items.forEach(i => { if (i.r) addName(i.t); });
+      }
+
+      if (!names.length) {
+        body.innerHTML = '<div class="rs-empty">아직 매일 루틴 항목이 없어요.<br>숙제에서 "🔁 매일 루틴으로"를 눌러 추가해 보세요.</div>';
+        return;
+      }
+
+      const findItem = (dStr, name) => {
+        const rec = h[dStr];
+        if (!rec || !Array.isArray(rec.items)) return null;
+        return rec.items.find(i => i.t === name) || null;
+      };
+
+      const rows = names.map(name => {
+        let tracked = 0, done = 0, dots = '';
+        for (let d = 1; d <= CAL_DAYS; d++) {
+          const dStr = ymd(d);
+          if (dStr > todayStr) { dots += '<span class="rs-dot"></span>'; continue; }
+          const it = findItem(dStr, name);
+          const todayCls = dStr === todayStr ? ' today' : '';
+          if (!it) { dots += `<span class="rs-dot${todayCls}" title="${d}일: 기록 없음"></span>`; continue; }
+          tracked++;
+          if (it.d) done++;
+          dots += `<span class="rs-dot ${it.d ? 'on' : 'off'}${todayCls}" title="${d}일: ${it.d ? '완료' : '미완료'}"></span>`;
+        }
+        // 현재 연속 (달이 바뀌어도 이어짐): 오늘 완료면 오늘부터, 아니면 어제부터
+        const [ty, tm, td] = todayStr.split('-').map(Number);
+        const cur = new Date(ty, tm - 1, td);
+        const k = () => makeDateStr(cur.getFullYear(), cur.getMonth() + 1, cur.getDate());
+        const t0 = findItem(k(), name);
+        if (!(t0 && t0.d)) cur.setDate(cur.getDate() - 1);
+        let streak = 0;
+        for (let i = 0; i < 400; i++) {
+          const it = findItem(k(), name);
+          if (it && it.d) { streak++; cur.setDate(cur.getDate() - 1); } else break;
+        }
+        const pct = tracked ? Math.round((done / tracked) * 100) : 0;
+        return `<div class="rs-row">
+          <div class="rs-head"><span class="rs-name">${escapeHtml(name)}</span><span class="rs-meta">${tracked ? `${done} / ${tracked}일 · ${pct}%` : '기록 없음'}</span></div>
+          <div class="rs-bar"><div style="width:${pct}%"></div></div>
+          <div class="rs-sub">🔥 현재 연속 ${streak}일${tracked ? '' : ' · 오늘부터 기록이 쌓여요'}</div>
+          <div class="rs-dots">${dots}</div>
+        </div>`;
+      }).join('');
+
+      body.innerHTML = rows + '<div class="rs-sub" style="margin-top:10px;">🟩 완료 · 🟥 미완료 · 회색은 기록 없음(항목별 기록은 업데이트 이후부터 저장)</div>';
     }
 
     function renderBadges(child, streak, completedDays) {
@@ -1989,7 +2324,7 @@
         {
           icon: '🐣',
           name: '첫 걸음 달성!',
-          desc: '11월 100% 올클리어 첫 날 달성',
+          desc: `${calMonth}월 100% 올클리어 첫 날 달성`,
           achieved: completedDays >= 1,
           progress: `${Math.min(completedDays, 1)} / 1`
         },
@@ -2003,7 +2338,7 @@
         {
           icon: '🥈',
           name: '완벽한 1주일 배지',
-          desc: '연속 7일 100% 달성 마스터 (어제까지 완벽 달성!)',
+          desc: '연속 7일 100% 달성 마스터',
           achieved: streak >= 7,
           progress: `${Math.min(streak, 7)} / 7`
         },
@@ -2016,10 +2351,10 @@
         },
         {
           icon: '👑',
-          name: '11월 올클리어 마스터 킹',
-          desc: '한 달 30일 전체 100% 숙제 올클리어!',
-          achieved: completedDays >= 30,
-          progress: `${completedDays} / 30`
+          name: `${calMonth}월 올클리어 마스터 킹`,
+          desc: `한 달 ${CAL_DAYS}일 전체 100% 숙제 올클리어!`,
+          achieved: completedDays >= CAL_DAYS,
+          progress: `${completedDays} / ${CAL_DAYS}`
         }
       ];
 
@@ -2140,6 +2475,8 @@
       const task = curList.find(t => t.id === id);
       if (!task) return;
 
+      if (task.done && !confirm('이미 체크한 숙제예요.\n체크를 해제할까요?')) return;
+
       task.done = !task.done;
       if (task.done) {
         triggerParticles(event.clientX, event.clientY);
@@ -2179,11 +2516,13 @@
       const text = input.value.trim();
       if (!text) return;
 
+      const typeSel = document.getElementById('quickType');
+      const isRoutineType = typeSel && typeSel.value === 'routine';
       s.tasks[s.activeTab].push({
         id: 'custom-' + Date.now(),
-        section: 'school',
+        section: isRoutineType ? 'routine' : 'school',
         title: text,
-        icon: '📌',
+        icon: isRoutineType ? '✨' : '📌',
         done: false,
         reactions: {}
       });
@@ -2292,7 +2631,15 @@
           `;
         });
 
-        cheersHtml += `</div></div>`;
+        cheersHtml += `</div>`;
+        // 마감일(D-day)이 붙은 숙제는 제외하고, 일반 숙제 <-> 매일 루틴 전환 버튼 표시
+        if (task.section === 'routine') {
+          cheersHtml += `<button class="routine-toggle-btn" onclick="editRoutine('${task.id}', event)">✏️ 내용 바꾸기</button>`;
+          cheersHtml += `<button class="routine-toggle-btn" style="margin-left:4px;" onclick="deleteRoutine('${task.id}', event)">🗑</button>`;
+        } else if (!task.dday) {
+          cheersHtml += `<button class="routine-toggle-btn" onclick="toggleRoutine('${task.id}', event)">🔁 매일 루틴으로</button>`;
+        }
+        cheersHtml += `</div>`;
 
         item.innerHTML = `
           <div class="task-main-row" onclick="toggleTask('${task.id}', event)">
@@ -2306,6 +2653,49 @@
         `;
         container.appendChild(item);
       });
+    }
+
+    // 매일 루틴 내용 바꾸기 (예: 원리셈 연산 풀기 -> 책 한 권 읽기)
+    function editRoutine(id, event) {
+      event.stopPropagation();
+      const task = s.tasks[s.activeTab].find(t => t.id === id);
+      if (!task) return;
+      const input = prompt('이 매일 루틴을 어떤 내용으로 바꿀까요?', task.title);
+      if (input === null) return;
+      const next = input.trim();
+      if (!next || next === task.title) return;
+      task.title = next;
+      task.note = '';       // 이전 내용에 붙은 메모는 함께 지움
+      task.done = false;    // 새 루틴은 오늘 다시 체크
+      task.reactions = {};
+      commit(s, true);
+    }
+
+    function deleteRoutine(id, event) {
+      event.stopPropagation();
+      const list = s.tasks[s.activeTab];
+      const task = list.find(t => t.id === id);
+      if (!task) return;
+      if (!confirm(`"${task.title}" 매일 루틴을 삭제할까요?\n(지난 기록과 통계는 그대로 남아요)`)) return;
+      s.tasks[s.activeTab] = list.filter(t => t.id !== id);
+      commit(s, true);
+    }
+
+    // 일반 숙제 -> 매일 루틴(매일 자동 초기화) 전환
+    function toggleRoutine(id, event) {
+      event.stopPropagation();
+      const task = s.tasks[s.activeTab].find(t => t.id === id);
+      if (!task) return;
+
+      if (task.section === 'routine') {
+        if (!confirm(`"${task.title}"을(를) 매일 루틴에서 빼고 일반 숙제로 바꿀까요?\n(더 이상 매일 자동으로 초기화되지 않아요)`)) return;
+        task.section = (task.origSection && task.origSection !== 'routine') ? task.origSection : 'school';
+        delete task.origSection;
+      } else {
+        task.origSection = task.section || 'school';
+        task.section = 'routine';
+      }
+      commit(s, true);
     }
 
     function pokeChick(event) {
@@ -2334,6 +2724,9 @@
       updateTodayHistory();
       if (currentView === 'month') {
         renderCalendar();
+      }
+      if (currentView === 'day') {
+        renderDayView();
       }
       const isMj = s.activeTab === 'mj';
       const curTasks = s.tasks[s.activeTab];
