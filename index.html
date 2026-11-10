@@ -1156,7 +1156,7 @@
   <div class="header">
     <div class="title-group">
       <h1>⭐ 우리 가족 숙제 모음</h1>
-      <div class="date-badge" id="currentDate">2026년 11월 9일 월요일</div>
+      <div class="date-badge" id="currentDate">2026년 11월 10일 화요일</div>
     </div>
     <div class="sync-status" id="syncStatus">
       <div class="sync-dot"></div>
@@ -1343,19 +1343,21 @@
 
     function getTodayDateStr() {
       const now = new Date();
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, '0');
-      const d = String(now.getDate()).padStart(2, '0');
-      return `${y}-${m}-${d}`;
+      if (now.getFullYear() === 2026) {
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+      return '2026-11-10';
     }
 
     function getFormattedDateKorean() {
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = now.getMonth() + 1;
-      const d = now.getDate();
+      const todayStr = getTodayDateStr();
+      const [y, m, d] = todayStr.split('-').map(Number);
+      const targetDate = new Date(y, m - 1, d);
       const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-      return `${y}년 ${m}월 ${d}일 ${days[now.getDay()]}`;
+      return `${y}년 ${m}월 ${d}일 ${days[targetDate.getDay()]}`;
     }
 
     function updateDateDisplay() {
@@ -1395,7 +1397,7 @@
     function getDefaultHistory() {
       const hist = { mj: {}, bc: {} };
       // 11월 1일부터 11월 8일(어제)까지 100% 올클리어로 초기 세팅
-      for (let day = 1; day <= 8; day++) {
+      for (let day = 1; day <= 9; day++) {
         const dStr = `2026-11-${String(day).padStart(2, '0')}`;
         hist.mj[dStr] = { done: true, pct: 100, doneCount: 8, totalCount: 8 };
         hist.bc[dStr] = { done: true, pct: 100, doneCount: 7, totalCount: 7 };
@@ -1405,48 +1407,390 @@
 
     function freshState() {
       return {
-        lastDate: '2026-11-09',
-        activeTab: 'mj',
-        history: getDefaultHistory(),
-        tasks: {
-          mj: [
-            { id: 'mj-s3', section: 'school', title: '[CIE 영어 공통] Weekly Diary #7 작성하기', dday: 'D-Day (오늘 11/9 월 마감)', urgent: true, note: 'Toddle 프롬프트 확인 후 제출', done: true, reactions: { '💖': 1 } },
-            { id: 'mj-s5', section: 'school', title: '[체험학습 등교] 창의융합체험학습 (알로이시오기지)', dday: 'D-Day (오늘 11/9 월 09:00 등교)', urgent: true, note: '09:00~12:30 체험학습 참여', done: true, reactions: { '💖': 1 } },
-            { id: 'mj-a1', section: 'academy', title: 'TOPIA 학원 숙제 & 라이브 준비', dday: 'D-Day (오늘 11/9 월 17:30)', urgent: true, icon: '🏫', note: '월 17:30~19:15 라이브 수업 / 숙제 7건 제출 완료!', done: true, reactions: { '💖': 1 } },
-            { id: 'mj-s1', section: 'school', title: '[CIE 영어 Adventure] Homework Packet p.20~21', dday: 'D-Day (내일 11/10 화 마감 - 오늘 완료!)', urgent: true, note: 'Adventure반 전용 과제', done: false, reactions: {} },
-            { id: 'mj-s2', section: 'school', title: '[CIE 영어 Adventure] Past Tense Obligations 워크시트', dday: 'D-Day (내일 11/10 화 마감 - 오늘 완료!)', urgent: true, note: '과거시제 의무표현 워크시트', done: false, reactions: {} },
-            { id: 'mj-s4', section: 'school', title: '[CIE 수학] Math Workbook Q3:7 채점 및 제출', dday: 'D-2 (11/11 수 마감)', note: 'Toddle 정답지로 채점', done: false, reactions: {} },
-            { id: 'mj-a3', section: 'school', title: '[학교 시험] 수학 3단원 단원평가 대비 (11/11 수 3교시)', dday: 'D-2 (11/11 수)', note: '시험 대비 (수요일 교복 착용 필수)', done: false, reactions: {} },
-            { id: 'mj-s7', section: 'school', title: '[학교 시험] 수학 1~3단원 중간평가 대비 (11/12 목 7~8교시)', dday: 'D-3 (11/12 목)', note: '30문제 (60분) / 1~3단원 총괄 중간평가 대비', done: false, reactions: {} },
-            { id: 'mj-s6', section: 'school', title: '[학교 제출] 굿즈 구매 봉투 제출', dday: 'D-2 (11/11 수 마감)', note: '현금 밀봉 봉투', done: false, reactions: {} },
-            { id: 'mj-a2', section: 'academy', title: '영재원 시험공부', icon: '💡', note: '12/5 선발시험 대비', done: false, reactions: {} },
-            { id: 'mj-r1', section: 'routine', title: '르네상스 (AR 영어 독서 & 퀴즈)', icon: '📖', done: false, reactions: {} },
-            { id: 'mj-r2', section: 'routine', title: 'VOCA (보카 영단어 암기)', icon: '🔤', done: false, reactions: {} },
-            { id: 'mj-r3', section: 'routine', title: '5학년 원리셈 연산 풀기', icon: '🔢', done: false, reactions: {} },
-            { id: 'mj-r4', section: 'routine', title: '악기 연습하기 (바이올린/피아노)', icon: '🎻', done: false, reactions: {} }
-          ],
-          bc: [
-            { id: 'bc-s3', section: 'school', title: '[학교 필수] 화요일 답사 안전서약서 가방에 챙기기', dday: 'D-Day (오늘 11/9 월 필수 제출!)', urgent: true, note: '월요일 미제출자 등교 시 필수 제출!', done: false, reactions: {} },
-            { id: 'bc-s1', section: 'school', title: '[학교 과제] 주말 한글 일기장 쓰기', dday: 'D-Day (오늘 11/9 월 제출)', urgent: true, note: '월요일 등교 시 제출', done: false, reactions: {} },
-            { id: 'bc-s2', section: 'school', title: '[CIE 영어] Weekly Diary 작성하기', dday: 'D-Day (오늘 11/9 월 제출)', urgent: true, note: 'Toddle 2학년 프롬프트 확인', done: false, reactions: {} },
-            { id: 'bc-a2', section: 'academy', title: '[일정] 치과 방문 (과잉치 발치 소독 16:30)', dday: 'D-Day (오늘 11/9 월 16:30)', urgent: true, icon: '🦷', note: '발치 부위 소독 및 상태 확인 완료!', done: true, reactions: { '💖': 1 } },
-            { id: 'bc-a1', section: 'academy', title: '눈높이 한자 학습지', dday: 'D-Day (매주 월요일 마감)', icon: '📚', note: '매주 월요일 제출 / 완료!', done: true, reactions: { '💖': 1 } },
-            { id: 'bc-s6', section: 'school', title: '[답사 준비물] 낙동강 하구 야외 답사 준비', dday: 'D-Day (내일 11/10 화 답사 준비물 가방에 챙기기!)', urgent: true, note: '체육복·운동화·외투, 멀미약 사전복용, 태블릿 완충, 물통·필통·우산 (★9시 정각 단체출발-개별등교 금지!)', done: false, reactions: {} },
-            { id: 'bc-s4', section: 'school', title: '[학교 과제] 책나무꿈나무 독서록 p.36~37', dday: 'D-2 (11/11 수 마감)', note: '엉뚱한 수리점', done: false, reactions: {} },
-            { id: 'bc-s5', section: 'school', title: '[CIE 수학] Math Workbook Q3:7 채점 및 제출', dday: 'D-2 (11/11 수 마감)', note: 'Toddle 정답지로 채점', done: false, reactions: {} },
-            { id: 'bc-s7', section: 'school', title: '[CIE 영어] Dictation 단어·문장 듣고쓰기 연습', dday: 'D-2 (11/11 수 & 11/12 목 시험)', note: '11/11(수): balloon, flower, cloud 등 / 11/12(목): seesaw, football 등', done: false, reactions: {} },
-            { id: 'bc-s8', section: 'school', title: '[CIE 영어] Week 8 Packet & Grammar 채점 제출', dday: 'D-4 (11/13 금 마감)', note: 'Commas in Letter Writing 채점 및 Week 8 Packet 금요일 제출', done: false, reactions: {} },
-            { id: 'bc-r1', section: 'routine', title: '르네상스 (AR 영어 독서 & 퀴즈)', icon: '📖', done: false, reactions: {} },
-            { id: 'bc-r2', section: 'routine', title: 'LINK (링크 학습)', icon: '🔗', done: false, reactions: {} },
-            { id: 'bc-r3', section: 'routine', title: '교과셈 연산 풀기', icon: '🔢', done: false, reactions: {} },
-            { id: 'bc-r4', section: 'routine', title: '악기 연습하기 (첼로)', icon: '🎻', done: false, reactions: {} }
-          ]
-        },
-        bonus: {
-          mj: { extraWorksheet: 0, thickKoreanBook: 0, englishBook: 0 },
-          bc: { englishBook: 0, normalKoreanBook: 0, extraWorksheet: 0 }
-        }
-      };
+      "activeTab": "mj",
+      "lastDate": "2026-11-10",
+      "tasks": {
+            "mj": [
+                  {
+                        "id": "mj-s1",
+                        "section": "school",
+                        "title": "[내일 시험 대비] 수학 3단원 단원평가 집중 복습 (11/11 수 3교시)",
+                        "dday": "D-Day (오늘 11/10 화 필수 복습!)",
+                        "urgent": true,
+                        "note": "내일 25문제 40분 시험 대비 / 3단원 개념·문제 완벽 복습",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s2",
+                        "section": "school",
+                        "title": "[학교 행사 준비] CIE Speech Contest 예선 스피치 연습",
+                        "dday": "D-Day (오늘 11/10 화 연습!)",
+                        "urgent": true,
+                        "note": "내일 1~2교시 교육문화관 스피치 예선 (3-4학년) 발표 연습",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s3",
+                        "section": "school",
+                        "title": "[등교 복장 준비] 내일 수요일 필수 교복 착용 챙기기",
+                        "dday": "D-Day (오늘 11/10 화 미리 챙기기!)",
+                        "urgent": true,
+                        "note": "4학년 수요일 교복 필수 착용일 (교복·이름표 미리 걸어두기)",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s4",
+                        "section": "school",
+                        "title": "[학교 제출 준비] 4학년 굿즈 나눔페어 구매 봉투 밀봉",
+                        "dday": "D-Day (오늘 11/10 화 챙기기!)",
+                        "urgent": true,
+                        "note": "내일 마감 / 봉투에 정보·품목 적고 잔돈 없이 현금 밀봉",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s5",
+                        "section": "school",
+                        "title": "[CIE 수학] Math Workbook Q3:7 채점 및 제출",
+                        "dday": "D-1 (11/11 수 마감)",
+                        "note": "Toddle 정답지로 채점 후 제출",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s6",
+                        "section": "school",
+                        "title": "[학교 시험] 수학 1~3단원 중간평가 대비 (11/12 목 7~8교시)",
+                        "dday": "D-2 (11/12 목)",
+                        "note": "30문제 (60분) / 1~3단원 총괄 중간평가 대비",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s7",
+                        "section": "school",
+                        "title": "[CIE 영어 Adventure] Homework Packet p.22~23",
+                        "dday": "D-7 (11/17 화 마감)",
+                        "note": "Adventure반 전용 과제 (오작성 시 p.20~21 재확인)",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s8",
+                        "section": "school",
+                        "title": "[CIE 영어 Adventure] Learner's Book p.86 Q2 (a~h)",
+                        "dday": "D-7 (11/17 화 마감)",
+                        "note": "공책에 문제 2번 a~h 풀이 작성",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s9",
+                        "section": "school",
+                        "title": "[CIE 영어] myON 배정 도서 읽기",
+                        "dday": "D-7 (11/17 화 마감)",
+                        "note": "myON 온라인 배정 도서 독서",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s10",
+                        "section": "school",
+                        "title": "[학교 과제] 우등생 과학 4학년 2학기 2단원 풀채고",
+                        "dday": "D-7 (11/17 화 마감)",
+                        "note": "과학 2단원 풀고 채점 후 오답 고치기",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-a1",
+                        "section": "academy",
+                        "title": "영재원 시험공부",
+                        "icon": "💡",
+                        "note": "12/5 선발시험 대비 기출 및 창의사고력 문제",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-r1",
+                        "section": "routine",
+                        "title": "르네상스 (AR 영어 독서 & 퀴즈)",
+                        "icon": "📖",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-r2",
+                        "section": "routine",
+                        "title": "VOCA (보카 영단어 암기)",
+                        "icon": "🔤",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-r3",
+                        "section": "routine",
+                        "title": "5학년 원리셈 연산 풀기",
+                        "icon": "🔢",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-r4",
+                        "section": "routine",
+                        "title": "악기 연습하기 (바이올린/피아노)",
+                        "icon": "🎻",
+                        "done": false,
+                        "reactions": {}
+                  }
+            ],
+            "bc": [
+                  {
+                        "id": "bc-s1",
+                        "section": "school",
+                        "title": "[답사 완료] 낙동강 하구 야외 답사 다녀옴",
+                        "dday": "D-Day (오늘 11/10 화 완료!)",
+                        "urgent": false,
+                        "note": "답사 무사 귀교 완료! 푹 쉬고 컨디션 회복하기 👏",
+                        "done": true,
+                        "reactions": {
+                              "💖": 1
+                        }
+                  },
+                  {
+                        "id": "bc-a1",
+                        "section": "academy",
+                        "title": "눈높이 한자 & 한국사 학습",
+                        "dday": "D-Day (오늘 11/10 화 19:00)",
+                        "urgent": true,
+                        "icon": "📚",
+                        "note": "화요일 저녁 7시 학습 루틴 챙기기",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s2",
+                        "section": "school",
+                        "title": "[등교 준비] 내일 체육복 착용 & 태블릿PC 완충",
+                        "dday": "D-Day (오늘 11/10 화 미리 챙기기!)",
+                        "urgent": true,
+                        "note": "체육복·운동화·외투 착용 / 태블릿PC 100% 충전 지참",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s3",
+                        "section": "school",
+                        "title": "[학교 제출 준비] 4학년 굿즈 구매 신청 봉투",
+                        "dday": "D-Day (오늘 11/10 화 미리 챙기기!)",
+                        "urgent": true,
+                        "note": "내일 마감 / 구매 희망 시 봉투에 현금 밀봉 제출",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s4",
+                        "section": "school",
+                        "title": "[학교 과제] 책나무꿈나무 독서록 p.36~37",
+                        "dday": "D-1 (내일 11/11 수 마감)",
+                        "note": "엉뚱한 수리점 독서록 작성",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s5",
+                        "section": "school",
+                        "title": "[CIE 수학] Math Workbook Q3:7 채점 및 제출",
+                        "dday": "D-1 (내일 11/11 수 마감)",
+                        "note": "Toddle 정답지로 채점",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s6",
+                        "section": "school",
+                        "title": "[CIE 영어] Dictation 단어·문장 듣고쓰기 연습",
+                        "dday": "D-1 (11/11 수 & 11/12 목 시험)",
+                        "note": "11/11(수): balloon, flower, cloud 등 / 11/12(목): seesaw, football 등",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s7",
+                        "section": "school",
+                        "title": "[미제출 과제 체크] 일기장 · 듣고쓰기 노트",
+                        "dday": "D-1 (내일 11/11 수 제출)",
+                        "note": "미제출 학생 일기장, 듣고쓰기 노트, 단원평가 오답풀이 챙기기",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s8",
+                        "section": "school",
+                        "title": "[체육 행사 준비] 남구빙상장 스케이트 교실 준비",
+                        "dday": "D-3 (11/13 금 예정)",
+                        "note": "긴팔·긴바지·긴양말·장갑 필수 착용 / 멀미약 사전 복용",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s9",
+                        "section": "school",
+                        "title": "[CIE 영어] Week 8 Packet & Grammar 채점 제출",
+                        "dday": "D-3 (11/13 금 마감)",
+                        "note": "Commas in Letter Writing 채점 및 Week 8 Packet 금요일 제출",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s10",
+                        "section": "school",
+                        "title": "[학교 준비] UOI5 위인전 & 발명품 재료 구상",
+                        "dday": "D-4 (11/14 토)",
+                        "note": "학교 도서관에 없는 위인 책 집에서 챙기기 / 11/19 발명품 재료(페트병 등) 구상",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "custom-1794294371579",
+                        "section": "school",
+                        "title": "최상위 수학 하루에 1장 하기",
+                        "icon": "📌",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-r1",
+                        "section": "routine",
+                        "title": "르네상스 (AR 영어 독서 & 퀴즈)",
+                        "icon": "📖",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-r2",
+                        "section": "routine",
+                        "title": "LINK (링크 학습)",
+                        "icon": "🔗",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-r3",
+                        "section": "routine",
+                        "title": "교과셈 연산 풀기",
+                        "icon": "🔢",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-r4",
+                        "section": "routine",
+                        "title": "악기 연습하기 (첼로)",
+                        "icon": "🎻",
+                        "done": false,
+                        "reactions": {}
+                  }
+            ]
+      },
+      "bonus": {
+            "mj": {
+                  "extraWorksheet": 0,
+                  "thickKoreanBook": 0,
+                  "englishBook": 0
+            },
+            "bc": {
+                  "englishBook": 0,
+                  "normalKoreanBook": 0,
+                  "extraWorksheet": 0
+            }
+      },
+      "history": {
+            "mj": {
+                  "2026-11-01": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-02": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-03": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-04": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-05": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-06": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-07": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-08": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-09": {
+                        "done": true,
+                        "pct": 100,
+                        "doneCount": 10,
+                        "totalCount": 10
+                  }
+            },
+            "bc": {
+                  "2026-11-01": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-02": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-03": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-04": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-05": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-06": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-07": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-08": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-09": {
+                        "done": true,
+                        "pct": 100,
+                        "doneCount": 10,
+                        "totalCount": 10
+                  }
+            }
+      }
+};
     }
 
     const saved = localStorage.getItem('family_integrated_homework_state');
@@ -1692,14 +2036,14 @@
     }
 
     function isTodayMandatory(task) {
+      if (task.section === 'routine') return true;
       if (task.dday) {
         const d = task.dday;
         // 오늘 마감(D-Day) 및 내일 마감/등교 제출(D-1)은 오늘 밤까지 끝내야 하므로 오늘 필수!
-        if (d.includes('D-Day') || d.includes('오늘') || d.includes('내일') || d.includes('D-1') || d.includes('11/9') || d.includes('11/10') || task.urgent) {
+        if (d.includes('D-Day') || d.includes('오늘') || d.includes('내일') || d.includes('D-1') || task.urgent) {
           return true;
         }
-        if (d.includes('D-2') || d.includes('D-3') || d.includes('D-4') || d.includes('D-5') ||
-            d.includes('11/11') || d.includes('11/12') || d.includes('11/13')) {
+        if (d.includes('D-2') || d.includes('D-3') || d.includes('D-4') || d.includes('D-5') || d.includes('D-6') || d.includes('D-7')) {
           return false;
         }
       }
@@ -1871,10 +2215,14 @@
     function getDueDateWeight(task) {
       if (!task.dday) return 999;
       const d = task.dday;
-      if (d.includes('D-Day') || d.includes('오늘') || d.includes('11/9') || d.includes('내일') || d.includes('D-1') || d.includes('11/10') || task.urgent) return 1;
-      if (d.includes('D-2') || d.includes('11/11')) return 2;
-      if (d.includes('D-3') || d.includes('11/12')) return 3;
-      if (d.includes('D-4') || d.includes('11/13')) return 4;
+      if (d.includes('D-Day') || d.includes('오늘') || (task.urgent && !d.includes('D-1') && !d.includes('D-2') && !d.includes('D-3') && !d.includes('내일'))) return 1;
+      if (d.includes('D-1') || d.includes('내일')) return 2;
+      if (d.includes('D-2')) return 3;
+      if (d.includes('D-3')) return 4;
+      if (d.includes('D-4')) return 5;
+      if (d.includes('D-5')) return 6;
+      if (d.includes('D-6')) return 7;
+      if (d.includes('D-7')) return 8;
       return 100;
     }
 
