@@ -1122,6 +1122,64 @@
       cursor: pointer;
     }
 
+    .toss-ledger-line {
+      margin-top: 8px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.95);
+      position: relative;
+      z-index: 1;
+    }
+    .toss-deposit-btn {
+      position: relative;
+      z-index: 1;
+      margin-top: 10px;
+      width: 100%;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.45);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .toss-panel {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 16px;
+      margin: -4px 0 16px;
+      box-shadow: 0 4px 14px rgba(15,23,42,0.06);
+    }
+    .toss-panel-title { font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 12px; }
+    .toss-sum-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .toss-sum-box { background: #f1f5f9; border-radius: 12px; padding: 10px 6px; text-align: center; }
+    .toss-sum-label { font-size: 10.5px; font-weight: 700; color: #64748b; }
+    .toss-sum-val { font-size: 14.5px; font-weight: 800; margin-top: 3px; }
+    .toss-form { display: flex; flex-direction: column; gap: 8px; }
+    .toss-form-row { display: flex; gap: 8px; }
+    .toss-input {
+      flex: 1; min-width: 0;
+      border: 1px solid #cbd5e1; border-radius: 12px;
+      padding: 11px 12px; font-size: 14px; outline: none; background: #fff;
+    }
+    .toss-input:focus { border-color: var(--toss-blue); }
+    .toss-fill-btn, .toss-add-btn {
+      flex: 1; border-radius: 12px; padding: 11px 8px;
+      font-size: 13px; font-weight: 800; cursor: pointer;
+    }
+    .toss-fill-btn { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; }
+    .toss-add-btn { background: var(--toss-blue); border: 1px solid var(--toss-blue); color: #fff; }
+    .toss-list-title { font-size: 12.5px; font-weight: 800; color: #475569; margin: 16px 0 6px; }
+    .toss-dep-row { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    .toss-dep-row:last-child { border-bottom: none; }
+    .toss-dep-date { color: #64748b; font-weight: 700; min-width: 64px; }
+    .toss-dep-amt { font-weight: 800; color: #0f172a; }
+    .toss-dep-memo { flex: 1; color: #64748b; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .toss-dep-del { background: none; border: none; font-size: 15px; cursor: pointer; padding: 2px 6px; }
+    .toss-empty { font-size: 12.5px; color: #94a3b8; text-align: center; padding: 10px; }
+
     .month-nav-btn {
       border: 1px solid #cbd5e1;
       background: #ffffff;
@@ -1332,6 +1390,29 @@
     <div class="toss-breakdown" id="tossBreakdown">
       자기 전 리스트 100% 완료 시 보너스 100원 적립!
     </div>
+    <div class="toss-ledger-line" id="tossLedgerLine"></div>
+    <button class="toss-deposit-btn" onclick="toggleTossPanel()">💸 토스 입금 기록 / 확인</button>
+  </div>
+
+  <!-- Toss deposit ledger -->
+  <div class="toss-panel" id="tossPanel" style="display:none;">
+    <div class="toss-panel-title" id="tossPanelTitle">💸 토스 입금 내역</div>
+    <div class="toss-sum-grid" id="tossSummary"></div>
+
+    <div class="toss-form">
+      <div class="toss-form-row">
+        <input type="number" id="depAmount" class="toss-input" inputmode="numeric" min="1" step="100" placeholder="입금 금액 (원)">
+        <input type="date" id="depDate" class="toss-input">
+      </div>
+      <input type="text" id="depMemo" class="toss-input" maxlength="30" placeholder="메모 (선택, 예: 11월 1주차)">
+      <div class="toss-form-row">
+        <button class="toss-fill-btn" onclick="fillPendingAmount()">대기 금액 전부 채우기</button>
+        <button class="toss-add-btn" onclick="addDeposit()">입금 기록 추가</button>
+      </div>
+    </div>
+
+    <div class="toss-list-title">입금 기록</div>
+    <div id="tossList"></div>
   </div>
 
   <!-- Progress Bar & Chick Incubator -->
@@ -1599,6 +1680,113 @@
       }
       return changed;
     }
+
+    // ===== 토스 입금 내역 =====
+    function ensureDeposits(st) {
+      if (!st) return false;
+      let changed = false;
+      if (!st.deposits || typeof st.deposits !== 'object') { st.deposits = { mj: [], bc: [] }; changed = true; }
+      ['mj', 'bc'].forEach(c => { if (!Array.isArray(st.deposits[c])) { st.deposits[c] = []; changed = true; } });
+      return changed;
+    }
+
+    // 날짜별 적립액: 기록된 값(earn)이 있으면 그 값, 옛 기록은 100% 달성일 100원으로 계산
+    function getEarnedTotal(child) {
+      const h = (s.history && s.history[child]) ? s.history[child] : {};
+      const todayStr = getTodayDateStr();
+      let sum = 0;
+      Object.keys(h).forEach(dStr => {
+        if (dStr > todayStr) return;
+        const r = h[dStr];
+        if (!r) return;
+        sum += (typeof r.earn === 'number') ? r.earn : (r.done ? 100 : 0);
+      });
+      return sum;
+    }
+
+    function getDepositedTotal(child) {
+      ensureDeposits(s);
+      return s.deposits[child].reduce((a, d) => a + (Number(d.amount) || 0), 0);
+    }
+
+    let tossPanelOpen = false;
+    function toggleTossPanel() {
+      tossPanelOpen = !tossPanelOpen;
+      const panel = document.getElementById('tossPanel');
+      panel.style.display = tossPanelOpen ? 'block' : 'none';
+      if (tossPanelOpen) {
+        const dateEl = document.getElementById('depDate');
+        if (dateEl && !dateEl.value) dateEl.value = getTodayDateStr();
+        renderTossPanel();
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function fillPendingAmount() {
+      const child = s.activeTab || 'mj';
+      const pending = getEarnedTotal(child) - getDepositedTotal(child);
+      document.getElementById('depAmount').value = pending > 0 ? pending : '';
+    }
+
+    function addDeposit() {
+      const child = s.activeTab || 'mj';
+      const amount = Math.round(Number(document.getElementById('depAmount').value));
+      const date = document.getElementById('depDate').value || getTodayDateStr();
+      const memo = document.getElementById('depMemo').value.trim();
+      if (!(amount > 0) || amount > 10000000) { alert('입금 금액을 올바르게 입력해 주세요.'); return; }
+      ensureDeposits(s);
+      s.deposits[child].push({ id: 'dep-' + Date.now(), date: date, amount: amount, memo: memo });
+      s.deposits[child].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+      document.getElementById('depAmount').value = '';
+      document.getElementById('depMemo').value = '';
+      commit(s, true);
+      if (typeof triggerParticles === 'function') triggerParticles();
+    }
+
+    function deleteDeposit(id) {
+      const child = s.activeTab || 'mj';
+      const d = s.deposits[child].find(x => x.id === id);
+      if (!d) return;
+      if (!confirm(`${d.date} ${Number(d.amount).toLocaleString()}원 입금 기록을 삭제할까요?`)) return;
+      s.deposits[child] = s.deposits[child].filter(x => x.id !== id);
+      commit(s, true);
+    }
+
+    function renderTossLedger() {
+      const child = s.activeTab || 'mj';
+      ensureDeposits(s);
+      const earned = getEarnedTotal(child);
+      const deposited = getDepositedTotal(child);
+      const pending = earned - deposited;
+      const fmt = n => n.toLocaleString() + '원';
+
+      const line = document.getElementById('tossLedgerLine');
+      if (line) line.textContent = `입금 완료 ${fmt(deposited)} · ${pending >= 0 ? '입금 대기' : '더 입금함'} ${fmt(Math.abs(pending))}`;
+
+      const title = document.getElementById('tossPanelTitle');
+      if (title) title.textContent = `💸 ${child === 'mj' ? 'MJ' : 'BC'} 토스 입금 내역`;
+
+      const sum = document.getElementById('tossSummary');
+      if (sum) {
+        sum.innerHTML = `
+          <div class="toss-sum-box"><div class="toss-sum-label">총 적립</div><div class="toss-sum-val" style="color:#0f172a;">${fmt(earned)}</div></div>
+          <div class="toss-sum-box"><div class="toss-sum-label">입금 완료</div><div class="toss-sum-val" style="color:#059669;">${fmt(deposited)}</div></div>
+          <div class="toss-sum-box"><div class="toss-sum-label">${pending >= 0 ? '입금 대기' : '초과 입금'}</div><div class="toss-sum-val" style="color:${pending > 0 ? '#d97706' : '#2563eb'};">${fmt(Math.abs(pending))}</div></div>`;
+      }
+
+      const list = document.getElementById('tossList');
+      if (list) {
+        const items = s.deposits[child];
+        list.innerHTML = items.length ? items.map(d => `
+          <div class="toss-dep-row">
+            <span class="toss-dep-date">${escapeHtml(d.date.slice(5).replace('-', '/'))}</span>
+            <span class="toss-dep-amt">+${Number(d.amount).toLocaleString()}원</span>
+            <span class="toss-dep-memo">${escapeHtml(d.memo || '')}</span>
+            <button class="toss-dep-del" onclick="deleteDeposit('${d.id}')" aria-label="삭제">🗑</button>
+          </div>`).join('') : '<div class="toss-empty">아직 입금 기록이 없어요.</div>';
+      }
+    }
+    function renderTossPanel() { renderTossLedger(); }
 
     function getDefaultHistory() {
       const hist = { mj: {}, bc: {} };
@@ -2008,6 +2196,7 @@
     }
 
     // 이 기기에 저장된 어제 상태가 오늘 기록으로 잘못 들어가지 않도록, 시작할 때 먼저 날짜 넘김 처리
+    ensureDeposits(s);
     if (applyTitleRenames(s)) {
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
     }
@@ -2094,6 +2283,7 @@
           pct: pct,
           doneCount: doneCount,
           totalCount: totalCount,
+          earn: calculateTossSavings(child).total,
           // 날짜별 숙제 체크 화면용 기록 (t: 제목, d: 완료 여부)
           items: mandatory.map(t => ({ t: String(t.title || '').slice(0, 40), d: t.done ? 1 : 0, r: t.section === 'routine' ? 1 : 0 }))
         };
@@ -2505,6 +2695,8 @@
             const renamed = applyTitleRenames(remote);
             s.tasks = remote.tasks;
             if (remote.bonus) s.bonus = remote.bonus;
+            if (remote.deposits) s.deposits = remote.deposits;
+            ensureDeposits(s);
             if (remote.lastDate) s.lastDate = remote.lastDate;
             if (remote.history) {
               s.history = remote.history;
@@ -2810,6 +3002,7 @@
         tabBc.className = 'tab-btn active bc';
       }
 
+      renderTossLedger();
       const tossTargetLabel = document.getElementById('tossTargetLabel');
       const tossCurAmount = document.getElementById('tossCurAmount');
       const tossBreakdown = document.getElementById('tossBreakdown');
