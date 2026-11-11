@@ -1378,43 +1378,6 @@
       <div class="banner-stamp" id="bannerStamp">🌟 0%</div>
     </div>
 
-  <!-- Toss Piggy Bank Card -->
-  <div class="toss-card" id="tossCard">
-    <div class="toss-header">
-      <span class="toss-tag">🏦 토스 적금 저금통</span>
-      <span class="toss-target-desc" id="tossTargetLabel">MJ의 토스 31일 적금 목표!</span>
-    </div>
-    <div class="toss-amount">
-      <span id="tossCurAmount">0</span><span>원 적립 예정</span>
-    </div>
-    <div class="toss-breakdown" id="tossBreakdown">
-      자기 전 리스트 100% 완료 시 보너스 100원 적립!
-    </div>
-    <div class="toss-ledger-line" id="tossLedgerLine"></div>
-    <button class="toss-deposit-btn" onclick="toggleTossPanel()">💸 토스 입금 기록 / 확인</button>
-  </div>
-
-  <!-- Toss deposit ledger -->
-  <div class="toss-panel" id="tossPanel" style="display:none;">
-    <div class="toss-panel-title" id="tossPanelTitle">💸 토스 입금 내역</div>
-    <div class="toss-sum-grid" id="tossSummary"></div>
-
-    <div class="toss-form">
-      <div class="toss-form-row">
-        <input type="number" id="depAmount" class="toss-input" inputmode="numeric" min="1" step="100" placeholder="입금 금액 (원)">
-        <input type="date" id="depDate" class="toss-input">
-      </div>
-      <input type="text" id="depMemo" class="toss-input" maxlength="30" placeholder="메모 (선택, 예: 11월 1주차)">
-      <div class="toss-form-row">
-        <button class="toss-fill-btn" onclick="fillPendingAmount()">대기 금액 전부 채우기</button>
-        <button class="toss-add-btn" onclick="addDeposit()">입금 기록 추가</button>
-      </div>
-    </div>
-
-    <div class="toss-list-title">입금 기록</div>
-    <div id="tossList"></div>
-  </div>
-
   <!-- Progress Bar & Chick Incubator -->
   <div class="progress-card">
     <div class="chick-stage-box" id="chickBox" onclick="pokeChick(event)">
@@ -1514,6 +1477,43 @@
         💡 <b>날짜 칸을 누르면</b> 그날의 숙제를 확인하고 체크할 수 있어요.<br>
         오늘 칸은 오늘 숙제 화면으로 이동해요. 한 번 체크한 숙제를 해제할 땐 한 번 더 물어봐요.
       </div>
+    </div>
+
+    <!-- Toss Piggy Bank Card -->
+    <div class="toss-card" id="tossCard">
+      <div class="toss-header">
+        <span class="toss-tag">🏦 토스 적금 저금통</span>
+        <span class="toss-target-desc" id="tossTargetLabel">MJ의 토스 31일 적금 목표!</span>
+      </div>
+      <div class="toss-amount">
+        <span id="tossCurAmount">0</span><span>원 적립 예정</span>
+      </div>
+      <div class="toss-breakdown" id="tossBreakdown">
+        자기 전 리스트 100% 완료 시 보너스 100원 적립!
+      </div>
+      <div class="toss-ledger-line" id="tossLedgerLine"></div>
+      <button class="toss-deposit-btn" onclick="toggleTossPanel()">💸 토스 입금 기록 / 확인</button>
+    </div>
+
+    <!-- Toss deposit ledger -->
+    <div class="toss-panel" id="tossPanel" style="display:none;">
+      <div class="toss-panel-title" id="tossPanelTitle">💸 토스 입금 내역</div>
+      <div class="toss-sum-grid" id="tossSummary"></div>
+
+      <div class="toss-form">
+        <div class="toss-form-row">
+          <input type="number" id="depAmount" class="toss-input" inputmode="numeric" min="1" step="100" placeholder="입금 금액 (원)">
+          <input type="date" id="depDate" class="toss-input">
+        </div>
+        <input type="text" id="depMemo" class="toss-input" maxlength="30" placeholder="메모 (선택, 예: 11월 1주차)">
+        <div class="toss-form-row">
+          <button class="toss-fill-btn" onclick="fillPendingAmount()">대기 금액 전부 채우기</button>
+          <button class="toss-add-btn" onclick="addDeposit()">입금 기록 추가</button>
+        </div>
+      </div>
+
+      <div class="toss-list-title">입금 기록</div>
+      <div id="tossList"></div>
     </div>
 
     <!-- Daily routine statistics -->
