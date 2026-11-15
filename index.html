@@ -1314,6 +1314,162 @@
       font-weight: 600;
       cursor: pointer;
     }
+
+    /* ===== 반려식물 물주기 (숙제 아님 · 진도율 미포함) ===== */
+    .plant-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #cbd5e1 30%, #cbd5e1 70%, transparent);
+      margin: 26px 0 16px;
+    }
+
+    .plant-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.2px;
+      margin-bottom: 10px;
+    }
+
+    .plant-sub-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #0f766e;
+      background: #ccfbf1;
+      border: 1px solid #99f6e4;
+      padding: 2px 7px;
+      border-radius: 9999px;
+    }
+
+    .plant-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .plant-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .plant-card.due {
+      border-color: #86efac;
+      background: linear-gradient(135deg, #f0fdf4, #ffffff 70%);
+    }
+
+    .plant-card.overdue {
+      border-color: #fca5a5;
+      background: linear-gradient(135deg, #fef2f2, #ffffff 70%);
+    }
+
+    .plant-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .plant-emoji {
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .plant-name {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .plant-kind {
+      font-size: 10px;
+      font-weight: 700;
+      color: #0d9488;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      padding: 1px 6px;
+      border-radius: 9999px;
+    }
+
+    .plant-cycle {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #64748b;
+      margin-top: 3px;
+    }
+
+    .plant-dday {
+      margin-left: auto;
+      font-size: 13px;
+      font-weight: 800;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 5px 11px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .plant-dday.soon { color: #b45309; background: #fef3c7; }
+    .plant-dday.today { color: #047857; background: #dcfce7; }
+    .plant-dday.over { color: #b91c1c; background: #fee2e2; }
+
+    .plant-dates {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #64748b;
+      margin-top: 10px;
+    }
+
+    .plant-tip {
+      font-size: 11.5px;
+      color: #475569;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 9px 10px;
+      margin-top: 9px;
+      line-height: 1.55;
+    }
+
+    .plant-water-btn {
+      width: 100%;
+      margin-top: 10px;
+      border: none;
+      border-radius: 12px;
+      padding: 11px;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.22);
+    }
+
+    .plant-water-btn:active { transform: scale(0.98); }
+
+    .plant-water-btn.done {
+      background: #e2e8f0;
+      color: #64748b;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    .plant-note {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 9px;
+    }
   </style>
 </head>
 <body>
@@ -1419,7 +1575,18 @@
     <button class="quick-add-btn" onclick="addCustomTask()">+ 추가</button>
   </div>
 
-  <!-- Section 4: Toss Extra Bonus -->
+  <!-- Section 4: BC 반려식물 물주기 (숙제 아님 · 숙제 진도율에 포함되지 않음) -->
+  <div id="plantSection" style="display:none;">
+    <div class="plant-divider"></div>
+    <div class="plant-title">
+      <span>🪴 병찬이 식물 물주기</span>
+      <span class="plant-sub-tag">숙제 아님</span>
+    </div>
+    <div class="plant-list" id="plantList"></div>
+    <div class="plant-note">물주기는 숙제 진도율·토스 적립과 따로 계산돼요</div>
+  </div>
+
+  <!-- Section 5: Toss Extra Bonus -->
   <div class="section-title" style="margin-top: 24px;">💰 추가 토스 보너스 적립 (화이트보드)</div>
   <div id="bonusSection"></div>
 
@@ -1559,6 +1726,12 @@
   <script>
     const CLOUD_URL = 'https://mantledb.sh/v2/hhsk92-family-homework/state';
     const EMOJI_OPTIONS = ['💖', '👏', '🔥', '💯', '⭐', '👑', '👍'];
+
+    // ===== 반려식물 물주기 기본값 (숙제 아님 · 진도율 미포함) =====
+    const PLANT_DEFAULTS = [
+      { id: 'ionantha', name: '이오난사', emoji: '🌿', kind: '공기식물', intervalDays: 5, lastWatered: '2026-11-15', tip: '물에 20~30분 담갔다 거꾸로 털어 말리기' },
+      { id: 'cactus', name: '선인장', emoji: '🌵', kind: '', intervalDays: 30, lastWatered: '2026-11-15', tip: '흙이 속까지 바짝 마른 뒤 주기 (겨울엔 월 1회)' }
+    ];
 
     // ===== 달력 설정 (한 달 성취표: 달 이동 가능) =====
     function pad2(n) { return String(n).padStart(2, '0'); }
@@ -2288,6 +2461,9 @@
     if (ensureTaskDueDates(s)) {
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
     }
+    if (ensurePlants(s)) {
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+    }
 
     let currentView = 'today';
     let selectedDay = null;
@@ -2766,6 +2942,7 @@
 
     async function fetchFromCloud() {
       try {
+        let plantsNeedSync = false;
         const res = await fetch(CLOUD_URL);
         if (res.ok) {
           const remote = await res.json();
@@ -2777,6 +2954,8 @@
             if (remote.bonus) s.bonus = remote.bonus;
             if (remote.deposits) s.deposits = remote.deposits;
             ensureDeposits(s);
+            // 식물 물주기 기록 병합 (클라우드에 아직 없으면 이 기기 기록을 올린다)
+            plantsNeedSync = mergePlants(s, remote);
             if (remote.lastDate) s.lastDate = remote.lastDate;
             if (remote.history) {
               s.history = remote.history;
@@ -2786,7 +2965,7 @@
             updateTodayHistory();
             localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
             render();
-            if (rolled || renamed || dueFilled || !remote.history) syncToCloud();
+            if (rolled || renamed || dueFilled || !remote.history || plantsNeedSync) syncToCloud();
           }
         }
       } catch (e) {
@@ -3053,6 +3232,134 @@
       chickSpeech.textContent = messages[Math.floor(Math.random() * messages.length)];
     }
 
+    // ===== 반려식물 물주기 =====
+    // 숙제(s.tasks)와 완전히 분리된 데이터. 진도율·토스 적립 계산에 포함되지 않는다.
+    // 오늘 날짜(한국 시간 기준, YYYY-MM-DD)
+    function getTodayKstStr() {
+      try {
+        const parts = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit'
+        }).format(new Date());
+        if (/^\d{4}-\d{2}-\d{2}$/.test(parts)) return parts;
+      } catch (e) { /* Intl 미지원 시 기기 시간대 */ }
+      return getTodayDateStr();
+    }
+
+    function addDaysToYmd(ymdStr, days) {
+      const m = String(ymdStr || '').match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (!m) return ymdStr;
+      const t = Date.UTC(+m[1], +m[2] - 1, +m[3]) + (Number(days) || 0) * 86400000;
+      const d = new Date(t);
+      return makeDateStr(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
+    }
+
+    function diffDaysFromToday(ymdStr) {
+      const m = String(ymdStr || '').match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (!m) return null;
+      const target = Date.UTC(+m[1], +m[2] - 1, +m[3]);
+      const [ty, tm, td] = getTodayKstStr().split('-').map(Number);
+      return Math.round((target - Date.UTC(ty, tm - 1, td)) / 86400000);
+    }
+
+    // 식물 목록 보장: 없는 식물은 기본값으로 추가하고, 주기·다음 물 주는 날을 다시 계산
+    function ensurePlants(st) {
+      if (!st) return false;
+      const before = JSON.stringify(Array.isArray(st.plants) ? st.plants : []);
+      const existing = {};
+      (Array.isArray(st.plants) ? st.plants : []).forEach(p => { if (p && p.id) existing[p.id] = p; });
+      st.plants = PLANT_DEFAULTS.map(d => {
+        const cur = existing[d.id] || {};
+        const p = Object.assign({}, d, cur);
+        p.intervalDays = Math.max(1, Number(p.intervalDays) || d.intervalDays);
+        if (!p.lastWatered) p.lastWatered = d.lastWatered;
+        if (!p.name) p.name = d.name;
+        p.nextDue = addDaysToYmd(p.lastWatered, p.intervalDays);
+        return p;
+      });
+      return before !== JSON.stringify(st.plants);
+    }
+
+    // 기기 간 병합: 더 최근에 물 준 기록을 남긴다
+    function mergePlants(st, remote) {
+      const pulled = (remote && Array.isArray(remote.plants)) ? remote.plants : [];
+      const byId = {};
+      (Array.isArray(st.plants) ? st.plants : []).forEach(p => { if (p && p.id) byId[p.id] = p; });
+      pulled.forEach(rp => {
+        if (!rp || !rp.id) return;
+        const lp = byId[rp.id];
+        if (!lp || String(rp.lastWatered || '') > String(lp.lastWatered || '')) byId[rp.id] = rp;
+      });
+      st.plants = Object.keys(byId).map(k => byId[k]);
+      const normalized = ensurePlants(st);
+      const pack = list => JSON.stringify((list || []).slice().sort((a, b) => String(a.id).localeCompare(String(b.id))));
+      return normalized || pack(st.plants) !== pack(pulled);
+    }
+
+    function plantDdayInfo(p) {
+      const diff = diffDaysFromToday(p.nextDue);
+      if (diff === null) return { label: 'D-day', cls: '' };
+      if (diff > 0) return { label: `D-${diff}`, cls: diff <= 1 ? 'soon' : '' };
+      if (diff === 0) return { label: 'D-day (오늘!)', cls: 'today' };
+      return { label: `D+${-diff} 지남`, cls: 'over' };
+    }
+
+    function koreanYmdLabel(ymdStr) {
+      const m = String(ymdStr || '').match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (!m) return ymdStr || '-';
+      const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+      const dow = ['일', '월', '화', '수', '목', '금', '토'][d.getUTCDay()];
+      return `${+m[2]}월 ${+m[3]}일 (${dow})`;
+    }
+
+    function waterPlant(id, event) {
+      if (!Array.isArray(s.plants)) ensurePlants(s);
+      const p = (s.plants || []).find(x => x.id === id);
+      if (!p) return;
+      const todayStr = getTodayKstStr();
+      if (p.lastWatered === todayStr) return; // 오늘 이미 물 줬으면 변화 없음
+      p.lastWatered = todayStr;
+      p.nextDue = addDaysToYmd(todayStr, p.intervalDays);
+      if (event) triggerEmojiBurst(event.clientX, event.clientY, '💧');
+      commit(s, true);
+    }
+
+    function renderPlants() {
+      const sec = document.getElementById('plantSection');
+      const box = document.getElementById('plantList');
+      if (!sec || !box) return;
+      // 병찬이(BC) 탭에서만 보인다
+      if (s.activeTab !== 'bc') {
+        sec.style.display = 'none';
+        return;
+      }
+      sec.style.display = 'block';
+      ensurePlants(s);
+      const todayStr = getTodayKstStr();
+      box.innerHTML = (s.plants || []).map(p => {
+        const info = plantDdayInfo(p);
+        const diff = diffDaysFromToday(p.nextDue);
+        const cardCls = 'plant-card' + (diff === null ? '' : (diff < 0 ? ' overdue' : (diff === 0 ? ' due' : '')));
+        const wateredToday = p.lastWatered === todayStr;
+        return `
+          <div class="${cardCls}">
+            <div class="plant-head">
+              <span class="plant-emoji">${p.emoji || '🪴'}</span>
+              <div>
+                <div class="plant-name">${escapeHtml(p.name)}${p.kind ? `<span class="plant-kind">${escapeHtml(p.kind)}</span>` : ''}</div>
+                <div class="plant-cycle">${p.intervalDays}일마다 물 주기</div>
+              </div>
+              <span class="plant-dday ${info.cls}">${info.label}</span>
+            </div>
+            <div class="plant-dates">
+              <span>💧 마지막 물: ${koreanYmdLabel(p.lastWatered)}</span>
+              <span>📅 다음 물: ${koreanYmdLabel(p.nextDue)}</span>
+            </div>
+            <div class="plant-tip">💡 ${escapeHtml(p.tip || '')}</div>
+            <button class="plant-water-btn ${wateredToday ? 'done' : ''}" ${wateredToday ? 'disabled' : ''} onclick="waterPlant('${p.id}', event)">${wateredToday ? '✅ 오늘 물 줬어요' : '💧 물 줬어요'}</button>
+          </div>`;
+      }).join('');
+    }
+
     function render() {
       updateDateDisplay();
       updateTodayHistory();
@@ -3170,6 +3477,7 @@
       renderTaskList('schoolTaskList', schoolTasks);
       renderTaskList('academyTaskList', academyTasks);
       renderTaskList('routineTaskList', routineTasks);
+      renderPlants();
 
       const bonusSec = document.getElementById('bonusSection');
       bonusSec.innerHTML = '';
