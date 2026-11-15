@@ -1,0 +1,3362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>⭐ 우리 가족 숙제 모음</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <meta name="theme-color" content="#0064FF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="우리 가족 숙제 모음">
+  <meta name="mobile-web-app-capable" content="yes">
+  <style>
+    :root {
+      --app-purple: #8b5cf6;
+      --app-purple-light: #f3e8ff;
+      --app-blue: #2563eb;
+      --app-blue-light: #eff6ff;
+      --toss-blue: #0064FF;
+      --toss-gold: #f59e0b;
+      --app-green: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, sans-serif;
+      padding: 16px 16px 56px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .title-group h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .date-badge {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #059669;
+      background: #ecfdf5;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      border: 1px solid #a7f3d0;
+    }
+
+    .sync-dot {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .tab-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 9999px;
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      border: none;
+      padding: 10px 12px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 700;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active.mj {
+      background: #ffffff;
+      color: var(--app-purple);
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+    }
+
+    .tab-btn.active.bc {
+      background: #ffffff;
+      color: var(--app-blue);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    /* View Switcher */
+    .view-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+
+    .view-btn {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 9999px;
+      font-size: 13.5px;
+      font-weight: 800;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .view-btn.active {
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .streak-badge {
+      font-size: 11px;
+      background: #fef3c7;
+      color: #b45309;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+
+    /* Month Preview Banner */
+    .month-preview-banner {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border: 1.5px solid #86efac;
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .month-preview-banner:active {
+      transform: scale(0.98);
+    }
+
+    .banner-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .banner-icon {
+      font-size: 24px;
+    }
+
+    .banner-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #166534;
+    }
+
+    .banner-sub {
+      font-size: 11px;
+      color: #15803d;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .banner-stamp {
+      font-size: 12px;
+      font-weight: 800;
+      background: #22c55e;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+      white-space: nowrap;
+    }
+
+    /* Calendar Card */
+    .calendar-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 18px 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 14px;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding: 0 4px;
+    }
+
+    .calendar-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .child-indicator {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    .child-indicator.mj {
+      background: var(--app-purple-light);
+      color: var(--app-purple);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .child-indicator.bc {
+      background: var(--app-blue-light);
+      color: var(--app-blue);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    .calendar-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .stat-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+
+    .stat-box-val {
+      font-size: 16px;
+      font-weight: 900;
+      margin-top: 3px;
+    }
+
+    .stat-box-label {
+      font-size: 10.5px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #64748b;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .calendar-weekdays span:first-child { color: #ef4444; }
+    .calendar-weekdays span:last-child { color: #3b82f6; }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    .cal-day {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      min-height: 60px;
+      padding: 4px 3px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s ease;
+    }
+
+    .cal-day:active {
+      transform: scale(0.96);
+    }
+
+    .cal-day-num {
+      font-size: 11px;
+      font-weight: 800;
+      color: #64748b;
+      align-self: flex-start;
+      line-height: 1;
+      padding: 1px 2px;
+    }
+
+    .cal-day.sunday .cal-day-num { color: #ef4444; }
+    .cal-day.saturday .cal-day-num { color: #3b82f6; }
+
+    .cal-day.today {
+      border: 2px solid #0064FF;
+      box-shadow: 0 0 0 2px rgba(0, 100, 255, 0.2);
+      background: #eff6ff;
+    }
+
+    .cal-day.today .cal-day-num {
+      background: #0064FF;
+      color: white;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 9.5px;
+    }
+
+    .cal-stamp {
+      font-size: 16px;
+      line-height: 1;
+      margin: 1px 0;
+    }
+
+    .cal-pct {
+      font-size: 9px;
+      font-weight: 800;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .cal-day.completed {
+      background: linear-gradient(135deg, #fef9c3, #fef08a);
+      border-color: #facc15;
+      box-shadow: 0 2px 8px rgba(234, 179, 8, 0.2);
+    }
+
+    .cal-day.completed .cal-pct {
+      color: #854d0e;
+      font-weight: 900;
+    }
+
+    .cal-day.future {
+      opacity: 0.55;
+      cursor: default;
+      background: #f1f5f9;
+      border-style: dashed;
+    }
+
+    /* Badges Card */
+    .badges-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 16px 14px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .badge-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f8fafc;
+    }
+
+    .badge-item.achieved {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+
+    .badge-icon {
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    .badge-info-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .badge-info-desc {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .badge-item.achieved .badge-info-name {
+      color: #065f46;
+    }
+
+    .badge-status-tag {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .badge-item.achieved .badge-status-tag {
+      background: #10b981;
+      color: white;
+    }
+
+    .badge-item:not(.achieved) .badge-status-tag {
+      background: #e2e8f0;
+      color: #64748b;
+    }
+
+    .back-to-today-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #0064FF, #2563eb);
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 100, 255, 0.3);
+      transition: transform 0.15s ease;
+    }
+
+    .back-to-today-btn:active {
+      transform: scale(0.98);
+    }
+
+    .toss-card {
+      background: linear-gradient(135deg, #0064FF, #7c3aed);
+      color: #ffffff;
+      border-radius: 20px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 20px rgba(0, 100, 255, 0.25);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s ease;
+    }
+
+    .toss-card::after {
+      content: "🪙";
+      position: absolute;
+      right: 14px;
+      bottom: -6px;
+      font-size: 64px;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    .toss-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .toss-tag {
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 3px 8px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .toss-target-desc {
+      font-size: 11px;
+      opacity: 0.85;
+    }
+
+    .toss-amount {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin: 4px 0 6px;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .toss-amount span {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .toss-breakdown {
+      font-size: 11px;
+      opacity: 0.9;
+      line-height: 1.4;
+      background: rgba(0, 0, 0, 0.12);
+      padding: 6px 10px;
+      border-radius: 10px;
+    }
+
+    .progress-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .progress-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .progress-count {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      background: #f1f5f9;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, #8b5cf6, #ec4899);
+      transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .progress-bar-fill.bc-theme {
+      background: linear-gradient(90deg, #2563eb, #06b6d4);
+    }
+
+    /* Chick Incubator Stage Box */
+    .chick-stage-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(254, 252, 232, 0.92);
+      border-radius: 16px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      border: 1.5px solid #fde047;
+      box-shadow: 0 2px 8px rgba(234, 179, 8, 0.12);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+    .chick-stage-box:active {
+      transform: scale(0.98);
+    }
+    .chick-stage-box.stage-3 {
+      background: linear-gradient(135deg, #fef08a, #fde047);
+      border-color: #eab308;
+      box-shadow: 0 4px 14px rgba(234, 179, 8, 0.3);
+    }
+    .chick-avatar {
+      font-size: 38px;
+      line-height: 1;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      flex-shrink: 0;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .chick-avatar.wiggle {
+      animation: chickWiggle 1.8s ease-in-out infinite;
+    }
+    .chick-avatar.jump {
+      animation: chickJump 0.8s ease-in-out infinite alternate;
+    }
+    @keyframes chickWiggle {
+      0%, 100% { transform: rotate(0deg); }
+      20% { transform: rotate(-10deg) scale(1.05); }
+      40% { transform: rotate(10deg) scale(1.05); }
+      60% { transform: rotate(0deg); }
+    }
+    @keyframes chickJump {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-7px) scale(1.12); }
+    }
+    .chick-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .chick-name {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #854d0e;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chick-speech {
+      font-size: 12px;
+      color: #713f12;
+      margin-top: 2px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .all-done-banner {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      color: #065f46;
+      border: 1.5px solid #6ee7b7;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      animation: popIn 0.3s ease-out;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 18px 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task-item {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0,0,0,0.06);
+      user-select: none;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .task-main-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .task-main-row:active {
+      transform: scale(0.99);
+    }
+
+    .task-item.completed {
+      background: #f8fafc;
+      opacity: 0.85;
+    }
+
+    /* 1. D-Day Urgent: Soft Pastel Rose / Coral */
+    .task-item.today-urgent {
+      background: linear-gradient(135deg, #fff1f2, #ffe4e6) !important;
+      border: 1.5px solid #fecdd3 !important;
+      box-shadow: 0 3px 10px rgba(244, 63, 94, 0.08) !important;
+    }
+
+    .task-item.today-urgent .task-title {
+      color: #9f1239 !important;
+      font-weight: 750 !important;
+    }
+
+    .task-item.today-urgent .sub-note {
+      color: #be123c !important;
+      font-weight: 600 !important;
+    }
+
+    .task-item.today-urgent .dday-chip {
+      background: #f43f5e !important;
+      color: #ffffff !important;
+      font-weight: 800 !important;
+      box-shadow: 0 2px 6px rgba(244, 63, 94, 0.22) !important;
+    }
+
+    .task-item.today-urgent .task-checkbox {
+      background: #ffffff !important;
+      border: 2px solid #fda4af !important;
+    }
+
+    .task-item.today-urgent.completed {
+      background: #fff5f5 !important;
+      opacity: 0.72 !important;
+      border-color: #ffe4e6 !important;
+      box-shadow: none !important;
+    }
+
+    .task-item.today-urgent.completed .task-title {
+      color: #9ca3af !important;
+      text-decoration: line-through !important;
+    }
+
+    .task-item.today-urgent.completed .task-checkbox {
+      background: #fb7185 !important;
+      border-color: #fb7185 !important;
+    }
+
+    .task-item.today-urgent.completed .task-checkbox svg {
+      stroke: #ffffff !important;
+      opacity: 1 !important;
+      transform: scale(1) !important;
+    }
+
+    .task-item.today-urgent .cheer-bar {
+      border-top: 1px dashed #fecdd3 !important;
+    }
+
+    .task-item.today-urgent .cheer-bar span {
+      color: #be123c !important;
+    }
+
+    .task-item.today-urgent .cheer-btn {
+      background: #ffffff !important;
+      border-color: #fecdd3 !important;
+      color: #9f1239 !important;
+    }
+
+    .task-item.today-urgent .cheer-btn.active {
+      background: #f43f5e !important;
+      color: #ffffff !important;
+      border-color: #f43f5e !important;
+    }
+
+    /* 2. Daily Routine: Soft Pastel Butter / Sunshine Cream */
+    .task-item.today-routine {
+      background: linear-gradient(135deg, #fefce8, #fef9c3) !important;
+      border: 1.5px solid #fde047 !important;
+      box-shadow: 0 3px 10px rgba(234, 179, 8, 0.08) !important;
+    }
+
+    .task-item.today-routine .task-title {
+      color: #713f12 !important;
+      font-weight: 750 !important;
+    }
+
+    .task-item.today-routine .sub-note {
+      color: #854d0e !important;
+      font-weight: 600 !important;
+    }
+
+    .routine-chip {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #fef08a;
+      color: #854d0e;
+      border: 1px solid #facc15;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .task-item.today-routine .task-checkbox {
+      background: #ffffff !important;
+      border: 2px solid #facc15 !important;
+    }
+
+    .task-item.today-routine.completed {
+      background: #fefce8 !important;
+      opacity: 0.72 !important;
+      border-color: #fef9c3 !important;
+      box-shadow: none !important;
+    }
+
+    .task-item.today-routine.completed .task-title {
+      color: #9ca3af !important;
+      text-decoration: line-through !important;
+    }
+
+    .task-item.today-routine.completed .task-checkbox {
+      background: #eab308 !important;
+      border-color: #eab308 !important;
+    }
+
+    .task-item.today-routine.completed .task-checkbox svg {
+      stroke: #ffffff !important;
+      opacity: 1 !important;
+      transform: scale(1) !important;
+    }
+
+    .task-item.today-routine .cheer-bar {
+      border-top: 1px dashed #fef08a !important;
+    }
+
+    .task-item.today-routine .cheer-bar span {
+      color: #854d0e !important;
+    }
+
+    .task-item.today-routine .cheer-btn {
+      background: #ffffff !important;
+      border-color: #fef08a !important;
+      color: #854d0e !important;
+    }
+
+    .task-item.today-routine .cheer-btn.active {
+      background: #eab308 !important;
+      color: #ffffff !important;
+      border-color: #eab308 !important;
+    }
+
+    .task-checkbox {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      border: 2px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: #ffffff;
+    }
+
+    .task-item.completed .task-checkbox {
+      background: var(--app-purple);
+      border-color: var(--app-purple);
+      transform: scale(1.05);
+    }
+
+    .task-item.completed.bc-theme .task-checkbox {
+      background: var(--app-blue);
+      border-color: var(--app-blue);
+    }
+
+    .task-checkbox svg {
+      width: 14px;
+      height: 14px;
+      stroke: #ffffff;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .task-item.completed .task-checkbox svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .task-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .task-item.completed .task-title {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 3px;
+    }
+
+    .dday-chip {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .dday-chip.urgent {
+      background: #ef4444;
+      color: #ffffff;
+      animation: pulse 2s infinite;
+    }
+
+    .sub-note {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* Cheering Stickers Bar */
+    .cheer-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding-top: 6px;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .cheer-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 2px 0;
+    }
+
+    .cheer-btn {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 9999px;
+      padding: 3px 7px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s ease;
+      line-height: 1;
+    }
+
+    .cheer-btn:active {
+      transform: scale(1.2);
+    }
+
+    .cheer-btn.active {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      font-weight: 700;
+      color: #92400e;
+    }
+
+    .cheer-count {
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .bonus-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0,0,0,0.06);
+      margin-bottom: 8px;
+    }
+
+    .bonus-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bonus-icon {
+      font-size: 22px;
+    }
+
+    .bonus-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .bonus-rate {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--toss-blue);
+      margin-top: 2px;
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      font-size: 16px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .step-btn:active {
+      transform: scale(0.9);
+      background: #e2e8f0;
+    }
+
+    .step-count {
+      font-size: 14px;
+      font-weight: 800;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .quick-add-box {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .quick-add-input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 9999px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .quick-add-input:focus {
+      border-color: var(--toss-blue);
+    }
+
+    .quick-add-btn {
+      background: #1e293b;
+      color: #ffffff;
+      border: none;
+      padding: 0 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .toss-ledger-line {
+      margin-top: 8px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.95);
+      position: relative;
+      z-index: 1;
+    }
+    .toss-deposit-btn {
+      position: relative;
+      z-index: 1;
+      margin-top: 10px;
+      width: 100%;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.45);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .toss-panel {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 16px;
+      margin: -4px 0 16px;
+      box-shadow: 0 4px 14px rgba(15,23,42,0.06);
+    }
+    .toss-panel-title { font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 12px; }
+    .toss-sum-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .toss-sum-box { background: #f1f5f9; border-radius: 12px; padding: 10px 6px; text-align: center; }
+    .toss-sum-label { font-size: 10.5px; font-weight: 700; color: #64748b; }
+    .toss-sum-val { font-size: 14.5px; font-weight: 800; margin-top: 3px; }
+    .toss-form { display: flex; flex-direction: column; gap: 8px; }
+    .toss-form-row { display: flex; gap: 8px; }
+    .toss-input {
+      flex: 1; min-width: 0;
+      border: 1px solid #cbd5e1; border-radius: 12px;
+      padding: 11px 12px; font-size: 14px; outline: none; background: #fff;
+    }
+    .toss-input:focus { border-color: var(--toss-blue); }
+    .toss-fill-btn, .toss-add-btn {
+      flex: 1; border-radius: 12px; padding: 11px 8px;
+      font-size: 13px; font-weight: 800; cursor: pointer;
+    }
+    .toss-fill-btn { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; }
+    .toss-add-btn { background: var(--toss-blue); border: 1px solid var(--toss-blue); color: #fff; }
+    .toss-list-title { font-size: 12.5px; font-weight: 800; color: #475569; margin: 16px 0 6px; }
+    .toss-dep-row { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    .toss-dep-row:last-child { border-bottom: none; }
+    .toss-dep-date { color: #64748b; font-weight: 700; min-width: 64px; }
+    .toss-dep-amt { font-weight: 800; color: #0f172a; }
+    .toss-dep-memo { flex: 1; color: #64748b; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .toss-dep-del { background: none; border: none; font-size: 15px; cursor: pointer; padding: 2px 6px; }
+    .toss-empty { font-size: 12.5px; color: #94a3b8; text-align: center; padding: 10px; }
+
+    .month-nav-btn {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      border-radius: 9999px;
+      min-width: 30px;
+      height: 30px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 0 8px;
+    }
+    .month-nav-btn:active { transform: scale(0.94); }
+    .month-today-btn { font-size: 11px; margin-left: 2px; }
+    .calendar-title { flex-wrap: wrap; }
+
+    .rs-row { padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+    .rs-row:last-child { border-bottom: none; }
+    .rs-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .rs-name { font-size: 13.5px; font-weight: 800; color: #0f172a; }
+    .rs-meta { font-size: 12px; font-weight: 800; color: #475569; white-space: nowrap; }
+    .rs-bar { height: 8px; background: #e2e8f0; border-radius: 9999px; margin: 7px 0 6px; overflow: hidden; }
+    .rs-bar > div { height: 100%; background: #10b981; border-radius: 9999px; }
+    .rs-sub { font-size: 11.5px; color: #64748b; font-weight: 700; }
+    .rs-dots { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+    .rs-dot { width: 9px; height: 9px; border-radius: 3px; background: #e2e8f0; }
+    .rs-dot.on { background: #10b981; }
+    .rs-dot.off { background: #fca5a5; }
+    .rs-dot.today { outline: 2px solid #94a3b8; }
+    .rs-empty { font-size: 12.5px; color: #64748b; text-align: center; padding: 14px 6px; line-height: 1.6; }
+
+    .quick-add-select {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      border-radius: 9999px;
+      padding: 0 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #334155;
+      outline: none;
+    }
+
+    .routine-toggle-btn {
+      margin-left: auto;
+      background: #ffffff;
+      border: 1px dashed #cbd5e1;
+      color: #64748b;
+      border-radius: 9999px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .routine-toggle-btn:active { transform: scale(0.96); }
+
+    .day-nav-btn {
+      flex: 1;
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 14px 12px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .day-summary {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    .day-note {
+      font-size: 12.5px;
+      color: #64748b;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 12px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .day-toggle-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      color: #475569;
+      cursor: pointer;
+    }
+
+    .day-toggle-btn.on {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      color: #047857;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .footer-actions {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .reset-btn {
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      color: #64748b;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="header">
+    <div class="title-group">
+      <h1>⭐ 우리 가족 숙제 모음</h1>
+      <div class="date-badge" id="currentDate">2026년 11월 10일 화요일</div>
+    </div>
+    <div class="sync-status" id="syncStatus">
+      <div class="sync-dot"></div>
+      <span id="syncText">실시간 동기화</span>
+    </div>
+  </div>
+
+  <!-- PWA Quick Install Banner -->
+  <div id="installBanner" style="display:none; margin-bottom: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 12px 14px; border-radius: 16px; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="font-size: 22px;">📲</span>
+      <div>
+        <div style="font-weight: 800; font-size: 13px;">바탕화면에 앱 설치하기</div>
+        <div style="font-size: 11px; opacity: 0.9;">터치 한 번으로 홈 화면에 아이콘 쏙!</div>
+      </div>
+    </div>
+    <button id="installBtn" style="background: white; color: #065f46; border: none; padding: 7px 14px; border-radius: 9999px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">설치</button>
+  </div>
+
+  <!-- View Switcher (Today's Tasks vs Monthly Achievement) -->
+  <div class="view-switcher">
+    <button class="view-btn active" id="viewBtnToday" onclick="switchView('today')">
+      <span>📝 오늘 숙제</span>
+    </button>
+    <button class="view-btn" id="viewBtnMonth" onclick="switchView('month')">
+      <span>📅 한 달 성취표</span>
+      <span class="streak-badge" id="navStreakBadge">🔥 8일 연속</span>
+    </button>
+  </div>
+
+  <div class="tab-container">
+    <button class="tab-btn active mj" id="tabMj" onclick="switchTab('mj')">
+      <span>💜 MJ</span>
+      <span style="font-size: 11px; opacity: 0.8;">(4학년)</span>
+    </button>
+    <button class="tab-btn bc" id="tabBc" onclick="switchTab('bc')">
+      <span>💙 BC</span>
+      <span style="font-size: 11px; opacity: 0.8;">(2학년)</span>
+    </button>
+  </div>
+
+  <!-- Today's Tasks View -->
+  <div id="todayView">
+    <!-- Month Preview Mini Banner -->
+    <div class="month-preview-banner" onclick="switchView('month')">
+      <div class="banner-left">
+        <span class="banner-icon">📅</span>
+        <div>
+          <div class="banner-title">이번 달 성취: <span id="bannerStreakText">8일 연속 100% 달성 중!</span> 🔥</div>
+          <div class="banner-sub" id="bannerSubText">달력 보기 ➔</div>
+        </div>
+      </div>
+      <div class="banner-stamp" id="bannerStamp">🌟 0%</div>
+    </div>
+
+  <!-- Progress Bar & Chick Incubator -->
+  <div class="progress-card">
+    <div class="chick-stage-box" id="chickBox" onclick="pokeChick(event)">
+      <div class="chick-avatar" id="chickAvatar">🥚</div>
+      <div class="chick-info">
+        <div class="chick-name" id="chickName">신비한 잠자는 알</div>
+        <div class="chick-speech" id="chickSpeech">"오늘치 숙제를 시작하면 내가 깨어날지도 몰라... 쿨쿨 zZ"</div>
+      </div>
+    </div>
+    <div class="progress-header">
+      <span class="progress-title">⚡ 오늘 꼭 해야 하는 숙제 달성률</span>
+      <span class="progress-count" id="progressCount">0 / 0 (0%)</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+    <div class="all-done-banner" id="doneBanner">🎉 와아! 오늘 숙제 100% 올클리어! 삐약이가 태어났어요! 🐥👑 (+100원 획득)</div>
+  </div>
+
+  <!-- Section 1: School Homework -->
+  <div class="section-title">🎒 학교 숙제 & 준비물 (이번 주)</div>
+  <div class="task-list" id="schoolTaskList"></div>
+
+  <!-- Section 2: Academy & Study -->
+  <div class="section-title" style="margin-top: 20px;">🏫 학원 숙제 & 시험 대비</div>
+  <div class="task-list" id="academyTaskList"></div>
+
+  <!-- Section 3: Daily Routine -->
+  <div class="section-title" style="margin-top: 20px;">✨ 매일 필수 루틴 (냉장고 표)</div>
+  <div class="task-list" id="routineTaskList"></div>
+
+  <!-- Quick Add Custom Task -->
+  <div class="quick-add-box">
+    <select id="quickType" class="quick-add-select" aria-label="추가할 종류">
+      <option value="school">📌 일반 숙제</option>
+      <option value="routine">✨ 매일 루틴</option>
+    </select>
+    <input type="text" id="quickInput" class="quick-add-input" placeholder="새 숙제나 할 일 직접 추가..." onkeypress="handleEnter(event)">
+    <button class="quick-add-btn" onclick="addCustomTask()">+ 추가</button>
+  </div>
+
+  <!-- Section 4: Toss Extra Bonus -->
+  <div class="section-title" style="margin-top: 24px;">💰 추가 토스 보너스 적립 (화이트보드)</div>
+  <div id="bonusSection"></div>
+
+    <div class="footer-actions">
+      <button class="reset-btn" onclick="confirmReset()">🔄 오늘 체크 및 저금 초기화</button>
+    </div>
+  </div> <!-- /#todayView -->
+
+  <!-- Monthly Achievement View -->
+  <div id="monthView" style="display:none;">
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <div class="calendar-title">
+          <button class="month-nav-btn" onclick="changeMonth(-1)" aria-label="이전 달">◀</button>
+          <span id="calTitle">📅 성취 달력</span>
+          <button class="month-nav-btn" onclick="changeMonth(1)" aria-label="다음 달">▶</button>
+          <button class="month-nav-btn month-today-btn" onclick="goThisMonth()">이번 달</button>
+        </div>
+        <div class="child-indicator mj" id="calChildLabel">
+          💜 MJ (4학년)
+        </div>
+      </div>
+
+      <!-- Stats Summary -->
+      <div class="calendar-stats-row">
+        <div class="stat-box">
+          <div class="stat-box-label">🔥 연속 올클리어</div>
+          <div class="stat-box-val" id="calStatStreak" style="color:#d97706;">8일째</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">🌟 100% 달성일</div>
+          <div class="stat-box-val" id="calStatDays" style="color:#059669;">8 / 30일</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">🪙 누적 100% 상금</div>
+          <div class="stat-box-val" id="calStatMoney" style="color:#2563eb;">800원</div>
+        </div>
+      </div>
+
+      <div class="calendar-weekdays">
+        <span>일</span>
+        <span>월</span>
+        <span>화</span>
+        <span>수</span>
+        <span>목</span>
+        <span>금</span>
+        <span>토</span>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid">
+        <!-- Rendered by JS -->
+      </div>
+      
+      <div style="margin-top:14px; font-size:11.5px; color:#64748b; text-align:center; background:#f8fafc; padding:10px; border-radius:12px; line-height: 1.5;">
+        💡 <b>날짜 칸을 누르면</b> 그날의 숙제를 확인하고 체크할 수 있어요.<br>
+        오늘 칸은 오늘 숙제 화면으로 이동해요. 한 번 체크한 숙제를 해제할 땐 한 번 더 물어봐요.
+      </div>
+    </div>
+
+    <!-- Toss Piggy Bank Card -->
+    <div class="toss-card" id="tossCard">
+      <div class="toss-header">
+        <span class="toss-tag">🏦 토스 적금 저금통</span>
+        <span class="toss-target-desc" id="tossTargetLabel">MJ의 토스 31일 적금 목표!</span>
+      </div>
+      <div class="toss-amount">
+        <span id="tossCurAmount">0</span><span>원 적립 예정</span>
+      </div>
+      <div class="toss-breakdown" id="tossBreakdown">
+        자기 전 리스트 100% 완료 시 보너스 100원 적립!
+      </div>
+      <div class="toss-ledger-line" id="tossLedgerLine"></div>
+      <button class="toss-deposit-btn" onclick="toggleTossPanel()">💸 토스 입금 기록 / 확인</button>
+    </div>
+
+    <!-- Toss deposit ledger -->
+    <div class="toss-panel" id="tossPanel" style="display:none;">
+      <div class="toss-panel-title" id="tossPanelTitle">💸 토스 입금 내역</div>
+      <div class="toss-sum-grid" id="tossSummary"></div>
+
+      <div class="toss-form">
+        <div class="toss-form-row">
+          <input type="number" id="depAmount" class="toss-input" inputmode="numeric" min="1" step="100" placeholder="입금 금액 (원)">
+          <input type="date" id="depDate" class="toss-input">
+        </div>
+        <input type="text" id="depMemo" class="toss-input" maxlength="30" placeholder="메모 (선택, 예: 11월 1주차)">
+        <div class="toss-form-row">
+          <button class="toss-fill-btn" onclick="fillPendingAmount()">대기 금액 전부 채우기</button>
+          <button class="toss-add-btn" onclick="addDeposit()">입금 기록 추가</button>
+        </div>
+      </div>
+
+      <div class="toss-list-title">입금 기록</div>
+      <div id="tossList"></div>
+    </div>
+
+    <!-- Daily routine statistics -->
+    <div class="badges-card" id="routineStatsCard">
+      <div style="font-size: 15px; font-weight: 800; color: #0f172a;" id="routineStatsTitle">🔁 매일 루틴 통계</div>
+      <div id="routineStatsBody"></div>
+    </div>
+
+    <!-- Milestone Badges -->
+    <div class="badges-card">
+      <div style="font-size: 15px; font-weight: 800; color: #0f172a; display:flex; align-items:center; gap:6px;">
+        <span id="badgesTitle">🏆 성취 배지 컬렉션</span>
+      </div>
+      <div class="badges-grid" id="badgesGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <div style="margin-top: 14px; text-align: center;">
+      <button class="back-to-today-btn" onclick="switchView('today')">
+        📝 오늘 숙제 체크하러 가기
+      </button>
+    </div>
+  </div> <!-- /#monthView -->
+
+  <!-- Day Detail View (달력에서 지난 날짜를 누르면 열림) -->
+  <div id="dayView" style="display:none;">
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <div class="calendar-title">
+          <span id="dayViewTitle">📅 숙제 체크</span>
+        </div>
+        <div class="child-indicator mj" id="dayChildLabel">💜 MJ (4학년)</div>
+      </div>
+      <div id="dayViewBody"></div>
+    </div>
+    <div style="display:flex; gap:8px; margin-top:14px;">
+      <button class="day-nav-btn" onclick="switchView('month')">← 성취 달력</button>
+      <button class="back-to-today-btn" style="width:auto; flex:1.4;" onclick="switchView('today')">📝 오늘 숙제 체크하러 가기</button>
+    </div>
+  </div> <!-- /#dayView -->
+
+  <script>
+    const CLOUD_URL = 'https://mantledb.sh/v2/hhsk92-family-homework/state';
+    const EMOJI_OPTIONS = ['💖', '👏', '🔥', '💯', '⭐', '👑', '👍'];
+
+    // ===== 달력 설정 (한 달 성취표: 달 이동 가능) =====
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    function makeDateStr(y, m, d) { return `${y}-${pad2(m)}-${pad2(d)}`; }
+    function daysInMonth(y, m) { return new Date(y, m, 0).getDate(); }
+
+    let calYear = 2026;
+    let calMonth = 11;
+    let CAL_DAYS = 30;
+
+    function setCalMonth(y, m) {
+      calYear = y; calMonth = m; CAL_DAYS = daysInMonth(y, m);
+    }
+
+    // 보고 있는 달의 날짜 문자열
+    function ymd(day) { return makeDateStr(calYear, calMonth, day); }
+
+    // 오늘이 보고 있는 달의 며칠째인지 (달이 오늘보다 미래면 0, 과거면 CAL_DAYS + 1)
+    function getTodayDayNum() {
+      const [y, m, d] = getTodayDateStr().split('-').map(Number);
+      if (y < calYear || (y === calYear && m < calMonth)) return 0;
+      if (y > calYear || m > calMonth) return CAL_DAYS + 1;
+      return d;
+    }
+
+    function countCompletedDays(child, y = calYear, m = calMonth) {
+      const h = (s.history && s.history[child]) ? s.history[child] : {};
+      let n = 0;
+      for (let d = 1; d <= daysInMonth(y, m); d++) {
+        const r = h[makeDateStr(y, m, d)];
+        if (r && r.done) n++;
+      }
+      return n;
+    }
+
+    function changeMonth(delta) {
+      let m = calMonth + delta, y = calYear;
+      if (m < 1) { m = 12; y--; }
+      if (m > 12) { m = 1; y++; }
+      setCalMonth(y, m);
+      renderCalendar();
+    }
+
+    function goThisMonth() {
+      const [y, m] = getTodayDateStr().split('-').map(Number);
+      setCalMonth(y, m);
+      renderCalendar();
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function getTodayDateStr() {
+      const now = new Date();
+      return makeDateStr(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    }
+
+    function getFormattedDateKorean() {
+      const todayStr = getTodayDateStr();
+      const [y, m, d] = todayStr.split('-').map(Number);
+      const targetDate = new Date(y, m - 1, d);
+      const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+      return `${y}년 ${m}월 ${d}일 ${days[targetDate.getDay()]}`;
+    }
+
+    function updateDateDisplay() {
+      const el = document.getElementById('currentDate');
+      if (el) el.textContent = getFormattedDateKorean();
+    }
+
+    // ===== D-Day 실시간 계산 =====
+    // 마감일은 task.due(YYYY-MM-DD)에 저장하고, 없으면 dday 문자열의 (MM/DD) 표기를 읽는다.
+    // 화면에 그릴 때마다 오늘 날짜와 비교해 D-N / D-Day / D+N을 새로 계산하므로 날짜가 바뀌어도 자동으로 갱신된다.
+    const WEEKDAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
+
+    function parseDueYmd(task) {
+      if (task && task.due) {
+        const m = String(task.due).match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (m) return { y: +m[1], m: +m[2], d: +m[3] };
+      }
+      if (task && task.dday) {
+        const m = String(task.dday).match(/(\d{1,2})\s*[\/.]\s*(\d{1,2})/);
+        if (m) {
+          const now = new Date();
+          let y = now.getFullYear();
+          const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+          const t = Date.UTC(y, +m[1] - 1, +m[2]);
+          // 연말·연초를 넘겨 저장된 표기 보정 (6개월 이상 차이면 연도 조정)
+          if (t - today > 183 * 86400000) y -= 1;
+          else if (today - t > 183 * 86400000) y += 1;
+          return { y, m: +m[1], d: +m[2] };
+        }
+      }
+      return null;
+    }
+
+    function getDdayDiff(task) {
+      const due = parseDueYmd(task);
+      if (!due) return null;
+      const now = new Date();
+      const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+      const target = Date.UTC(due.y, due.m - 1, due.d);
+      return Math.round((target - today) / 86400000);
+    }
+
+    function getDdayLabel(task) {
+      const diff = getDdayDiff(task);
+      const stored = task.dday || '';
+      if (diff === null) return stored;
+      let rest = String(stored)
+        .replace(/^\s*D\s*[-–+]?\s*(?:Day|day|\d+)\s*/i, '')
+        .replace(/^\s*(?:완료|✓)\s*/, '')
+        .replace(/^\s*(?:오늘|내일|모레)\s*/, '')
+        .replace(/^(\(\s*)(?:오늘|내일|모레)\s*/, '$1')
+        .replace(/\s+/g, ' ')
+        .trim();
+      let prefix;
+      if (diff > 0) prefix = `D-${diff}`;
+      else if (diff === 0) prefix = 'D-Day';
+      else prefix = task.done ? '완료' : `D+${-diff}`;
+      return rest ? `${prefix} ${rest}` : prefix;
+    }
+
+    function isDdayUrgent(task) {
+      const diff = getDdayDiff(task);
+      if (diff === null) return !!task.urgent;
+      return !task.done && diff <= 1;
+    }
+
+    // dday 문자열만 있는 예전 데이터에 마감일(due)을 채워 넣는다
+    function ensureTaskDueDates(st) {
+      let changed = false;
+      if (st && st.tasks) {
+        ['mj', 'bc'].forEach(c => (st.tasks[c] || []).forEach(t => {
+          if (!t.due) {
+            const p = parseDueYmd(t);
+            if (p) { t.due = makeDateStr(p.y, p.m, p.d); changed = true; }
+          }
+        }));
+      }
+      return changed;
+    }
+
+    function checkAndApplyDailyRollover(stateObj) {
+      const todayStr = getTodayDateStr();
+      if (!stateObj.lastDate) {
+        stateObj.lastDate = todayStr;
+        return false;
+      }
+      if (stateObj.lastDate !== todayStr) {
+        stateObj.lastDate = todayStr;
+        if (stateObj.tasks) {
+          ['mj', 'bc'].forEach(child => {
+            if (stateObj.tasks[child]) {
+              stateObj.tasks[child].forEach(t => {
+                if (t.section === 'routine') {
+                  t.done = false;
+                  t.reactions = {};
+                }
+              });
+            }
+          });
+        }
+        stateObj.bonus = {
+          mj: { extraWorksheet: 0, thickKoreanBook: 0, englishBook: 0 },
+          bc: { englishBook: 0, normalKoreanBook: 0, extraWorksheet: 0 }
+        };
+        return true;
+      }
+      return false;
+    }
+
+    // 항목 이름 일괄 변경 (이미 저장된 상태·클라우드·지난 기록에도 적용)
+    const TITLE_RENAMES = {
+      '악기 연습하기 (바이올린/피아노)': '바이올린',
+      'LINK (링크 학습)': 'EASY LINK'
+    };
+    function applyTitleRenames(st) {
+      let changed = false;
+      if (st && st.tasks) {
+        ['mj', 'bc'].forEach(c => (st.tasks[c] || []).forEach(t => {
+          if (TITLE_RENAMES[t.title]) { t.title = TITLE_RENAMES[t.title]; changed = true; }
+        }));
+      }
+      if (st && st.history) {
+        ['mj', 'bc'].forEach(c => Object.values(st.history[c] || {}).forEach(rec => {
+          if (rec && Array.isArray(rec.items)) rec.items.forEach(it => {
+            if (TITLE_RENAMES[it.t]) { it.t = TITLE_RENAMES[it.t]; changed = true; }
+          });
+        }));
+      }
+      return changed;
+    }
+
+    // ===== 토스 입금 내역 =====
+    function ensureDeposits(st) {
+      if (!st) return false;
+      let changed = false;
+      if (!st.deposits || typeof st.deposits !== 'object') { st.deposits = { mj: [], bc: [] }; changed = true; }
+      ['mj', 'bc'].forEach(c => { if (!Array.isArray(st.deposits[c])) { st.deposits[c] = []; changed = true; } });
+      return changed;
+    }
+
+    // 날짜별 적립액: 기록된 값(earn)이 있으면 그 값, 옛 기록은 100% 달성일 100원으로 계산
+    function getEarnedTotal(child) {
+      const h = (s.history && s.history[child]) ? s.history[child] : {};
+      const todayStr = getTodayDateStr();
+      let sum = 0;
+      Object.keys(h).forEach(dStr => {
+        if (dStr > todayStr) return;
+        const r = h[dStr];
+        if (!r) return;
+        sum += (typeof r.earn === 'number') ? r.earn : (r.done ? 100 : 0);
+      });
+      return sum;
+    }
+
+    function getDepositedTotal(child) {
+      ensureDeposits(s);
+      return s.deposits[child].reduce((a, d) => a + (Number(d.amount) || 0), 0);
+    }
+
+    let tossPanelOpen = false;
+    function toggleTossPanel() {
+      tossPanelOpen = !tossPanelOpen;
+      const panel = document.getElementById('tossPanel');
+      panel.style.display = tossPanelOpen ? 'block' : 'none';
+      if (tossPanelOpen) {
+        const dateEl = document.getElementById('depDate');
+        if (dateEl && !dateEl.value) dateEl.value = getTodayDateStr();
+        renderTossPanel();
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function fillPendingAmount() {
+      const child = s.activeTab || 'mj';
+      const pending = getEarnedTotal(child) - getDepositedTotal(child);
+      document.getElementById('depAmount').value = pending > 0 ? pending : '';
+    }
+
+    function addDeposit() {
+      const child = s.activeTab || 'mj';
+      const amount = Math.round(Number(document.getElementById('depAmount').value));
+      const date = document.getElementById('depDate').value || getTodayDateStr();
+      const memo = document.getElementById('depMemo').value.trim();
+      if (!(amount > 0) || amount > 10000000) { alert('입금 금액을 올바르게 입력해 주세요.'); return; }
+      ensureDeposits(s);
+      s.deposits[child].push({ id: 'dep-' + Date.now(), date: date, amount: amount, memo: memo });
+      s.deposits[child].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+      document.getElementById('depAmount').value = '';
+      document.getElementById('depMemo').value = '';
+      commit(s, true);
+      if (typeof triggerParticles === 'function') triggerParticles();
+    }
+
+    function deleteDeposit(id) {
+      const child = s.activeTab || 'mj';
+      const d = s.deposits[child].find(x => x.id === id);
+      if (!d) return;
+      if (!confirm(`${d.date} ${Number(d.amount).toLocaleString()}원 입금 기록을 삭제할까요?`)) return;
+      s.deposits[child] = s.deposits[child].filter(x => x.id !== id);
+      commit(s, true);
+    }
+
+    function renderTossLedger() {
+      const child = s.activeTab || 'mj';
+      ensureDeposits(s);
+      const earned = getEarnedTotal(child);
+      const deposited = getDepositedTotal(child);
+      const pending = earned - deposited;
+      const fmt = n => n.toLocaleString() + '원';
+
+      const line = document.getElementById('tossLedgerLine');
+      if (line) line.textContent = `입금 완료 ${fmt(deposited)} · ${pending >= 0 ? '입금 대기' : '더 입금함'} ${fmt(Math.abs(pending))}`;
+
+      const title = document.getElementById('tossPanelTitle');
+      if (title) title.textContent = `💸 ${child === 'mj' ? 'MJ' : 'BC'} 토스 입금 내역`;
+
+      const sum = document.getElementById('tossSummary');
+      if (sum) {
+        sum.innerHTML = `
+          <div class="toss-sum-box"><div class="toss-sum-label">총 적립</div><div class="toss-sum-val" style="color:#0f172a;">${fmt(earned)}</div></div>
+          <div class="toss-sum-box"><div class="toss-sum-label">입금 완료</div><div class="toss-sum-val" style="color:#059669;">${fmt(deposited)}</div></div>
+          <div class="toss-sum-box"><div class="toss-sum-label">${pending >= 0 ? '입금 대기' : '초과 입금'}</div><div class="toss-sum-val" style="color:${pending > 0 ? '#d97706' : '#2563eb'};">${fmt(Math.abs(pending))}</div></div>`;
+      }
+
+      const list = document.getElementById('tossList');
+      if (list) {
+        const items = s.deposits[child];
+        list.innerHTML = items.length ? items.map(d => `
+          <div class="toss-dep-row">
+            <span class="toss-dep-date">${escapeHtml(d.date.slice(5).replace('-', '/'))}</span>
+            <span class="toss-dep-amt">+${Number(d.amount).toLocaleString()}원</span>
+            <span class="toss-dep-memo">${escapeHtml(d.memo || '')}</span>
+            <button class="toss-dep-del" onclick="deleteDeposit('${d.id}')" aria-label="삭제">🗑</button>
+          </div>`).join('') : '<div class="toss-empty">아직 입금 기록이 없어요.</div>';
+      }
+    }
+    function renderTossPanel() { renderTossLedger(); }
+
+    function getDefaultHistory() {
+      const hist = { mj: {}, bc: {} };
+      // 11월 1일부터 오늘 전날까지 100% 올클리어로 초기 세팅
+      const todayStr = getTodayDateStr();
+      for (let day = 1; day <= 30; day++) {
+        const dStr = makeDateStr(2026, 11, day);
+        if (dStr >= todayStr) break;
+        hist.mj[dStr] = { done: true, pct: 100, doneCount: 8, totalCount: 8 };
+        hist.bc[dStr] = { done: true, pct: 100, doneCount: 7, totalCount: 7 };
+      }
+      return hist;
+    }
+
+    function freshState() {
+      return {
+      "activeTab": "mj",
+      "lastDate": "2026-11-10",
+      "tasks": {
+            "mj": [
+                  {
+                        "id": "mj-s1",
+                        "section": "school",
+                        "title": "[내일 시험 대비] 수학 3단원 단원평가 집중 복습 (11/11 수 3교시)",
+                        "dday": "D-Day (오늘 11/10 화 필수 복습!)",
+                        "urgent": true,
+                        "note": "내일 25문제 40분 시험 대비 / 3단원 개념·문제 완벽 복습",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s2",
+                        "section": "school",
+                        "title": "[학교 행사 준비] CIE Speech Contest 예선 스피치 연습",
+                        "dday": "D-Day (오늘 11/10 화 연습!)",
+                        "urgent": true,
+                        "note": "내일 1~2교시 교육문화관 스피치 예선 (3-4학년) 발표 연습",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s3",
+                        "section": "school",
+                        "title": "[등교 복장 준비] 내일 수요일 필수 교복 착용 챙기기",
+                        "dday": "D-Day (오늘 11/10 화 미리 챙기기!)",
+                        "urgent": true,
+                        "note": "4학년 수요일 교복 필수 착용일 (교복·이름표 미리 걸어두기)",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s4",
+                        "section": "school",
+                        "title": "[학교 제출 준비] 4학년 굿즈 나눔페어 구매 봉투 밀봉",
+                        "dday": "D-Day (오늘 11/10 화 챙기기!)",
+                        "urgent": true,
+                        "note": "내일 마감 / 봉투에 정보·품목 적고 잔돈 없이 현금 밀봉",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s5",
+                        "section": "school",
+                        "title": "[CIE 수학] Math Workbook Q3:7 채점 및 제출",
+                        "dday": "D-1 (11/11 수 마감)",
+                        "note": "Toddle 정답지로 채점 후 제출",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s6",
+                        "section": "school",
+                        "title": "[학교 시험] 수학 1~3단원 중간평가 대비 (11/12 목 7~8교시)",
+                        "dday": "D-2 (11/12 목)",
+                        "note": "30문제 (60분) / 1~3단원 총괄 중간평가 대비",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s7",
+                        "section": "school",
+                        "title": "[CIE 영어 Adventure] Homework Packet p.22~23",
+                        "dday": "D-7 (11/17 화 마감)",
+                        "note": "Adventure반 전용 과제 (오작성 시 p.20~21 재확인)",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s8",
+                        "section": "school",
+                        "title": "[CIE 영어 Adventure] Learner's Book p.86 Q2 (a~h)",
+                        "dday": "D-7 (11/17 화 마감)",
+                        "note": "공책에 문제 2번 a~h 풀이 작성",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s9",
+                        "section": "school",
+                        "title": "[CIE 영어] myON 배정 도서 읽기",
+                        "dday": "D-7 (11/17 화 마감)",
+                        "note": "myON 온라인 배정 도서 독서",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-s10",
+                        "section": "school",
+                        "title": "[학교 과제] 우등생 과학 4학년 2학기 2단원 풀채고",
+                        "dday": "D-7 (11/17 화 마감)",
+                        "note": "과학 2단원 풀고 채점 후 오답 고치기",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-a1",
+                        "section": "academy",
+                        "title": "영재원 시험공부",
+                        "icon": "💡",
+                        "note": "12/5 선발시험 대비 기출 및 창의사고력 문제",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-r1",
+                        "section": "routine",
+                        "title": "르네상스 (AR 영어 독서 & 퀴즈)",
+                        "icon": "📖",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-r2",
+                        "section": "routine",
+                        "title": "VOCA (보카 영단어 암기)",
+                        "icon": "🔤",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-r3",
+                        "section": "routine",
+                        "title": "5학년 원리셈 연산 풀기",
+                        "icon": "🔢",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "mj-r4",
+                        "section": "routine",
+                        "title": "바이올린",
+                        "icon": "🎻",
+                        "done": false,
+                        "reactions": {}
+                  }
+            ],
+            "bc": [
+                  {
+                        "id": "bc-s1",
+                        "section": "school",
+                        "title": "[답사 완료] 낙동강 하구 야외 답사 다녀옴",
+                        "dday": "D-Day (오늘 11/10 화 완료!)",
+                        "urgent": false,
+                        "note": "답사 무사 귀교 완료! 푹 쉬고 컨디션 회복하기 👏",
+                        "done": true,
+                        "reactions": {
+                              "💖": 1
+                        }
+                  },
+                  {
+                        "id": "bc-a1",
+                        "section": "academy",
+                        "title": "눈높이 한자 & 한국사 학습",
+                        "dday": "D-Day (오늘 11/10 화 19:00)",
+                        "urgent": true,
+                        "icon": "📚",
+                        "note": "화요일 저녁 7시 학습 루틴 챙기기",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s2",
+                        "section": "school",
+                        "title": "[등교 준비] 내일 체육복 착용 & 태블릿PC 완충",
+                        "dday": "D-Day (오늘 11/10 화 미리 챙기기!)",
+                        "urgent": true,
+                        "note": "체육복·운동화·외투 착용 / 태블릿PC 100% 충전 지참",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s3",
+                        "section": "school",
+                        "title": "[학교 제출 준비] 4학년 굿즈 구매 신청 봉투",
+                        "dday": "D-Day (오늘 11/10 화 미리 챙기기!)",
+                        "urgent": true,
+                        "note": "내일 마감 / 구매 희망 시 봉투에 현금 밀봉 제출",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s4",
+                        "section": "school",
+                        "title": "[학교 과제] 책나무꿈나무 독서록 p.36~37",
+                        "dday": "D-1 (내일 11/11 수 마감)",
+                        "note": "엉뚱한 수리점 독서록 작성",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s5",
+                        "section": "school",
+                        "title": "[CIE 수학] Math Workbook Q3:7 채점 및 제출",
+                        "dday": "D-1 (내일 11/11 수 마감)",
+                        "note": "Toddle 정답지로 채점",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s6",
+                        "section": "school",
+                        "title": "[CIE 영어] Dictation 단어·문장 듣고쓰기 연습",
+                        "dday": "D-1 (11/11 수 & 11/12 목 시험)",
+                        "note": "11/11(수): balloon, flower, cloud 등 / 11/12(목): seesaw, football 등",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s7",
+                        "section": "school",
+                        "title": "[미제출 과제 체크] 일기장 · 듣고쓰기 노트",
+                        "dday": "D-1 (내일 11/11 수 제출)",
+                        "note": "미제출 학생 일기장, 듣고쓰기 노트, 단원평가 오답풀이 챙기기",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s8",
+                        "section": "school",
+                        "title": "[체육 행사 준비] 남구빙상장 스케이트 교실 준비",
+                        "dday": "D-3 (11/13 금 예정)",
+                        "note": "긴팔·긴바지·긴양말·장갑 필수 착용 / 멀미약 사전 복용",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s9",
+                        "section": "school",
+                        "title": "[CIE 영어] Week 8 Packet & Grammar 채점 제출",
+                        "dday": "D-3 (11/13 금 마감)",
+                        "note": "Commas in Letter Writing 채점 및 Week 8 Packet 금요일 제출",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-s10",
+                        "section": "school",
+                        "title": "[학교 준비] UOI5 위인전 & 발명품 재료 구상",
+                        "dday": "D-4 (11/14 토)",
+                        "note": "학교 도서관에 없는 위인 책 집에서 챙기기 / 11/19 발명품 재료(페트병 등) 구상",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "custom-1794294371579",
+                        "section": "school",
+                        "title": "최상위 수학 하루에 1장 하기",
+                        "icon": "📌",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-r1",
+                        "section": "routine",
+                        "title": "르네상스 (AR 영어 독서 & 퀴즈)",
+                        "icon": "📖",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-r2",
+                        "section": "routine",
+                        "title": "EASY LINK",
+                        "icon": "🔗",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-r3",
+                        "section": "routine",
+                        "title": "교과셈 연산 풀기",
+                        "icon": "🔢",
+                        "done": false,
+                        "reactions": {}
+                  },
+                  {
+                        "id": "bc-r4",
+                        "section": "routine",
+                        "title": "악기 연습하기 (첼로)",
+                        "icon": "🎻",
+                        "done": false,
+                        "reactions": {}
+                  }
+            ]
+      },
+      "bonus": {
+            "mj": {
+                  "extraWorksheet": 0,
+                  "thickKoreanBook": 0,
+                  "englishBook": 0
+            },
+            "bc": {
+                  "englishBook": 0,
+                  "normalKoreanBook": 0,
+                  "extraWorksheet": 0
+            }
+      },
+      "history": {
+            "mj": {
+                  "2026-11-01": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-02": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-03": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-04": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-05": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-06": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-07": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-08": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-09": {
+                        "done": true,
+                        "pct": 100,
+                        "doneCount": 10,
+                        "totalCount": 10
+                  }
+            },
+            "bc": {
+                  "2026-11-01": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-02": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-03": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-04": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-05": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-06": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-07": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-08": {
+                        "done": true,
+                        "pct": 100
+                  },
+                  "2026-11-09": {
+                        "done": true,
+                        "pct": 100,
+                        "doneCount": 10,
+                        "totalCount": 10
+                  }
+            }
+      }
+};
+    }
+
+    updateDateDisplay();
+
+    const saved = localStorage.getItem('family_integrated_homework_state');
+    let s;
+    try {
+      s = saved ? JSON.parse(saved) : freshState();
+      if (!s || !s.tasks) s = freshState();
+    } catch (e) {
+      console.warn('Saved state unreadable, starting fresh', e);
+      s = freshState();
+    }
+    if (!s.history || !s.history.mj || Object.keys(s.history.mj).length === 0) {
+      s.history = getDefaultHistory();
+    }
+
+    // 이 기기에 저장된 어제 상태가 오늘 기록으로 잘못 들어가지 않도록, 시작할 때 먼저 날짜 넘김 처리
+    ensureDeposits(s);
+    if (applyTitleRenames(s)) {
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+    }
+    if (s.tasks && checkAndApplyDailyRollover(s)) {
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+    }
+    if (ensureTaskDueDates(s)) {
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+    }
+
+    let currentView = 'today';
+    let selectedDay = null;
+    goThisMonthInit();
+    function goThisMonthInit() {
+      const [y, m] = getTodayDateStr().split('-').map(Number);
+      setCalMonth(y, m);
+    }
+
+    function switchView(view) {
+      currentView = view;
+      const todayEl = document.getElementById('todayView');
+      const monthEl = document.getElementById('monthView');
+      const dayEl = document.getElementById('dayView');
+      const btnToday = document.getElementById('viewBtnToday');
+      const btnMonth = document.getElementById('viewBtnMonth');
+
+      todayEl.style.display = view === 'today' ? 'block' : 'none';
+      monthEl.style.display = view === 'month' ? 'block' : 'none';
+      if (dayEl) dayEl.style.display = view === 'day' ? 'block' : 'none';
+      btnToday.classList.toggle('active', view === 'today');
+      btnMonth.classList.toggle('active', view !== 'today');
+
+      if (view === 'month') renderCalendar();
+      if (view === 'day') renderDayView();
+      window.scrollTo({ top: 0 });
+    }
+
+    // 연속 올클리어 일수: 오늘이 100%면 오늘부터, 아니면 어제부터 거꾸로 센다 (달이 바뀌어도 이어짐)
+    function calculateStreak(child) {
+      if (!s.history || !s.history[child]) return 0;
+      const h = s.history[child];
+      const [ty, tm, td] = getTodayDateStr().split('-').map(Number);
+      const cur = new Date(ty, tm - 1, td);
+      const key = () => makeDateStr(cur.getFullYear(), cur.getMonth() + 1, cur.getDate());
+      const todayRec = h[key()];
+      if (!(todayRec && todayRec.done)) cur.setDate(cur.getDate() - 1);
+      let streak = 0;
+      for (let i = 0; i < 400; i++) {
+        const rec = h[key()];
+        if (rec && rec.done) { streak++; cur.setDate(cur.getDate() - 1); } else break;
+      }
+      return streak;
+    }
+
+    // 11/1~11/9는 100% 올클리어로만 기록돼 있어서, 현재 매일 루틴 항목을 '완료'로 채워 넣는다 (한 번만 실행됨)
+    function backfillLegacyRoutines(todayStr) {
+      ['mj', 'bc'].forEach(child => {
+        const routines = ((s.tasks && s.tasks[child]) || []).filter(t => t.section === 'routine');
+        if (!routines.length || !s.history || !s.history[child]) return;
+        for (let day = 1; day <= 9; day++) {
+          const dStr = makeDateStr(2026, 11, day);
+          const rec = s.history[child][dStr];
+          if (dStr >= todayStr || !rec || !rec.done || Array.isArray(rec.items)) continue;
+          rec.items = routines.map(t => ({ t: String(t.title || '').slice(0, 40), d: 1, r: 1 }));
+          rec.legacy = 1;
+        }
+      });
+    }
+
+    function updateTodayHistory() {
+      if (!s.history) s.history = getDefaultHistory();
+      if (!s.history.mj) s.history.mj = {};
+      if (!s.history.bc) s.history.bc = {};
+
+      const todayStr = getTodayDateStr();
+      backfillLegacyRoutines(todayStr);
+      ['mj', 'bc'].forEach(child => {
+        const tasks = (s.tasks && s.tasks[child]) ? s.tasks[child] : [];
+        const mandatory = tasks.filter(isTodayMandatory);
+        const doneCount = mandatory.filter(t => t.done).length;
+        const totalCount = mandatory.length;
+        const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+        const isAllDone = totalCount > 0 && doneCount === totalCount;
+
+        s.history[child][todayStr] = {
+          done: isAllDone,
+          pct: pct,
+          doneCount: doneCount,
+          totalCount: totalCount,
+          earn: calculateTossSavings(child).total,
+          // 날짜별 숙제 체크 화면용 기록 (t: 제목, d: 완료 여부)
+          items: mandatory.map(t => ({ t: String(t.title || '').slice(0, 40), d: t.done ? 1 : 0, r: t.section === 'routine' ? 1 : 0 }))
+        };
+      });
+
+      const curChild = s.activeTab || 'mj';
+      const streak = calculateStreak(curChild);
+      const navStreak = document.getElementById('navStreakBadge');
+      if (navStreak) navStreak.textContent = `🔥 ${streak}일 연속`;
+      const bannerStreak = document.getElementById('bannerStreakText');
+      if (bannerStreak) bannerStreak.textContent = `${streak}일 연속 100% 달성 중!`;
+      const bannerSub = document.getElementById('bannerSubText');
+      if (bannerSub) bannerSub.textContent = `이번 달 ${countCompletedDays(curChild, ...getTodayDateStr().split('-').slice(0, 2).map(Number))}일 100% 달성 · 달력 보기 ➔`;
+      const bannerStamp = document.getElementById('bannerStamp');
+      if (bannerStamp) {
+        const todayRec = s.history[curChild] ? s.history[curChild][todayStr] : null;
+        bannerStamp.textContent = `🌟 ${todayRec ? todayRec.pct : 0}%`;
+      }
+    }
+
+    // 달력 날짜 칸 클릭: 오늘이면 오늘 숙제 화면, 지난 날이면 그날 숙제 체크 화면
+    function openDay(day) {
+      const todayNum = getTodayDayNum();
+      if (day > todayNum) {
+        alert("아직 다가오지 않은 날짜예요! 오늘 숙제부터 차근차근 해봐요 😊");
+        return;
+      }
+      if (day === todayNum) {
+        switchView('today');
+        return;
+      }
+      selectedDay = day;
+      switchView('day');
+    }
+
+    // 그날 화면에 보여줄 항목: 저장된 항목 + (아직 기록에 없는) 현재 매일 루틴
+    function getDayItems(child, dStr) {
+      const rec = (s.history && s.history[child]) ? s.history[child][dStr] : null;
+      const saved = (rec && Array.isArray(rec.items)) ? rec.items : [];
+      const list = saved.map(it => ({ t: it.t, d: it.d ? 1 : 0, r: it.r ? 1 : 0, saved: true }));
+      ((s.tasks && s.tasks[child]) || []).filter(t => t.section === 'routine').forEach(t => {
+        const name = String(t.title || '').slice(0, 40);
+        if (!list.some(i => i.t === name)) list.push({ t: name, d: 0, r: 1, saved: false });
+      });
+      return { rec, list };
+    }
+
+    function renderDayView() {
+      const body = document.getElementById('dayViewBody');
+      if (!body || !selectedDay) return;
+      const child = s.activeTab || 'mj';
+      const isMj = child === 'mj';
+
+      const label = document.getElementById('dayChildLabel');
+      if (label) {
+        label.className = 'child-indicator ' + (isMj ? 'mj' : 'bc');
+        label.textContent = isMj ? '💜 MJ (4학년)' : '💙 BC (2학년)';
+      }
+      const dow = ['일', '월', '화', '수', '목', '금', '토'][new Date(calYear, calMonth - 1, selectedDay).getDay()];
+      const title = document.getElementById('dayViewTitle');
+      if (title) title.textContent = `📅 ${calYear}년 ${calMonth}월 ${selectedDay}일 (${dow}) 숙제 체크`;
+
+      const { rec, list } = getDayItems(child, ymd(selectedDay));
+      let html = '';
+
+      if (list.length) {
+        const doneCount = list.filter(i => i.d).length;
+        const pct = Math.round((doneCount / list.length) * 100);
+        if (!rec || !rec.items || rec.legacy) html += '<div class="day-note">이 날은 매일 루틴 항목만 기록할 수 있어요.<br>빠뜨린 루틴은 지금 체크해서 채워 넣을 수 있어요.</div>';
+        html += `<div class="day-summary">${doneCount} / ${list.length} 완료 (${pct}%)${(rec && rec.done) ? ' · 🌟 100% 올클리어' : ''}</div>`;
+        html += '<div class="task-list">' + list.map((it, i) => `
+          <div class="task-item ${it.d ? 'completed' : ''} ${isMj ? '' : 'bc-theme'}">
+            <div class="task-main-row" onclick="toggleDayItem(${i})">
+              <div class="task-checkbox">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="task-content"><div class="task-title">${it.r ? '🔁 ' : ''}${escapeHtml(it.t)}</div></div>
+            </div>
+          </div>`).join('') + '</div>';
+      } else {
+        const done = !!(rec && rec.done);
+        html += `<div class="day-note">이 날은 숙제 항목별 기록이 없어요.<br>대신 전체 올클리어 여부를 직접 고칠 수 있어요.</div>
+          <button class="day-toggle-btn ${done ? 'on' : ''}" onclick="toggleDayManual()">${done ? '🌟 100% 올클리어 · 눌러서 해제' : '⏳ 미완료 · 눌러서 100% 올클리어로 기록'}</button>`;
+      }
+      body.innerHTML = html;
+    }
+
+    function toggleDayItem(idx) {
+      const child = s.activeTab || 'mj';
+      const dStr = ymd(selectedDay);
+      const { list } = getDayItems(child, dStr);
+      const target = list[idx];
+      if (!target) return;
+
+      if (target.d && !confirm('이미 체크한 숙제예요.\\n체크를 해제할까요?')) return;
+
+      if (!s.history) s.history = { mj: {}, bc: {} };
+      if (!s.history[child]) s.history[child] = {};
+      let rec = s.history[child][dStr];
+      if (!rec) { rec = { done: false, pct: 0, items: [], legacy: 1 }; s.history[child][dStr] = rec; }
+      if (!Array.isArray(rec.items)) { rec.items = []; rec.legacy = 1; }
+
+      // 아직 기록에 없던 루틴들도 함께 저장해서 목록 순서와 전체 달성률이 어긋나지 않게 한다
+      list.forEach(li => {
+        if (!rec.items.some(i => i.t === li.t)) rec.items.push({ t: li.t, d: 0, r: li.r });
+      });
+      const item = rec.items.find(i => i.t === target.t);
+      item.d = item.d ? 0 : 1;
+
+      rec.totalCount = rec.items.length;
+      rec.doneCount = rec.items.filter(i => i.d).length;
+      rec.pct = rec.totalCount > 0 ? Math.round((rec.doneCount / rec.totalCount) * 100) : 0;
+      rec.done = rec.totalCount > 0 && rec.doneCount === rec.totalCount;
+      if (item.d) triggerParticles();
+      commit(s, true);
+    }
+
+    // 항목별 기록이 없는 옛 날짜: 전체 올클리어 여부만 직접 수정
+    function toggleDayManual() {
+      const child = s.activeTab || 'mj';
+      const dStr = ymd(selectedDay);
+      if (!s.history[child]) s.history[child] = {};
+      const cur = s.history[child][dStr];
+      const wasDone = !!(cur && cur.done);
+
+      if (wasDone && !confirm('이미 100% 올클리어로 기록된 날이에요.\n정말 해제할까요?')) return;
+
+      s.history[child][dStr] = { done: !wasDone, pct: wasDone ? 0 : 100 };
+      if (!wasDone) triggerParticles();
+      commit(s, true);
+    }
+
+    function renderCalendar() {
+      const child = s.activeTab || 'mj';
+      const isMj = child === 'mj';
+      const calLabel = document.getElementById('calChildLabel');
+      if (calLabel) {
+        calLabel.className = 'child-indicator ' + (isMj ? 'mj' : 'bc');
+        calLabel.textContent = isMj ? '💜 MJ (4학년)' : '💙 BC (2학년)';
+      }
+
+      const streak = calculateStreak(child);
+      const h = (s.history && s.history[child]) ? s.history[child] : {};
+      const completedDays = countCompletedDays(child);
+      const todayNum = getTodayDayNum();
+
+      const statStreak = document.getElementById('calStatStreak');
+      const statDays = document.getElementById('calStatDays');
+      const statMoney = document.getElementById('calStatMoney');
+      if (statStreak) statStreak.textContent = `${streak}일째`;
+      if (statDays) statDays.textContent = `${completedDays} / ${CAL_DAYS}일`;
+      const calTitle = document.getElementById('calTitle');
+      if (calTitle) calTitle.textContent = `📅 ${calYear}년 ${calMonth}월`;
+      const badgesTitle = document.getElementById('badgesTitle');
+      if (badgesTitle) badgesTitle.textContent = `🏆 ${calMonth}월 성취 배지 컬렉션`;
+      if (statMoney) statMoney.textContent = `${(completedDays * 100).toLocaleString()}원`;
+
+      const grid = document.getElementById('calendarGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      for (let day = 1; day <= CAL_DAYS; day++) {
+        const dStr = ymd(day);
+        const dayOfWeek = new Date(calYear, calMonth - 1, day).getDay(); // 0 = Sunday, 6 = Saturday
+        const isSunday = dayOfWeek === 0;
+        const isSaturday = dayOfWeek === 6;
+        const isPast = day < todayNum;
+        const isToday = day === todayNum;
+        const isFuture = day > todayNum;
+
+        const cell = document.createElement('div');
+        let classes = ['cal-day'];
+        if (isSunday) classes.push('sunday');
+        if (isSaturday) classes.push('saturday');
+        if (isToday) classes.push('today');
+        if (isFuture) classes.push('future');
+
+        let stamp = '';
+        let pctLabel = '';
+
+        if (isPast) {
+          const record = h[dStr];
+          if (record && record.done) {
+            classes.push('completed');
+            stamp = '🌟';
+            pctLabel = '100%';
+          } else if (record && record.pct > 0) {
+            stamp = '🌗';
+            pctLabel = `${record.pct}%`;
+          } else {
+            stamp = '⏳';
+            pctLabel = '미완료';
+          }
+        } else if (isToday) {
+          const record = h[dStr];
+          if (record && record.done) {
+            classes.push('completed');
+            stamp = '🐥👑';
+            pctLabel = '100% 완료!';
+          } else if (record && record.pct > 0) {
+            stamp = '🐣';
+            pctLabel = `${record.pct}% 진행`;
+          } else {
+            stamp = '🥚';
+            pctLabel = '오늘 대기';
+          }
+        } else {
+          stamp = '⚪';
+          pctLabel = '예정';
+        }
+
+        cell.className = classes.join(' ');
+        cell.onclick = () => openDay(day);
+        cell.innerHTML = `
+          <span class="cal-day-num">${day}${isToday ? ' (오늘)' : ''}</span>
+          <span class="cal-stamp">${stamp}</span>
+          <span class="cal-pct">${pctLabel}</span>
+        `;
+        grid.appendChild(cell);
+      }
+
+      renderBadges(child, streak, completedDays);
+      renderRoutineStats(child);
+    }
+
+    // 매일 루틴 항목별 통계 (보고 있는 달 기준)
+    function renderRoutineStats(child) {
+      const body = document.getElementById('routineStatsBody');
+      if (!body) return;
+      const title = document.getElementById('routineStatsTitle');
+      if (title) title.textContent = `🔁 ${calMonth}월 매일 루틴 통계`;
+      const h = (s.history && s.history[child]) ? s.history[child] : {};
+      const todayStr = getTodayDateStr();
+
+      // 이번 달 기록 + 현재 루틴 목록에서 항목 이름 수집
+      const names = [];
+      const addName = n => { if (n && !names.includes(n)) names.push(n); };
+      ((s.tasks && s.tasks[child]) || []).filter(t => t.section === 'routine').forEach(t => addName(String(t.title || '').slice(0, 40)));
+      for (let d = 1; d <= CAL_DAYS; d++) {
+        const rec = h[ymd(d)];
+        if (rec && Array.isArray(rec.items)) rec.items.forEach(i => { if (i.r) addName(i.t); });
+      }
+
+      if (!names.length) {
+        body.innerHTML = '<div class="rs-empty">아직 매일 루틴 항목이 없어요.<br>숙제에서 "🔁 매일 루틴으로"를 눌러 추가해 보세요.</div>';
+        return;
+      }
+
+      const findItem = (dStr, name) => {
+        const rec = h[dStr];
+        if (!rec || !Array.isArray(rec.items)) return null;
+        return rec.items.find(i => i.t === name) || null;
+      };
+
+      const rows = names.map(name => {
+        let tracked = 0, done = 0, dots = '';
+        for (let d = 1; d <= CAL_DAYS; d++) {
+          const dStr = ymd(d);
+          if (dStr > todayStr) { dots += '<span class="rs-dot"></span>'; continue; }
+          const it = findItem(dStr, name);
+          const todayCls = dStr === todayStr ? ' today' : '';
+          if (!it) { dots += `<span class="rs-dot${todayCls}" title="${d}일: 기록 없음"></span>`; continue; }
+          tracked++;
+          if (it.d) done++;
+          dots += `<span class="rs-dot ${it.d ? 'on' : 'off'}${todayCls}" title="${d}일: ${it.d ? '완료' : '미완료'}"></span>`;
+        }
+        // 현재 연속 (달이 바뀌어도 이어짐): 오늘 완료면 오늘부터, 아니면 어제부터
+        const [ty, tm, td] = todayStr.split('-').map(Number);
+        const cur = new Date(ty, tm - 1, td);
+        const k = () => makeDateStr(cur.getFullYear(), cur.getMonth() + 1, cur.getDate());
+        const t0 = findItem(k(), name);
+        if (!(t0 && t0.d)) cur.setDate(cur.getDate() - 1);
+        let streak = 0;
+        for (let i = 0; i < 400; i++) {
+          const it = findItem(k(), name);
+          if (it && it.d) { streak++; cur.setDate(cur.getDate() - 1); } else break;
+        }
+        const pct = tracked ? Math.round((done / tracked) * 100) : 0;
+        return `<div class="rs-row">
+          <div class="rs-head"><span class="rs-name">${escapeHtml(name)}</span><span class="rs-meta">${tracked ? `${done} / ${tracked}일 · ${pct}%` : '기록 없음'}</span></div>
+          <div class="rs-bar"><div style="width:${pct}%"></div></div>
+          <div class="rs-sub">🔥 현재 연속 ${streak}일${tracked ? '' : ' · 오늘부터 기록이 쌓여요'}</div>
+          <div class="rs-dots">${dots}</div>
+        </div>`;
+      }).join('');
+
+      body.innerHTML = rows + '<div class="rs-sub" style="margin-top:10px;">🟩 완료 · 🟥 미완료 · 회색은 기록 없음(항목별 기록은 업데이트 이후부터 저장)</div>';
+    }
+
+    function renderBadges(child, streak, completedDays) {
+      const badgesGrid = document.getElementById('badgesGrid');
+      if (!badgesGrid) return;
+
+      const badges = [
+        {
+          icon: '🐣',
+          name: '첫 걸음 달성!',
+          desc: `${calMonth}월 100% 올클리어 첫 날 달성`,
+          achieved: completedDays >= 1,
+          progress: `${Math.min(completedDays, 1)} / 1`
+        },
+        {
+          icon: '🥉',
+          name: '작심삼일 탈출 배지',
+          desc: '연속 3일 100% 달성 성공',
+          achieved: streak >= 3,
+          progress: `${Math.min(streak, 3)} / 3`
+        },
+        {
+          icon: '🥈',
+          name: '완벽한 1주일 배지',
+          desc: '연속 7일 100% 달성 마스터',
+          achieved: streak >= 7,
+          progress: `${Math.min(streak, 7)} / 7`
+        },
+        {
+          icon: '🥇',
+          name: '2주 챔피언 배지',
+          desc: '연속 14일 동안 매일 100% 달성하기',
+          achieved: streak >= 14,
+          progress: `${streak} / 14`
+        },
+        {
+          icon: '👑',
+          name: `${calMonth}월 올클리어 마스터 킹`,
+          desc: `한 달 ${CAL_DAYS}일 전체 100% 숙제 올클리어!`,
+          achieved: completedDays >= CAL_DAYS,
+          progress: `${completedDays} / ${CAL_DAYS}`
+        }
+      ];
+
+      badgesGrid.innerHTML = badges.map(b => `
+        <div class="badge-item ${b.achieved ? 'achieved' : ''}">
+          <span class="badge-icon">${b.icon}</span>
+          <div style="flex:1;">
+            <div class="badge-info-name">${b.name}</div>
+            <div class="badge-info-desc">${b.desc}</div>
+          </div>
+          <div class="badge-status-tag">${b.achieved ? '획득 완료 🎉' : b.progress}</div>
+        </div>
+      `).join('');
+    }
+
+    function isTodayMandatory(task) {
+      if (task.section === 'routine') return true;
+      // 오늘 마감(D-Day)과 내일 마감(D-1)은 오늘 밤까지 끝내야 하므로 오늘 필수
+      // (D-day 숫자를 글자로 읽지 않고 오늘 날짜와의 차이로 판정하므로 날짜가 바뀌면 자동 반영)
+      const diff = getDdayDiff(task);
+      if (diff !== null) return diff <= 1;
+      return true;
+    }
+
+    function calculateTossSavings(target) {
+      const isMj = target === 'mj';
+      const tasks = s.tasks[target];
+      const mandatoryTasks = tasks.filter(isTodayMandatory);
+      const doneMandatory = mandatoryTasks.filter(t => t.done).length;
+      const isAllDone = mandatoryTasks.length > 0 && doneMandatory === mandatoryTasks.length;
+      const completionBonus = isAllDone ? 100 : 0;
+
+      let extraBonus = 0;
+      if (isMj) {
+        extraBonus += (s.bonus.mj.extraWorksheet || 0) * 100;
+        extraBonus += (s.bonus.mj.thickKoreanBook || 0) * 500;
+        extraBonus += (s.bonus.mj.englishBook || 0) * 500;
+      } else {
+        extraBonus += (s.bonus.bc.englishBook || 0) * 500;
+        extraBonus += (s.bonus.bc.normalKoreanBook || 0) * 200;
+        extraBonus += (s.bonus.bc.extraWorksheet || 0) * 100;
+      }
+
+      return {
+        base: 0,
+        completion: completionBonus,
+        extra: extraBonus,
+        total: completionBonus + extraBonus,
+        isAllDone: isAllDone
+      };
+    }
+
+    async function syncToCloud() {
+      try {
+        const syncDot = document.querySelector('.sync-dot');
+        if (syncDot) syncDot.style.background = '#f59e0b';
+        await fetch(CLOUD_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(s)
+        });
+        if (syncDot) syncDot.style.background = '#10b981';
+      } catch (e) {
+        console.warn('Cloud sync error', e);
+      }
+    }
+
+    async function fetchFromCloud() {
+      try {
+        const res = await fetch(CLOUD_URL);
+        if (res.ok) {
+          const remote = await res.json();
+          if (remote && remote.tasks) {
+            const rolled = checkAndApplyDailyRollover(remote);
+            const renamed = applyTitleRenames(remote);
+            const dueFilled = ensureTaskDueDates(remote);
+            s.tasks = remote.tasks;
+            if (remote.bonus) s.bonus = remote.bonus;
+            if (remote.deposits) s.deposits = remote.deposits;
+            ensureDeposits(s);
+            if (remote.lastDate) s.lastDate = remote.lastDate;
+            if (remote.history) {
+              s.history = remote.history;
+            } else if (!s.history) {
+              s.history = getDefaultHistory();
+            }
+            updateTodayHistory();
+            localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+            render();
+            if (rolled || renamed || dueFilled || !remote.history) syncToCloud();
+          }
+        }
+      } catch (e) {
+        console.warn('Cloud fetch error', e);
+      }
+    }
+
+    function commit(next, sync = true) {
+      s = next;
+      updateTodayHistory();
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+      render();
+      if (sync) syncToCloud();
+    }
+
+    function switchTab(tab) {
+      s.activeTab = tab;
+      commit(s, false);
+      if (currentView === 'month') {
+        renderCalendar();
+      }
+    }
+
+    function toggleTask(id, event) {
+      const curList = s.tasks[s.activeTab];
+      const task = curList.find(t => t.id === id);
+      if (!task) return;
+
+      if (task.done && !confirm('이미 체크한 숙제예요.\n체크를 해제할까요?')) return;
+
+      task.done = !task.done;
+      if (task.done) {
+        triggerParticles(event.clientX, event.clientY);
+      }
+      commit(s, true);
+    }
+
+    function addReaction(taskId, emoji, event) {
+      event.stopPropagation();
+      const curList = s.tasks[s.activeTab];
+      const task = curList.find(t => t.id === taskId);
+      if (!task) return;
+
+      if (!task.reactions) task.reactions = {};
+
+      // 한 숙제당 응원 스티커 딱 1개만! (이미 누른 것 다시 누르면 취소, 다른 것 누르면 변경)
+      if (task.reactions[emoji] > 0) {
+        task.reactions = {};
+      } else {
+        task.reactions = { [emoji]: 1 };
+        triggerEmojiBurst(event.clientX, event.clientY, emoji);
+      }
+      commit(s, true);
+    }
+
+    function changeBonus(key, delta, event) {
+      const curBonus = s.bonus[s.activeTab];
+      curBonus[key] = Math.max(0, (curBonus[key] || 0) + delta);
+      if (delta > 0 && event) {
+        triggerParticles(event.clientX, event.clientY, true);
+      }
+      commit(s, true);
+    }
+
+    function addCustomTask() {
+      const input = document.getElementById('quickInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const typeSel = document.getElementById('quickType');
+      const isRoutineType = typeSel && typeSel.value === 'routine';
+      s.tasks[s.activeTab].push({
+        id: 'custom-' + Date.now(),
+        section: isRoutineType ? 'routine' : 'school',
+        title: text,
+        icon: isRoutineType ? '✨' : '📌',
+        done: false,
+        reactions: {}
+      });
+      input.value = '';
+      commit(s, true);
+    }
+
+    function handleEnter(e) {
+      if (e.key === 'Enter') {
+        addCustomTask();
+      }
+    }
+
+    function confirmReset() {
+      if (confirm("오늘 완료한 체크와 추가 보너스를 모두 초기화할까요?")) {
+        s.tasks[s.activeTab].forEach(t => {
+          t.done = false;
+          t.reactions = {};
+        });
+        if (s.activeTab === 'mj') {
+          s.bonus.mj = { extraWorksheet: 0, thickKoreanBook: 0, englishBook: 0 };
+        } else {
+          s.bonus.bc = { englishBook: 0, normalKoreanBook: 0, extraWorksheet: 0 };
+        }
+        commit(s, true);
+      }
+    }
+
+    function getDueDateWeight(task) {
+      if (!task.dday && !task.due) return 999;
+      const diff = getDdayDiff(task);
+      if (diff === null) return task.urgent ? 1 : 100;
+      if (diff < 0) return 90 + Math.min(9, -diff); // 기한 지난 항목은 뒤로
+      return 1 + diff;                              // 오늘=1, D-1=2, D-2=3 ...
+    }
+
+    function renderTaskList(containerId, list) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      const isMj = s.activeTab === 'mj';
+
+      const sortedList = [...list].sort((a, b) => getDueDateWeight(a) - getDueDateWeight(b));
+
+      sortedList.forEach(task => {
+        const isTodayDue = !!task.dday && isDdayUrgent(task);
+        const isRoutine = task.section === 'routine' || (!task.section && !task.dday);
+        const item = document.createElement('div');
+        let classes = ['task-item'];
+        if (task.done) classes.push('completed');
+        if (!isMj) classes.push('bc-theme');
+        if (isTodayDue) {
+          classes.push('today-urgent');
+        } else if (isRoutine) {
+          classes.push('today-routine');
+        }
+        item.className = classes.join(' ');
+
+        const checkIcon = `
+          <div class="task-checkbox">
+            <svg viewBox="0 0 24 24">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+        `;
+
+        let metaHtml = '';
+        if (task.dday || task.due || task.note || isRoutine) {
+          let ddayTag = '';
+          if (task.dday || task.due) {
+            ddayTag = `<span class="${isDdayUrgent(task) ? 'dday-chip urgent' : 'dday-chip'}">${escapeHtml(getDdayLabel(task))}</span>`;
+          } else if (isRoutine) {
+            ddayTag = `<span class="routine-chip">✨ 오늘 매일 루틴</span>`;
+          }
+          const noteTag = task.note ? `<span class="sub-note">${task.note}</span>` : '';
+          metaHtml = `
+            <div class="task-meta">
+              ${ddayTag}
+              ${noteTag}
+            </div>
+          `;
+        }
+
+        // Cheering sticker buttons
+        let cheersHtml = '';
+        const reactions = task.reactions || {};
+        const activeReactionKeys = Object.keys(reactions).filter(k => reactions[k] > 0);
+
+        cheersHtml += `<div class="cheer-bar">`;
+        cheersHtml += `<span style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-right: 2px;">응원:</span>`;
+        cheersHtml += `<div class="cheer-btn-group">`;
+
+        EMOJI_OPTIONS.forEach(em => {
+          const count = reactions[em] || 0;
+          const isActive = count > 0;
+          cheersHtml += `
+            <button class="cheer-btn ${isActive ? 'active' : ''}" onclick="addReaction('${task.id}', '${em}', event)">
+              <span>${em}</span>
+              ${count > 0 ? `<span class="cheer-count">${count}</span>` : ''}
+            </button>
+          `;
+        });
+
+        cheersHtml += `</div>`;
+        // 마감일(D-day)이 붙은 숙제는 제외하고, 일반 숙제 <-> 매일 루틴 전환 버튼 표시
+        if (task.section === 'routine') {
+          cheersHtml += `<button class="routine-toggle-btn" onclick="editRoutine('${task.id}', event)">✏️ 내용 바꾸기</button>`;
+          cheersHtml += `<button class="routine-toggle-btn" style="margin-left:4px;" onclick="deleteRoutine('${task.id}', event)">🗑</button>`;
+        } else if (!task.dday) {
+          cheersHtml += `<button class="routine-toggle-btn" onclick="toggleRoutine('${task.id}', event)">🔁 매일 루틴으로</button>`;
+        }
+        cheersHtml += `</div>`;
+
+        item.innerHTML = `
+          <div class="task-main-row" onclick="toggleTask('${task.id}', event)">
+            ${checkIcon}
+            <div class="task-content">
+              <div class="task-title">${task.icon ? task.icon + ' ' : ''}${task.title}</div>
+              ${metaHtml}
+            </div>
+          </div>
+          ${cheersHtml}
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // 매일 루틴 내용 바꾸기 (예: 원리셈 연산 풀기 -> 책 한 권 읽기)
+    function editRoutine(id, event) {
+      event.stopPropagation();
+      const task = s.tasks[s.activeTab].find(t => t.id === id);
+      if (!task) return;
+      const input = prompt('이 매일 루틴을 어떤 내용으로 바꿀까요?', task.title);
+      if (input === null) return;
+      const next = input.trim();
+      if (!next || next === task.title) return;
+      task.title = next;
+      task.note = '';       // 이전 내용에 붙은 메모는 함께 지움
+      task.done = false;    // 새 루틴은 오늘 다시 체크
+      task.reactions = {};
+      commit(s, true);
+    }
+
+    function deleteRoutine(id, event) {
+      event.stopPropagation();
+      const list = s.tasks[s.activeTab];
+      const task = list.find(t => t.id === id);
+      if (!task) return;
+      if (!confirm(`"${task.title}" 매일 루틴을 삭제할까요?\n(지난 기록과 통계는 그대로 남아요)`)) return;
+      s.tasks[s.activeTab] = list.filter(t => t.id !== id);
+      commit(s, true);
+    }
+
+    // 일반 숙제 -> 매일 루틴(매일 자동 초기화) 전환
+    function toggleRoutine(id, event) {
+      event.stopPropagation();
+      const task = s.tasks[s.activeTab].find(t => t.id === id);
+      if (!task) return;
+
+      if (task.section === 'routine') {
+        if (!confirm(`"${task.title}"을(를) 매일 루틴에서 빼고 일반 숙제로 바꿀까요?\n(더 이상 매일 자동으로 초기화되지 않아요)`)) return;
+        task.section = (task.origSection && task.origSection !== 'routine') ? task.origSection : 'school';
+        delete task.origSection;
+      } else {
+        task.origSection = task.section || 'school';
+        task.section = 'routine';
+      }
+      commit(s, true);
+    }
+
+    function pokeChick(event) {
+      event.stopPropagation();
+      const curList = s.tasks[s.activeTab];
+      const mandatoryTasks = curList.filter(isTodayMandatory);
+      const doneMandatory = mandatoryTasks.filter(t => t.done).length;
+      const totalMandatory = mandatoryTasks.length;
+      const pct = totalMandatory > 0 ? Math.round((doneMandatory / totalMandatory) * 100) : 0;
+
+      triggerEmojiBurst(event.clientX, event.clientY, pct === 100 ? '🐥' : (pct >= 50 ? '🐣' : '✨'));
+
+      const chickSpeech = document.getElementById('chickSpeech');
+      if (!chickSpeech) return;
+      const messages = pct === 100
+        ? ['"삐약삐약! 오늘 100% 해낸 네가 최고야! 💖"', '"황금 왕관 선물 삐약! 토스 100원 챙겼지? 👑"', '"내일도 나랑 같이 놀자 삐약! 🐥"']
+        : (pct >= 50
+          ? ['"껍질 밀어내는 중이야! 힘을 줘 삐약! 🐣"', '"조금만 더 하면 부화 성공이야! 🔥"', '"삐약! 밖이 조금 보인다!"']
+          : ['"알 속이 따뜻해... 얼른 숙제해줘! 🥚"', '"톡톡! 누가 밖에서 부르는 거야?"', '"꼬물꼬물... 힘을 내는 중이야!"']);
+
+      chickSpeech.textContent = messages[Math.floor(Math.random() * messages.length)];
+    }
+
+    function render() {
+      updateDateDisplay();
+      updateTodayHistory();
+      if (currentView === 'month') {
+        renderCalendar();
+      }
+      if (currentView === 'day') {
+        renderDayView();
+      }
+      const isMj = s.activeTab === 'mj';
+      const curTasks = s.tasks[s.activeTab];
+      const toss = calculateTossSavings(s.activeTab);
+
+      const tabMj = document.getElementById('tabMj');
+      const tabBc = document.getElementById('tabBc');
+      if (isMj) {
+        tabMj.className = 'tab-btn active mj';
+        tabBc.className = 'tab-btn';
+      } else {
+        tabMj.className = 'tab-btn';
+        tabBc.className = 'tab-btn active bc';
+      }
+
+      renderTossLedger();
+      const tossTargetLabel = document.getElementById('tossTargetLabel');
+      const tossCurAmount = document.getElementById('tossCurAmount');
+      const tossBreakdown = document.getElementById('tossBreakdown');
+      const tossCard = document.getElementById('tossCard');
+
+      tossTargetLabel.textContent = isMj ? 'MJ의 토스 31일 적금 목표!' : 'BC의 토스 적금 목표!';
+      tossCurAmount.textContent = toss.total.toLocaleString();
+
+      let breakdownText = '';
+      if (toss.completion > 0) {
+        breakdownText = '🎉 오늘 올클리어 달성 보너스 100원!';
+      } else {
+        breakdownText = '자기 전 리스트 100% 완료 시 보너스 100원 적립!';
+      }
+      if (toss.extra > 0) {
+        breakdownText += ` + 추가 보너스 ${toss.extra.toLocaleString()}원`;
+      }
+      tossBreakdown.textContent = breakdownText;
+
+      if (!isMj) {
+        tossCard.style.background = 'linear-gradient(135deg, #2563eb, #0284c7)';
+      } else {
+        tossCard.style.background = 'linear-gradient(135deg, #0064FF, #7c3aed)';
+      }
+
+      const mandatoryTasks = curTasks.filter(isTodayMandatory);
+      const doneMandatory = mandatoryTasks.filter(t => t.done).length;
+      const totalMandatory = mandatoryTasks.length;
+      const pct = totalMandatory > 0 ? Math.round((doneMandatory / totalMandatory) * 100) : 0;
+
+      const futureTasks = curTasks.filter(t => !isTodayMandatory(t));
+      const doneFuture = futureTasks.filter(t => t.done).length;
+
+      const progressCount = document.getElementById('progressCount');
+      const progressBar = document.getElementById('progressBar');
+      const doneBanner = document.getElementById('doneBanner');
+
+      let countHtml = `${doneMandatory} / ${totalMandatory} (${pct}%)`;
+      if (doneFuture > 0) {
+        countHtml += ` <span style="font-size:11px; color:#10b981; font-weight:700;">+미리한 숙제 ${doneFuture}개 👏</span>`;
+      }
+      progressCount.innerHTML = countHtml;
+      progressCount.style.color = isMj ? 'var(--app-purple)' : 'var(--app-blue)';
+      progressBar.style.width = pct + '%';
+      if (!isMj) {
+        progressBar.classList.add('bc-theme');
+      } else {
+        progressBar.classList.remove('bc-theme');
+      }
+
+      doneBanner.style.display = toss.isAllDone ? 'block' : 'none';
+
+      // Chick Incubator Stage
+      const chickBox = document.getElementById('chickBox');
+      const chickAvatar = document.getElementById('chickAvatar');
+      const chickName = document.getElementById('chickName');
+      const chickSpeech = document.getElementById('chickSpeech');
+
+      if (chickBox && chickAvatar && chickName && chickSpeech) {
+        chickAvatar.className = 'chick-avatar';
+        chickBox.className = 'chick-stage-box';
+
+        if (pct === 0) {
+          chickAvatar.textContent = '🥚';
+          chickAvatar.classList.add('wiggle');
+          chickName.innerHTML = '잠자는 알 <span style="font-size:10.5px; font-weight:700; background:#fef3c7; color:#92400e; padding:1px 6px; border-radius:10px;">0%</span>';
+          chickSpeech.textContent = '"오늘치 숙제를 시작하면 내가 깨어날지도 몰라... 쿨쿨 zZ"';
+        } else if (pct < 50) {
+          chickAvatar.textContent = '🥚💥';
+          chickAvatar.classList.add('wiggle');
+          chickName.innerHTML = '금이 가기 시작한 알! <span style="font-size:10.5px; font-weight:700; background:#fed7aa; color:#9a3412; padding:1px 6px; border-radius:10px;">' + pct + '%</span>';
+          chickSpeech.textContent = '"우와! 숙제하니까 알에 금이 쩍쩍 가고 있어! 꼬물꼬물..."';
+        } else if (pct < 100) {
+          chickAvatar.textContent = '🐣';
+          chickAvatar.classList.add('jump');
+          chickName.innerHTML = '빼꼼 나온 아기 병아리! <span style="font-size:10.5px; font-weight:700; background:#fef08a; color:#854d0e; padding:1px 6px; border-radius:10px;">' + pct + '%</span>';
+          chickSpeech.textContent = '"거의 다 왔어 삐약! 조금만 더 하면 세상 밖으로 나갈래!"';
+        } else {
+          chickAvatar.textContent = '🐥👑';
+          chickAvatar.classList.add('jump');
+          chickBox.classList.add('stage-3');
+          chickName.innerHTML = '✨ 축 부화! 황금 왕관 삐약이 ✨';
+          chickSpeech.textContent = '"만세! 오늘 숙제 100% 올클리어! 삐약이가 태어났어요! 💛"';
+        }
+      }
+
+      const schoolTasks = curTasks.filter(t => t.section === 'school');
+      const academyTasks = curTasks.filter(t => t.section === 'academy');
+      const routineTasks = curTasks.filter(t => t.section === 'routine' || !t.section);
+
+      renderTaskList('schoolTaskList', schoolTasks);
+      renderTaskList('academyTaskList', academyTasks);
+      renderTaskList('routineTaskList', routineTasks);
+
+      const bonusSec = document.getElementById('bonusSection');
+      bonusSec.innerHTML = '';
+
+      if (isMj) {
+        const cur = s.bonus.mj;
+        bonusSec.appendChild(createBonusRow('추가 문제집 풀기', '1장당 +100원', '📝', cur.extraWorksheet || 0, 'extraWorksheet'));
+        bonusSec.appendChild(createBonusRow('두꺼운 책(한글) 읽기', '1권당 +500원', '📚', cur.thickKoreanBook || 0, 'thickKoreanBook'));
+        bonusSec.appendChild(createBonusRow('영어책 읽기 (예: 호양이달)', '1권당 +500원', '📕', cur.englishBook || 0, 'englishBook'));
+      } else {
+        const cur = s.bonus.bc;
+        bonusSec.appendChild(createBonusRow('영어 책 한 권 읽기', '1권당 +500원', '📕', cur.englishBook || 0, 'englishBook'));
+        bonusSec.appendChild(createBonusRow('보통 한글 책 읽기', '1권당 +200원', '📖', cur.normalKoreanBook || 0, 'normalKoreanBook'));
+        bonusSec.appendChild(createBonusRow('추가 문제집 풀기', '1장당 +100원', '📝', cur.extraWorksheet || 0, 'extraWorksheet'));
+      }
+    }
+
+    function createBonusRow(title, rate, icon, count, key) {
+      const row = document.createElement('div');
+      row.className = 'bonus-card';
+      row.innerHTML = `
+        <div class="bonus-info">
+          <span class="bonus-icon">${icon}</span>
+          <div>
+            <div class="bonus-title">${title}</div>
+            <div class="bonus-rate">${rate}</div>
+          </div>
+        </div>
+        <div class="stepper">
+          <button class="step-btn" onclick="changeBonus('${key}', -1, event)">-</button>
+          <span class="step-count">${count}</span>
+          <button class="step-btn" onclick="changeBonus('${key}', 1, event)">+</button>
+        </div>
+      `;
+      return row;
+    }
+
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let emojiParticles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerParticles(x, y, isCoin) {
+      if (!x || !y) {
+        x = window.innerWidth / 2;
+        y = window.innerHeight / 2;
+      }
+      const colors = isCoin 
+        ? ['#f59e0b', '#fbbf24', '#fde047', '#d97706']
+        : ['#8b5cf6', '#ec4899', '#2563eb', '#10b981', '#f59e0b'];
+
+      for (let i = 0; i < 28; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 6 + 2;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1.5,
+          size: Math.random() * 5 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
+    }
+
+    function triggerEmojiBurst(x, y, emoji) {
+      if (!x || !y) {
+        x = window.innerWidth / 2;
+        y = window.innerHeight / 2;
+      }
+      for (let i = 0; i < 6; i++) {
+        const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.5;
+        const speed = Math.random() * 5 + 3;
+        emojiParticles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          emoji: emoji,
+          size: Math.random() * 10 + 20,
+          alpha: 1,
+          decay: 0.03
+        });
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.15;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      for (let i = emojiParticles.length - 1; i >= 0; i--) {
+        const ep = emojiParticles[i];
+        ep.x += ep.vx;
+        ep.y += ep.vy;
+        ep.vy += 0.1;
+        ep.alpha -= ep.decay;
+
+        if (ep.alpha <= 0) {
+          emojiParticles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = ep.alpha;
+        ctx.font = `${ep.size}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(ep.emoji, ep.x, ep.y);
+        ctx.restore();
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // PWA Install Prompt handling
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const banner = document.getElementById('installBanner');
+      if (banner) banner.style.display = 'flex';
+    });
+
+    document.getElementById('installBtn')?.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          const banner = document.getElementById('installBanner');
+          if (banner) banner.style.display = 'none';
+        }
+        deferredPrompt = null;
+      } else {
+        alert("브라우저 오른쪽 위 메뉴(점 3개 ⋮)를 누르고 [홈 화면에 추가] 또는 [앱 설치]를 눌러주세요!");
+      }
+    });
+
+    render();
+    fetchFromCloud();
+
+    // 클라우드 상태 주기적 확인 (10초)
+    setInterval(fetchFromCloud, 10000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') fetchFromCloud();
+    });
+
+    // 날짜가 바뀌면(자정 넘김·장시간 켜둔 앱) 헤더 날짜와 매일 루틴을 스스로 넘긴다
+    let bootDateStr = getTodayDateStr();
+    setInterval(() => {
+      updateDateDisplay();
+      const todayStr = getTodayDateStr();
+      if (todayStr !== bootDateStr) {
+        bootDateStr = todayStr;
+        if (checkAndApplyDailyRollover(s)) {
+          localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+          syncToCloud();
+        }
+        render();
+      }
+    }, 30000);
+  </script>
+</body>
+</html>
