@@ -1630,6 +1630,79 @@
       if (el) el.textContent = getFormattedDateKorean();
     }
 
+    // ===== D-Day 실시간 계산 =====
+    // 마감일은 task.due(YYYY-MM-DD)에 저장하고, 없으면 dday 문자열의 (MM/DD) 표기를 읽는다.
+    // 화면에 그릴 때마다 오늘 날짜와 비교해 D-N / D-Day / D+N을 새로 계산하므로 날짜가 바뀌어도 자동으로 갱신된다.
+    const WEEKDAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
+
+    function parseDueYmd(task) {
+      if (task && task.due) {
+        const m = String(task.due).match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (m) return { y: +m[1], m: +m[2], d: +m[3] };
+      }
+      if (task && task.dday) {
+        const m = String(task.dday).match(/(\d{1,2})\s*[\/.]\s*(\d{1,2})/);
+        if (m) {
+          const now = new Date();
+          let y = now.getFullYear();
+          const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+          const t = Date.UTC(y, +m[1] - 1, +m[2]);
+          // 연말·연초를 넘겨 저장된 표기 보정 (6개월 이상 차이면 연도 조정)
+          if (t - today > 183 * 86400000) y -= 1;
+          else if (today - t > 183 * 86400000) y += 1;
+          return { y, m: +m[1], d: +m[2] };
+        }
+      }
+      return null;
+    }
+
+    function getDdayDiff(task) {
+      const due = parseDueYmd(task);
+      if (!due) return null;
+      const now = new Date();
+      const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+      const target = Date.UTC(due.y, due.m - 1, due.d);
+      return Math.round((target - today) / 86400000);
+    }
+
+    function getDdayLabel(task) {
+      const diff = getDdayDiff(task);
+      const stored = task.dday || '';
+      if (diff === null) return stored;
+      let rest = String(stored)
+        .replace(/^\s*D\s*[-–+]?\s*(?:Day|day|\d+)\s*/i, '')
+        .replace(/^\s*(?:완료|✓)\s*/, '')
+        .replace(/^\s*(?:오늘|내일|모레)\s*/, '')
+        .replace(/^(\(\s*)(?:오늘|내일|모레)\s*/, '$1')
+        .replace(/\s+/g, ' ')
+        .trim();
+      let prefix;
+      if (diff > 0) prefix = `D-${diff}`;
+      else if (diff === 0) prefix = 'D-Day';
+      else prefix = task.done ? '완료' : `D+${-diff}`;
+      return rest ? `${prefix} ${rest}` : prefix;
+    }
+
+    function isDdayUrgent(task) {
+      const diff = getDdayDiff(task);
+      if (diff === null) return !!task.urgent;
+      return !task.done && diff <= 1;
+    }
+
+    // dday 문자열만 있는 예전 데이터에 마감일(due)을 채워 넣는다
+    function ensureTaskDueDates(st) {
+      let changed = false;
+      if (st && st.tasks) {
+        ['mj', 'bc'].forEach(c => (st.tasks[c] || []).forEach(t => {
+          if (!t.due) {
+            const p = parseDueYmd(t);
+            if (p) { t.due = makeDateStr(p.y, p.m, p.d); changed = true; }
+          }
+        }));
+      }
+      return changed;
+    }
+
     function checkAndApplyDailyRollover(stateObj) {
       const todayStr = getTodayDateStr();
       if (!stateObj.lastDate) {
@@ -2189,8 +2262,17 @@
 };
     }
 
+    updateDateDisplay();
+
     const saved = localStorage.getItem('family_integrated_homework_state');
-    let s = saved ? JSON.parse(saved) : freshState();
+    let s;
+    try {
+      s = saved ? JSON.parse(saved) : freshState();
+      if (!s || !s.tasks) s = freshState();
+    } catch (e) {
+      console.warn('Saved state unreadable, starting fresh', e);
+      s = freshState();
+    }
     if (!s.history || !s.history.mj || Object.keys(s.history.mj).length === 0) {
       s.history = getDefaultHistory();
     }
@@ -2201,6 +2283,9 @@
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
     }
     if (s.tasks && checkAndApplyDailyRollover(s)) {
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+    }
+    if (ensureTaskDueDates(s)) {
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
     }
 
@@ -2629,16 +2714,10 @@
 
     function isTodayMandatory(task) {
       if (task.section === 'routine') return true;
-      if (task.dday) {
-        const d = task.dday;
-        // 오늘 마감(D-Day) 및 내일 마감/등교 제출(D-1)은 오늘 밤까지 끝내야 하므로 오늘 필수!
-        if (d.includes('D-Day') || d.includes('오늘') || d.includes('내일') || d.includes('D-1') || task.urgent) {
-          return true;
-        }
-        if (d.includes('D-2') || d.includes('D-3') || d.includes('D-4') || d.includes('D-5') || d.includes('D-6') || d.includes('D-7')) {
-          return false;
-        }
-      }
+      // 오늘 마감(D-Day)과 내일 마감(D-1)은 오늘 밤까지 끝내야 하므로 오늘 필수
+      // (D-day 숫자를 글자로 읽지 않고 오늘 날짜와의 차이로 판정하므로 날짜가 바뀌면 자동 반영)
+      const diff = getDdayDiff(task);
+      if (diff !== null) return diff <= 1;
       return true;
     }
 
@@ -2693,6 +2772,7 @@
           if (remote && remote.tasks) {
             const rolled = checkAndApplyDailyRollover(remote);
             const renamed = applyTitleRenames(remote);
+            const dueFilled = ensureTaskDueDates(remote);
             s.tasks = remote.tasks;
             if (remote.bonus) s.bonus = remote.bonus;
             if (remote.deposits) s.deposits = remote.deposits;
@@ -2706,7 +2786,7 @@
             updateTodayHistory();
             localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
             render();
-            if (rolled || renamed || !remote.history) syncToCloud();
+            if (rolled || renamed || dueFilled || !remote.history) syncToCloud();
           }
         }
       } catch (e) {
@@ -2812,17 +2892,11 @@
     }
 
     function getDueDateWeight(task) {
-      if (!task.dday) return 999;
-      const d = task.dday;
-      if (d.includes('D-Day') || d.includes('오늘') || (task.urgent && !d.includes('D-1') && !d.includes('D-2') && !d.includes('D-3') && !d.includes('내일'))) return 1;
-      if (d.includes('D-1') || d.includes('내일')) return 2;
-      if (d.includes('D-2')) return 3;
-      if (d.includes('D-3')) return 4;
-      if (d.includes('D-4')) return 5;
-      if (d.includes('D-5')) return 6;
-      if (d.includes('D-6')) return 7;
-      if (d.includes('D-7')) return 8;
-      return 100;
+      if (!task.dday && !task.due) return 999;
+      const diff = getDdayDiff(task);
+      if (diff === null) return task.urgent ? 1 : 100;
+      if (diff < 0) return 90 + Math.min(9, -diff); // 기한 지난 항목은 뒤로
+      return 1 + diff;                              // 오늘=1, D-1=2, D-2=3 ...
     }
 
     function renderTaskList(containerId, list) {
@@ -2833,7 +2907,7 @@
       const sortedList = [...list].sort((a, b) => getDueDateWeight(a) - getDueDateWeight(b));
 
       sortedList.forEach(task => {
-        const isTodayDue = task.dday && (task.dday.includes('D-Day') || task.dday.includes('오늘') || task.dday.includes('내일') || task.dday.includes('D-1') || task.urgent);
+        const isTodayDue = !!task.dday && isDdayUrgent(task);
         const isRoutine = task.section === 'routine' || (!task.section && !task.dday);
         const item = document.createElement('div');
         let classes = ['task-item'];
@@ -2855,10 +2929,10 @@
         `;
 
         let metaHtml = '';
-        if (task.dday || task.note || isRoutine) {
+        if (task.dday || task.due || task.note || isRoutine) {
           let ddayTag = '';
-          if (task.dday) {
-            ddayTag = `<span class="${task.urgent ? 'dday-chip urgent' : 'dday-chip'}">${task.dday}</span>`;
+          if (task.dday || task.due) {
+            ddayTag = `<span class="${isDdayUrgent(task) ? 'dday-chip urgent' : 'dday-chip'}">${escapeHtml(getDdayLabel(task))}</span>`;
           } else if (isRoutine) {
             ddayTag = `<span class="routine-chip">✨ 오늘 매일 루틴</span>`;
           }
@@ -3263,11 +3337,26 @@
     render();
     fetchFromCloud();
 
-    // Poll cloud state every 3.5 seconds
+    // 클라우드 상태 주기적 확인 (10초)
     setInterval(fetchFromCloud, 10000);
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') fetchFromCloud();
     });
+
+    // 날짜가 바뀌면(자정 넘김·장시간 켜둔 앱) 헤더 날짜와 매일 루틴을 스스로 넘긴다
+    let bootDateStr = getTodayDateStr();
+    setInterval(() => {
+      updateDateDisplay();
+      const todayStr = getTodayDateStr();
+      if (todayStr !== bootDateStr) {
+        bootDateStr = todayStr;
+        if (checkAndApplyDailyRollover(s)) {
+          localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+          syncToCloud();
+        }
+        render();
+      }
+    }, 30000);
   </script>
 </body>
 </html>
