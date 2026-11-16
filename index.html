@@ -2847,6 +2847,16 @@
     let shopCat = 'mart';
     let shopRenderedSig = '';
 
+    // 이 기기에서 방금 지운 항목 id (최근 5분). 클라우드 응답이 잠깐 오래된 사본이어도 지운 항목이 되살아나지 않게 한다.
+    const deletedGuards = {};
+    function markDeleted(id) {
+      if (id) deletedGuards[String(id)] = Date.now();
+    }
+    function notDeleted(item) {
+      const t = deletedGuards[String(item && item.id)];
+      return !t || (Date.now() - t) > 5 * 60 * 1000;
+    }
+
     const READ_PEOPLE = [
       { key: 'mj', label: '💜 MJ', badge: '💜 MJ' },
       { key: 'bc', label: '💙 BC', badge: '💙 BC' },
@@ -4834,7 +4844,7 @@
     // (완료·삭제는 클라우드 기록을 따른다 — 지운 항목이 오래된 사본 때문에 되살아나지 않도록)
     function mergeShoppingList(st, remote) {
       const hasRemote = !!(remote && Array.isArray(remote.shoppingList));
-      const pulled = shopClean(hasRemote ? remote.shoppingList : []);
+      const pulled = shopClean(hasRemote ? remote.shoppingList : []).filter(notDeleted);
       const local = shopClean(Array.isArray(st.shoppingList) ? st.shoppingList : []);
       const ids = {};
       pulled.forEach(it => { ids[it.id] = true; });
@@ -4886,7 +4896,10 @@
       ensureShoppingList(s);
       const before = s.shoppingList.length;
       s.shoppingList = s.shoppingList.filter(x => x.id !== id);
-      if (s.shoppingList.length !== before) commit(s, true);
+      if (s.shoppingList.length !== before) {
+        markDeleted(id);
+        commit(s, true);
+      }
     }
 
     function clearBoughtItems() {
@@ -4894,6 +4907,7 @@
       const n = s.shoppingList.filter(x => x.done).length;
       if (!n) return;
       if (!confirm('산 것 ' + n + '개를 목록에서 비울까요?')) return;
+      s.shoppingList.filter(x => x.done).forEach(x => markDeleted(x.id));
       s.shoppingList = s.shoppingList.filter(x => !x.done);
       commit(s, true);
     }
@@ -5006,7 +5020,7 @@
 
     function mergeReadingLogs(st, remote) {
       const hasRemote = !!(remote && Array.isArray(remote.readingLogs));
-      const pulled = readingLogClean(hasRemote ? remote.readingLogs : []);
+      const pulled = readingLogClean(hasRemote ? remote.readingLogs : []).filter(notDeleted);
       const local = readingLogClean(Array.isArray(st.readingLogs) ? st.readingLogs : []);
       const ids = {};
       pulled.forEach(it => { ids[it.id] = true; });
@@ -5098,7 +5112,10 @@
       if (!it) return;
       if (it.earn > 0 && !confirm('「' + it.title + '」 기록을 지울까요?\n독서 적립 ' + it.earn.toLocaleString() + '원도 함께 취소돼요.')) return;
       s.readingLogs = s.readingLogs.filter(x => x.id !== id);
-      if (s.readingLogs.length !== before) commit(s, true);
+      if (s.readingLogs.length !== before) {
+        markDeleted(id);
+        commit(s, true);
+      }
     }
 
     function renderReadingLogs() {
