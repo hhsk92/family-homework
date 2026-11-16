@@ -229,7 +229,7 @@
     /* View Switcher */
     .view-switcher {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 5px;
       background: #e2e8f0;
       padding: 4px;
@@ -256,29 +256,39 @@
       white-space: nowrap;
     }
 
-    /* 좁은 폰 화면: 탭이 4개라 한 줄에 넣으면 글자가 잘리므로 2×2로 접어 크게 보여준다 */
-    @media (max-width: 600px) {
+    /* 좁은 폰 화면: 탭이 5개라 한 줄에 넣으면 글자가 잘리므로 3+2 두 줄로 접어 크게 보여준다 */
+    @media (max-width: 700px) {
       .streak-badge { display: none; }
       .view-switcher {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 5px;
         padding: 5px;
         border-radius: 18px;
       }
       .view-btn {
         border-radius: 13px;
-        padding: 10px 6px;
-        font-size: 12.5px;
+        padding: 9px 4px;
+        font-size: 12px;
         gap: 4px;
       }
+      .view-btn:nth-child(1),
+      .view-btn:nth-child(2),
+      .view-btn:nth-child(3) { grid-column: span 2; }
+      .view-btn:nth-child(4),
+      .view-btn:nth-child(5) { grid-column: span 3; }
     }
 
+    /* 아주 좁은 폰(360px 이하)에서도 한 줄에 들어가게 */
     @media (max-width: 430px) {
-      .view-btn { padding: 10px 6px; gap: 4px; letter-spacing: -0.4px; }
+      .view-btn { padding: 9px 4px; gap: 4px; letter-spacing: -0.4px; }
       .title-group h1 { font-size: 18px; }
       .chick-avatar { width: 52px; height: 52px; }
       .chick-name { font-size: 12.5px; gap: 4px; }
       .chick-speech { font-size: 11.5px; }
+    }
+
+    @media (max-width: 360px) {
+      .view-btn { font-size: 11px; padding: 8px 3px; letter-spacing: -0.5px; }
     }
 
     .view-btn.active {
@@ -2013,6 +2023,406 @@
       text-align: center;
       margin-top: 10px;
     }
+
+    /* ===== 공용 독서기록장 (숙제 아님 · 진도율·토스 적립 미포함) ===== */
+    .rd-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.2px;
+      margin-bottom: 10px;
+    }
+
+    .rd-sub-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .rd-view-intro {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #1e40af;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 14px;
+      padding: 11px 12px;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
+    .rd-summary {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .rd-stat {
+      flex: 1;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 11px 8px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .rd-stat-num {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1d4ed8;
+      line-height: 1.2;
+    }
+
+    .rd-stat-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #64748b;
+      margin-top: 3px;
+    }
+
+    .rd-earn-grid {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .rd-earn-box {
+      flex: 1;
+      border-radius: 14px;
+      padding: 9px 10px;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+    }
+
+    .rd-earn-box.mj { border-color: #ddd6fe; background: #faf5ff; }
+    .rd-earn-box.bc { border-color: #bfdbfe; background: #f0f7ff; }
+
+    .rd-earn-who {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #64748b;
+    }
+
+    .rd-earn-box.mj .rd-earn-who { color: #6d28d9; }
+    .rd-earn-box.bc .rd-earn-who { color: #1d4ed8; }
+
+    .rd-earn-val {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2px;
+    }
+
+    .rd-earn-note {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin: 0 2px 10px;
+    }
+
+    .rd-filters {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      padding-bottom: 3px;
+      margin-bottom: 10px;
+      scrollbar-width: none;
+    }
+
+    .rd-filters::-webkit-scrollbar { display: none; }
+
+    .rd-filter {
+      flex: 0 0 auto;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      color: #475569;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 7px 11px;
+      border-radius: 9999px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .rd-filter.on {
+      border-color: #2563eb;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .rd-form {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 11px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      margin-bottom: 12px;
+    }
+
+    .rd-label {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #94a3b8;
+      margin: 0 0 5px 2px;
+    }
+
+    .rd-people {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+      margin-bottom: 9px;
+    }
+
+    .rd-person {
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 8px 2px;
+      border-radius: 11px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .rd-person.on.mj { border-color: #c4b5fd; background: #f5f3ff; color: #6d28d9; }
+    .rd-person.on.bc { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+    .rd-person.on.mom { border-color: #fbcfe8; background: #fdf2f8; color: #be185d; }
+    .rd-person.on.dad { border-color: #a7f3d0; background: #ecfdf5; color: #047857; }
+
+    .rd-input {
+      width: 100%;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      background: #f8fafc;
+      font-family: inherit;
+    }
+
+    .rd-input:focus, .rd-date:focus {
+      outline: none;
+      border-color: #60a5fa;
+      background: #ffffff;
+    }
+
+    .rd-types {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      margin-bottom: 9px;
+    }
+
+    .rd-type {
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 8px 2px;
+      border-radius: 11px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .rd-type.on {
+      border-color: #5eead4;
+      background: #f0fdfa;
+      color: #0d9488;
+    }
+
+    .rd-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .rd-stars {
+      display: flex;
+      gap: 1px;
+      flex: 0 0 auto;
+    }
+
+    .rd-star {
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      line-height: 1;
+      padding: 2px;
+      color: #cbd5e1;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .rd-star.on { color: #f59e0b; }
+
+    .rd-date {
+      flex: 1;
+      min-width: 0;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 9px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #0f172a;
+      background: #f8fafc;
+      font-family: inherit;
+    }
+
+    .rd-submit {
+      width: 100%;
+      margin-top: 10px;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(29, 78, 216, 0.22);
+      font-family: inherit;
+    }
+
+    .rd-submit:active { transform: scale(0.99); }
+
+    .rd-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .rd-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 11px 12px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .rd-card-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rd-who {
+      flex: 0 0 auto;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 7px;
+      border-radius: 9999px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .rd-who.mj { color: #6d28d9; background: #f5f3ff; border-color: #ddd6fe; }
+    .rd-who.bc { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .rd-who.mom { color: #be185d; background: #fdf2f8; border-color: #fbcfe8; }
+    .rd-who.dad { color: #047857; background: #ecfdf5; border-color: #a7f3d0; }
+
+    .rd-book {
+      flex: 1;
+      min-width: 0;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .rd-type-tag {
+      flex: 0 0 auto;
+      font-size: 10px;
+      font-weight: 700;
+      color: #0d9488;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .rd-card-stars {
+      font-size: 12.5px;
+      color: #f59e0b;
+      letter-spacing: 1.5px;
+      margin-top: 6px;
+    }
+
+    .rd-date-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-top: 6px;
+    }
+
+    .rd-earn-tag {
+      font-size: 10px;
+      font-weight: 800;
+      color: #b45309;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .rd-empty {
+      text-align: center;
+      padding: 28px 16px;
+      background: #ffffff;
+      border: 1.5px dashed #e2e8f0;
+      border-radius: 18px;
+    }
+
+    .rd-empty-emoji {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+      margin-bottom: 9px;
+    }
+
+    .rd-empty-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #64748b;
+    }
+
+    .rd-empty-sub {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-top: 5px;
+      line-height: 1.6;
+    }
+
+    .rd-note {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -2059,6 +2469,9 @@
     </button>
     <button class="view-btn" id="viewBtnShopping" onclick="switchView('shopping')">
       <span>🛒 쇼핑리스트</span>
+    </button>
+    <button class="view-btn" id="viewBtnReading" onclick="switchView('reading')">
+      <span>📚 독서기록장</span>
     </button>
   </div>
 
@@ -2295,6 +2708,87 @@
     <div class="shop-list-wrap" id="shopListWrap"></div>
     <div class="shop-note">MJ·BC 탭을 바꿔도 같은 쇼핑리스트예요</div>
   </div> <!-- /#shoppingView -->
+
+  <!-- Reading View: 공용 독서기록장 (숙제 아님 · 누가 어떤 책을 읽었는지 같이 남김) -->
+  <div id="readingView" style="display:none;">
+    <div class="rd-title" style="margin-bottom: 8px;">
+      <span>📚 우리 가족 독서기록장</span>
+      <span class="rd-sub-tag">숙제 아님 · 공용</span>
+    </div>
+    <div class="rd-view-intro">
+      누가 어떤 책을 읽었는지 같이 남겨요 📖<br>
+      숙제 달성률·토스 적립과는 따로 계산돼요
+    </div>
+
+    <div class="rd-summary">
+      <div class="rd-stat">
+        <div class="rd-stat-num" id="rdTotal">0</div>
+        <div class="rd-stat-label">📚 총 읽은 권수</div>
+      </div>
+      <div class="rd-stat">
+        <div class="rd-stat-num" id="rdMonth">0</div>
+        <div class="rd-stat-label">📅 이번 달 읽은 권수</div>
+      </div>
+    </div>
+
+    <div class="rd-earn-grid">
+      <div class="rd-earn-box mj">
+        <div class="rd-earn-who">💜 MJ 독서 적립</div>
+        <div class="rd-earn-val" id="rdEarnMj">0원</div>
+      </div>
+      <div class="rd-earn-box bc">
+        <div class="rd-earn-who">💙 BC 독서 적립</div>
+        <div class="rd-earn-val" id="rdEarnBc">0원</div>
+      </div>
+    </div>
+    <div class="rd-earn-note">아이 책은 기록하면 토스 적립에 자동으로 쌓여요 · 엄마·아빠 기록은 적립 없음</div>
+
+    <div class="rd-filters" id="rdFilters">
+      <button class="rd-filter on" data-who="all" onclick="setReadingFilter('all')">전체</button>
+      <button class="rd-filter" data-who="mj" onclick="setReadingFilter('mj')">💜 MJ</button>
+      <button class="rd-filter" data-who="bc" onclick="setReadingFilter('bc')">💙 BC</button>
+      <button class="rd-filter" data-who="mom" onclick="setReadingFilter('mom')">👩 엄마</button>
+      <button class="rd-filter" data-who="dad" onclick="setReadingFilter('dad')">👨 아빠</button>
+    </div>
+
+    <div class="rd-form">
+      <div class="rd-label">읽은 사람</div>
+      <div class="rd-people" id="rdPeople">
+        <button class="rd-person on mj" data-who="mj" onclick="selectReader('mj')">💜 MJ</button>
+        <button class="rd-person bc" data-who="bc" onclick="selectReader('bc')">💙 BC</button>
+        <button class="rd-person mom" data-who="mom" onclick="selectReader('mom')">👩 엄마</button>
+        <button class="rd-person dad" data-who="dad" onclick="selectReader('dad')">👨 아빠</button>
+      </div>
+
+      <div class="rd-label">책 제목</div>
+      <input class="rd-input" id="rdTitle" type="text" maxlength="50" autocomplete="off" placeholder="예: 마당을 나온 암탉"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();addReadingLog();}">
+
+      <div class="rd-label" style="margin-top: 9px;">구분</div>
+      <div class="rd-types" id="rdTypes">
+        <button class="rd-type on" data-type="ko" onclick="selectBookType('ko')">한글책</button>
+        <button class="rd-type" data-type="en" onclick="selectBookType('en')">영어책(AR)</button>
+        <button class="rd-type" data-type="etc" onclick="selectBookType('etc')">기타</button>
+      </div>
+
+      <div class="rd-label">별점 · 날짜</div>
+      <div class="rd-row">
+        <div class="rd-stars" id="rdStars">
+          <button class="rd-star on" data-n="1" onclick="setRating(1)" aria-label="1점">★</button>
+          <button class="rd-star on" data-n="2" onclick="setRating(2)" aria-label="2점">★</button>
+          <button class="rd-star on" data-n="3" onclick="setRating(3)" aria-label="3점">★</button>
+          <button class="rd-star on" data-n="4" onclick="setRating(4)" aria-label="4점">★</button>
+          <button class="rd-star on" data-n="5" onclick="setRating(5)" aria-label="5점">★</button>
+        </div>
+        <input class="rd-date" id="rdDate" type="date">
+      </div>
+
+      <button class="rd-submit" onclick="addReadingLog()">📚 기록하기</button>
+    </div>
+
+    <div class="rd-list" id="rdList"></div>
+    <div class="rd-note">MJ·BC 탭을 바꿔도 같은 독서기록이에요</div>
+  </div> <!-- /#readingView -->
 
   <!-- Day Detail View (달력에서 지난 날짜를 누르면 열림) — 오늘의 기록과 같은 구성, 날짜만 해당 날짜 -->
   <div id="dayView" style="display:none;">
@@ -2632,6 +3126,8 @@
         if (!r) return;
         sum += (typeof r.earn === 'number') ? r.earn : (r.done ? 100 : 0);
       });
+      // 독서 적립은 history의 earn에 들어가지 않으므로, 기록된 전체 독서 적립을 더한다
+      sum += readingEarn(child, 'all');
       return sum;
     }
 
@@ -3156,6 +3652,9 @@
     if (ensureShoppingList(s)) {
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
     }
+    if (ensureReadingLogs(s)) {
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+    }
 
     goThisMonthInit();
     function goThisMonthInit() {
@@ -3170,29 +3669,34 @@
       const dayEl = document.getElementById('dayView');
       const plantsEl = document.getElementById('plantsView');
       const shoppingEl = document.getElementById('shoppingView');
+      const readingEl = document.getElementById('readingView');
       const childTabs = document.getElementById('childTabs');
       const btnToday = document.getElementById('viewBtnToday');
       const btnMonth = document.getElementById('viewBtnMonth');
       const btnPlants = document.getElementById('viewBtnPlants');
       const btnShopping = document.getElementById('viewBtnShopping');
+      const btnReading = document.getElementById('viewBtnReading');
 
       todayEl.style.display = view === 'today' ? 'block' : 'none';
       monthEl.style.display = view === 'month' ? 'block' : 'none';
       if (dayEl) dayEl.style.display = view === 'day' ? 'block' : 'none';
       if (plantsEl) plantsEl.style.display = view === 'plants' ? 'block' : 'none';
       if (shoppingEl) shoppingEl.style.display = view === 'shopping' ? 'block' : 'none';
-      // 식물 물주기·쇼핑리스트는 공용이라 아이 탭(MJ/BC)을 숨긴다
-      if (childTabs) childTabs.style.display = (view === 'plants' || view === 'shopping') ? 'none' : 'grid';
+      if (readingEl) readingEl.style.display = view === 'reading' ? 'block' : 'none';
+      // 식물 물주기·쇼핑리스트·독서기록장은 공용이라 아이 탭(MJ/BC)을 숨긴다
+      if (childTabs) childTabs.style.display = (view === 'plants' || view === 'shopping' || view === 'reading') ? 'none' : 'grid';
 
       btnToday.classList.toggle('active', view === 'today');
       btnMonth.classList.toggle('active', view === 'month' || view === 'day');
       if (btnPlants) btnPlants.classList.toggle('active', view === 'plants');
       if (btnShopping) btnShopping.classList.toggle('active', view === 'shopping');
+      if (btnReading) btnReading.classList.toggle('active', view === 'reading');
 
       if (view === 'month') renderCalendar();
       if (view === 'day') renderDayView();
       if (view === 'plants') renderPlants();
       if (view === 'shopping') renderShopping();
+      if (view === 'reading') renderReadingLogs();
       updateDateDisplay();
       window.scrollTo({ top: 0 });
     }
@@ -3686,10 +4190,15 @@
         extraBonus += (s.bonus.bc.extraWorksheet || 0) * 100;
       }
 
+      // 독서기록장에서 오늘 기록한 아이의 책도 토스 적립에 함께 쌓인다 (엄마·아빠 기록은 0원)
+      const readingBonus = readingEarn(target, 'today');
+
       return {
         base: 0,
         completion: completionBonus,
         extra: extraBonus,
+        reading: readingBonus,
+        // history에 저장되는 값은 날짜별 기본 적립(완료+보너스)만 — 독서 적립은 따로 합산해 중복되지 않게 한다
         total: completionBonus + extraBonus,
         isAllDone: isAllDone
       };
@@ -3711,7 +4220,7 @@
     }
 
     async function fetchFromCloud() {
-      let rolled = false, renamed = false, dueFilled = false, plantsNeedSync = false, shoppingNeedSync = false;
+      let rolled = false, renamed = false, dueFilled = false, plantsNeedSync = false, shoppingNeedSync = false, readingNeedSync = false;
       try {
         const res = await fetch(CLOUD_URL);
         if (res.ok) {
@@ -3728,6 +4237,8 @@
             plantsNeedSync = mergePlants(s, remote);
             // 쇼핑리스트 병합 (가족 공용 · 다른 기기에서 들어온 항목도 살린다)
             shoppingNeedSync = mergeShoppingList(s, remote);
+            // 독서기록 병합 (같은 규칙)
+            readingNeedSync = mergeReadingLogs(s, remote);
             // lastDate는 뒤로 가지 않게: 이미 오늘로 넘어간 기기 기록을 어제 값으로 되돌리지 않는다
             if (remote.lastDate && String(remote.lastDate) >= String(s.lastDate || '')) s.lastDate = remote.lastDate;
             if (remote.history) {
@@ -3747,7 +4258,7 @@
       updateTodayHistory();
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
       render();
-      if (rolled || renamed || dueFilled || plantsNeedSync || shoppingNeedSync) syncToCloud();
+      if (rolled || renamed || dueFilled || plantsNeedSync || shoppingNeedSync || readingNeedSync) syncToCloud();
     }
 
     function commit(next, sync = true) {
@@ -4415,6 +4926,250 @@
       wrap.innerHTML = html;
     }
 
+    // ===== 공용 독서기록장 (숙제 아님 · 아이 기록만 토스 적립에 함께 쌓임) =====
+    const READ_PEOPLE = [
+      { key: 'mj', label: '💜 MJ', badge: '💜 MJ' },
+      { key: 'bc', label: '💙 BC', badge: '💙 BC' },
+      { key: 'mom', label: '👩 엄마', badge: '👩 엄마' },
+      { key: 'dad', label: '👨 아빠', badge: '👨 아빠' }
+    ];
+    const READ_TYPES = [
+      { key: 'ko', label: '한글책' },
+      { key: 'en', label: '영어책(AR)' },
+      { key: 'etc', label: '기타' }
+    ];
+    // 1권당 독서 토스 적립 — 기존 보너스 규칙과 같은 금액 (MJ 한글 500 / 영어 500, BC 한글 200 / 영어 500)
+    const READ_EARN = {
+      mj: { ko: 500, en: 500, etc: 0 },
+      bc: { ko: 200, en: 500, etc: 0 },
+      mom: { ko: 0, en: 0, etc: 0 },
+      dad: { ko: 0, en: 0, etc: 0 }
+    };
+    let rdWho = 'mj';
+    let rdType = 'ko';
+    let rdRating = 5;
+    let rdFilter = 'all';
+
+    function readWhoLabel(key) {
+      const p = READ_PEOPLE.find(x => x.key === key);
+      return p ? p.label : '💜 MJ';
+    }
+
+    function readTypeLabel(key) {
+      const t = READ_TYPES.find(x => x.key === key);
+      return t ? t.label : READ_TYPES[0].label;
+    }
+
+    function readingLogClean(list) {
+      const out = [];
+      (Array.isArray(list) ? list : []).forEach((it, i) => {
+        if (!it || typeof it !== 'object') return;
+        const title = String(it.title || '').trim().slice(0, 50);
+        if (!title) return;
+        const rawId = String(it.id || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 60);
+        const who = READ_PEOPLE.some(p => p.key === it.who) ? it.who : 'mj';
+        const type = READ_TYPES.some(t => t.key === it.type) ? it.type : 'ko';
+        const d = String(it.date || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        out.push({
+          id: rawId || ('rl-' + i + '-' + title.length),
+          who: who,
+          title: title,
+          type: type,
+          rating: Math.min(5, Math.max(1, Number(it.rating) || 5)),
+          date: d ? d[1] + '-' + d[2] + '-' + d[3] : getTodayDateStr(),
+          earn: Math.max(0, Number(it.earn) || 0),
+          ts: Number(it.ts) || 0
+        });
+      });
+      return out;
+    }
+
+    function ensureReadingLogs(st) {
+      if (!st) return false;
+      const had = Array.isArray(st.readingLogs) ? JSON.stringify(st.readingLogs) : null;
+      st.readingLogs = readingLogClean(had === null ? [] : st.readingLogs);
+      return had !== JSON.stringify(st.readingLogs);
+    }
+
+    function mergeReadingLogs(st, remote) {
+      const hasRemote = !!(remote && Array.isArray(remote.readingLogs));
+      const pulled = readingLogClean(hasRemote ? remote.readingLogs : []);
+      const local = readingLogClean(Array.isArray(st.readingLogs) ? st.readingLogs : []);
+      const ids = {};
+      pulled.forEach(it => { ids[it.id] = true; });
+      const maxRemoteTs = pulled.reduce((m, it) => Math.max(m, it.ts), 0);
+      const extra = hasRemote
+        ? local.filter(it => !ids[it.id] && it.ts > maxRemoteTs)
+        : local;
+      st.readingLogs = readingLogClean(pulled.concat(extra));
+      const pack = list => JSON.stringify(list.slice().sort((a, b) => String(a.id).localeCompare(String(b.id))));
+      return pack(st.readingLogs) !== pack(pulled);
+    }
+
+    // 그 아이의 독서 적립 합계: 'all' 전체, 'today' 오늘 날짜, 'past' 지난 날짜
+    function readingEarn(child, range) {
+      const todayStr = getTodayDateStr();
+      return (Array.isArray(s.readingLogs) ? s.readingLogs : []).reduce((a, r) => {
+        if (!r || r.who !== child) return a;
+        const amt = Number(r.earn) || 0;
+        if (!(amt > 0)) return a;
+        const d = String(r.date || '');
+        if (!d || d > todayStr) return a;
+        if (range === 'today' && d !== todayStr) return a;
+        if (range === 'past' && d === todayStr) return a;
+        return a + amt;
+      }, 0);
+    }
+
+    function selectReader(who) {
+      if (!READ_PEOPLE.some(p => p.key === who)) return;
+      rdWho = who;
+      renderReadingLogs();
+    }
+
+    function selectBookType(type) {
+      if (!READ_TYPES.some(t => t.key === type)) return;
+      rdType = type;
+      renderReadingLogs();
+    }
+
+    function setRating(n) {
+      rdRating = Math.min(5, Math.max(1, Number(n) || 5));
+      renderReadingLogs();
+    }
+
+    function setReadingFilter(who) {
+      rdFilter = who === 'all' || READ_PEOPLE.some(p => p.key === who) ? who : 'all';
+      renderReadingLogs();
+    }
+
+    function addReadingLog() {
+      const titleEl = document.getElementById('rdTitle');
+      if (!titleEl) return;
+      const title = String(titleEl.value || '').trim().slice(0, 50);
+      if (!title) { titleEl.focus(); return; }
+      const dateEl = document.getElementById('rdDate');
+      const todayStr = getTodayDateStr();
+      const rawDate = dateEl && dateEl.value ? String(dateEl.value) : '';
+      const date = /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : todayStr;
+      ensureReadingLogs(s);
+      const now = Date.now();
+      s.readingLogs.push({
+        id: 'rl-' + now + '-' + Math.random().toString(36).slice(2, 6),
+        who: rdWho,
+        title: title,
+        type: rdType,
+        rating: rdRating,
+        date: date,
+        earn: (READ_EARN[rdWho] || READ_EARN.mom)[rdType] || 0,
+        ts: now
+      });
+      titleEl.value = '';
+      if (dateEl) dateEl.value = todayStr;
+      commit(s, true);
+      titleEl.focus();
+      if (rdWho === 'mj' || rdWho === 'bc') {
+        const box = document.getElementById('rdEarn' + (rdWho === 'mj' ? 'Mj' : 'Bc'));
+        if (box) {
+          box.style.transition = 'transform .18s ease';
+          box.style.transform = 'scale(1.08)';
+          setTimeout(() => { box.style.transform = 'scale(1)'; }, 180);
+        }
+      }
+    }
+
+    function deleteReadingLog(id) {
+      ensureReadingLogs(s);
+      const before = s.readingLogs.length;
+      const it = s.readingLogs.find(x => x.id === id);
+      if (!it) return;
+      if (it.earn > 0 && !confirm('「' + it.title + '」 기록을 지울까요?\n독서 적립 ' + it.earn.toLocaleString() + '원도 함께 취소돼요.')) return;
+      s.readingLogs = s.readingLogs.filter(x => x.id !== id);
+      if (s.readingLogs.length !== before) commit(s, true);
+    }
+
+    function renderReadingLogs() {
+      ensureReadingLogs(s);
+      const todayStr = getTodayDateStr();
+      const monthPrefix = todayStr.slice(0, 7);
+
+      // 기기에서 처음 열었을 때 날짜 기본값 = 오늘
+      const dateEl = document.getElementById('rdDate');
+      if (dateEl && !dateEl.value) dateEl.value = todayStr;
+
+      // 필터·입력 선택 상태
+      const filtersBox = document.getElementById('rdFilters');
+      if (filtersBox) {
+        Array.prototype.forEach.call(filtersBox.querySelectorAll('.rd-filter'), b => {
+          b.classList.toggle('on', b.getAttribute('data-who') === rdFilter);
+        });
+      }
+      const peopleBox = document.getElementById('rdPeople');
+      if (peopleBox) {
+        Array.prototype.forEach.call(peopleBox.querySelectorAll('.rd-person'), b => {
+          b.classList.toggle('on', b.getAttribute('data-who') === rdWho);
+        });
+      }
+      const typesBox = document.getElementById('rdTypes');
+      if (typesBox) {
+        Array.prototype.forEach.call(typesBox.querySelectorAll('.rd-type'), b => {
+          b.classList.toggle('on', b.getAttribute('data-type') === rdType);
+        });
+      }
+      const starsBox = document.getElementById('rdStars');
+      if (starsBox) {
+        Array.prototype.forEach.call(starsBox.querySelectorAll('.rd-star'), b => {
+          b.classList.toggle('on', Number(b.getAttribute('data-n')) <= rdRating);
+        });
+      }
+
+      const all = (s.readingLogs || []).filter(it => rdFilter === 'all' || it.who === rdFilter);
+      const totalEl = document.getElementById('rdTotal');
+      const monthEl = document.getElementById('rdMonth');
+      if (totalEl) totalEl.textContent = all.length;
+      if (monthEl) monthEl.textContent = all.filter(it => String(it.date || '').slice(0, 7) === monthPrefix).length;
+
+      // 아이별 독서 적립 현황 (엄마·아빠는 적립 없음)
+      const fmt = n => (Number(n) || 0).toLocaleString() + '원';
+      const mjEl = document.getElementById('rdEarnMj');
+      const bcEl = document.getElementById('rdEarnBc');
+      if (mjEl) mjEl.textContent = fmt(readingEarn('mj', 'all'));
+      if (bcEl) bcEl.textContent = fmt(readingEarn('bc', 'all'));
+
+      const box = document.getElementById('rdList');
+      if (!box) return;
+      if (!all.length) {
+        box.innerHTML = `
+          <div class="rd-empty">
+            <span class="rd-empty-emoji">📖</span>
+            <div class="rd-empty-title">아직 기록한 책이 없어요</div>
+            <div class="rd-empty-sub">위에서 누가・무슨 책을 읽었는지<br>한 권씩 남겨보세요</div>
+          </div>`;
+        return;
+      }
+
+      const list = all.slice().sort((a, b) => {
+        if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+        return (b.ts || 0) - (a.ts || 0);
+      });
+
+      box.innerHTML = list.map(it => {
+        const stars = '★'.repeat(it.rating) + '☆'.repeat(5 - it.rating);
+        const earnTag = it.earn > 0 ? `<span class="rd-earn-tag">+${it.earn.toLocaleString()}원</span>` : '';
+        return `
+          <div class="rd-card">
+            <div class="rd-card-head">
+              <span class="rd-who ${it.who}">${escapeHtml(readWhoLabel(it.who))}</span>
+              <span class="rd-book">${escapeHtml(it.title)}</span>
+              <span class="rd-type-tag">${escapeHtml(readTypeLabel(it.type))}</span>
+              <button class="shop-del" onclick="deleteReadingLog('${escapeHtml(it.id)}')" aria-label="삭제">✕</button>
+            </div>
+            <div class="rd-card-stars">${stars}</div>
+            <div class="rd-date-line">${escapeHtml(it.date)}${earnTag}</div>
+          </div>`;
+      }).join('');
+    }
+
     function render() {
       updateDateDisplay();
       updateTodayHistory();
@@ -4426,6 +5181,9 @@
       }
       if (currentView === 'shopping') {
         renderShopping();
+      }
+      if (currentView === 'reading') {
+        renderReadingLogs();
       }
       const isMj = s.activeTab === 'mj';
       const curTasks = s.tasks[s.activeTab];
@@ -4448,7 +5206,7 @@
       const tossCard = document.getElementById('tossCard');
 
       tossTargetLabel.textContent = isMj ? 'MJ의 토스 31일 적금 목표!' : 'BC의 토스 적금 목표!';
-      tossCurAmount.textContent = toss.total.toLocaleString();
+      tossCurAmount.textContent = (toss.total + (toss.reading || 0)).toLocaleString();
 
       let breakdownText = '';
       if (toss.completion > 0) {
@@ -4458,6 +5216,9 @@
       }
       if (toss.extra > 0) {
         breakdownText += ` + 추가 보너스 ${toss.extra.toLocaleString()}원`;
+      }
+      if (toss.reading > 0) {
+        breakdownText += ` + 📚 독서 적립 ${toss.reading.toLocaleString()}원`;
       }
       tossBreakdown.textContent = breakdownText;
 
