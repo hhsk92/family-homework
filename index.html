@@ -2989,9 +2989,10 @@
       const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
       const hasSnapshot = !!(rec && Array.isArray(rec.items) && rec.items.length);
       const recDone = !!(rec && rec.done);
+      const allDone = total > 0 && doneCount === total;
 
       const sum = document.getElementById('daySummary');
-      if (sum) sum.textContent = total ? `${doneCount} / ${total} 완료 (${pct}%)${recDone ? ' · 🌟 100% 올클리어' : ''}` : '이 날은 남겨진 기록이 없어요';
+      if (sum) sum.textContent = total ? `${doneCount} / ${total} 완료 (${pct}%)${allDone ? ' · 🌟 100% 올클리어' : ''}` : '이 날은 남겨진 기록이 없어요';
       const note = document.getElementById('dayNote');
       if (note) {
         if (!hasSnapshot) {
