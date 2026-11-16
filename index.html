@@ -3307,13 +3307,25 @@
       }
     }
 
+    // 긴급도 순위: 작을수록 지금 당장 해야 하는 항목
+    // 0 = 마무리 목표일이 지났거나 오늘 제출(가장 급함) → D-DAY 마무리=1 → D-1=2 → D-2=3 ...
+    // 마감일이 없는 일반 항목은 맨 뒤(1000)
     function getDueDateWeight(task) {
-      if (!parseDueYmd(task)) return 999;
+      if (!parseDueYmd(task)) return task.urgent ? 0.5 : 1000;
       const diff = getDdayDiff(task);
-      if (diff === null) return task.urgent ? 1 : 100;
-      if (diff >= 0) return 1 + diff;                // 오늘 마무리=1, 내일=2, 모레=3 ...
-      if (getDueDiff(task) === 0) return 0;          // 오늘 제출 = 맨 위
-      return 90 + Math.min(9, -diff - 1);            // 제출일이 지난 항목은 뒤로
+      if (diff === null) return 1000;
+      if (diff < 0) return 0;                        // 마감 지남(D+...) · 오늘 제출!
+      return 1 + diff;                               // D-DAY 마무리=1, D-1 마무리=2, ...
+    }
+
+    // 목록 정렬: 1차로 완료 여부(다 한 항목은 항상 아래), 2차로 긴급도(지금 당장 해야 하는 순)
+    // 같은 순위끼리는 원래 순서를 그대로 둔다(Array.sort 안정 정렬).
+    function compareTaskOrder(a, b) {
+      const aDone = a.done ? 1 : 0;
+      const bDone = b.done ? 1 : 0;
+      if (aDone !== bDone) return aDone - bDone;      // 미완료 위 / 완료 아래
+      if (aDone) return 0;                            // 완료한 항목끼리는 적어 둔 순서 유지
+      return getDueDateWeight(a) - getDueDateWeight(b);
     }
 
     // 제목 뒤에 실제 제출일을 붙인다. 제목에 이미 같은 날짜가 적혀 있으면 중복해서 붙이지 않는다.
@@ -3335,7 +3347,7 @@
       container.innerHTML = '';
       const isMj = s.activeTab === 'mj';
 
-      const sortedList = [...list].sort((a, b) => getDueDateWeight(a) - getDueDateWeight(b));
+      const sortedList = [...list].sort(compareTaskOrder);
 
       sortedList.forEach(task => {
         const hasDueDate = !!parseDueYmd(task);
