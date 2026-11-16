@@ -2040,9 +2040,9 @@
     function getDueActionWord(task) {
       const hay = String((task && task.dday) || '') + ' ' + String((task && task.title) || '');
       if (/지참|챙기/.test(hay)) return '지참';
+      if (/확인/.test(hay)) return '확인';
       if (/본선|발표/.test(hay)) return '본선';
       if (/시험|평가/.test(hay)) return '시험';
-      if (/확인/.test(hay)) return '확인';
       if (/예정|행사/.test(hay)) return '예정';
       return '제출';
     }
