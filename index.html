@@ -3376,6 +3376,13 @@
       { key: 'en', label: '영어책(AR)' },
       { key: 'etc', label: '기타' }
     ];
+    // 책 종류 탭·입력폼 드롭다운이 함께 쓰는 목록 (한 곳에서만 정의해 서로 어긋나지 않게)
+    const RD_KIND_DEFS = [
+      { key: 'all', label: '전체' },
+      { key: 'ko', label: '한글책' },
+      { key: 'en', label: '영어책(AR)' },
+      { key: 'etc', label: '기타' }
+    ];
     // 독서기록장은 두 아이 중심으로 쓴다 (엄마·아빠 항목은 옛 기록 호환용으로만 남김)
     const READ_KIDS = READ_PEOPLE.filter(p => p.key === 'mj' || p.key === 'bc');
     // 1권당 독서 토스 적립 기준 — 한글·영어 모두 500원, '그리스 로마 신화'만 300원 (기타는 0원)
@@ -5726,17 +5733,12 @@
       return READ_TYPES.some(t => t.key === rdType) ? rdType : 'ko';
     }
 
-    // 폼 옆 작은 종류 배지(▾)로 바꾸면 두 입력폼의 종류가 함께 바뀐다
-    // (위 종류 탭이 특정 종류를 고른 상태면 그 탭도 따라서 바뀌어 목록과 어긋나지 않는다)
+    // 폼 옆 작은 종류 드롭다운(▾) = 위 책 종류 탭과 같은 하나의 상태(rdKind)를 본다.
+    // 드롭다운에서 고르면 위 탭도 그 종류로 켜지고, 읽고 있는 책·다 읽은 책 목록이 함께 걸러지며,
+    // 두 입력폼에 새로 넣는 책의 종류도 그 값으로 들어간다 (따로 놀지 않는다).
     function setFormType(type) {
-      if (!READ_TYPES.some(t => t.key === type)) return;
-      rdType = type;
-      rtType = type;
-      if (rdKind !== 'all') rdKind = type;
-      rdKindSig = '';
-      rdRenderedSig = '';
-      rtRenderedSig = '';
-      renderReadingLogs();
+      const key = (type === 'all' || READ_TYPES.some(t => t.key === type)) ? type : 'all';
+      setReadingKind(key);
     }
 
     // 두 입력폼 위에 "지금 이 사람 · 이 종류로 들어간다"를 한 줄로 보여준다
@@ -5747,11 +5749,17 @@
       const p = READ_PEOPLE.find(x => x.key === who) || READ_PEOPLE[0];
       rdWho = who;
       rtWho = who;
-      const opts = READ_TYPES.map(t =>
-        `<option value="${t.key}"${t.key === type ? ' selected' : ''}>${escapeHtml(t.label)}</option>`).join('');
+      // 두 입력폼의 종류도 항상 같은 값으로 맞춰 둔다 (예상 적립금 배지가 옛 값으로 남지 않게)
+      rdType = type;
+      rtType = type;
+      const opts = RD_KIND_DEFS.map(k =>
+        `<option value="${k.key}"${k.key === rdKind ? ' selected' : ''}>${escapeHtml(k.label)}</option>`).join('');
+      const hint = rdKind === 'all'
+        ? `위에서 고른 그대로 · 새 책은 ${escapeHtml(readTypeLabel(type))}으로`
+        : `위 탭과 같이 움직여요 · 새 책도 ${escapeHtml(readTypeLabel(type))}으로`;
       const html = `<span class="rt-applied-who ${who}">${escapeHtml(p.label)}</span>`
         + `<select class="rt-applied-type" onchange="setFormType(this.value)" aria-label="책 종류">${opts}</select>`
-        + `<span class="rt-applied-hint">위에서 고른 그대로</span>`;
+        + `<span class="rt-applied-hint">${hint}</span>`;
       // 10초 자동 동기화 때도 내용이 그대로면 다시 그리지 않는다 (고르던 선택지·탭이 끊기지 않게)
       if (html === appliedRowsSig) return;
       ['rtApplied', 'rdApplied'].forEach(id => {
@@ -5873,12 +5881,8 @@
       if (!box) return;
       const base = (s.readingTodo || []).filter(it => rdFilter === 'all' || it.who === rdFilter);
       const cnt = k => (k === 'all' ? base.length : base.filter(it => it.type === k).length);
-      const defs = [
-        { key: 'all', label: '전체' },
-        { key: 'ko', label: '🇰🇷 한글책' },
-        { key: 'en', label: '🇺🇸 영어책(AR)' },
-        { key: 'etc', label: '📦 기타' }
-      ];
+      const icons = { all: '', ko: '🇰🇷 ', en: '🇺🇸 ', etc: '📦 ' };
+      const defs = RD_KIND_DEFS.map(d => ({ key: d.key, label: (icons[d.key] || '') + d.label }));
       const html = defs
         .filter(d => d.key !== 'etc' || cnt('etc') > 0 || rdKind === 'etc')
         .map(d => `<button class="rd-kind${rdKind === d.key ? ' on' : ''}" data-kind="${d.key}" onclick="setReadingKind('${d.key}')">${d.label}<b>${cnt(d.key)}</b></button>`)
@@ -5928,8 +5932,11 @@
       };
       const rtTitleEl = document.getElementById('rtTitle');
       const rdTitleEl = document.getElementById('rdTitle');
-      paint(document.getElementById('rtEarnPreview'), rtWho, rtType, rtTitleEl ? rtTitleEl.value : '');
-      paint(document.getElementById('rdEarnPreview'), rdWho, rdType, rdTitleEl ? rdTitleEl.value : '');
+      // 사람·종류는 위 탭(과 폼 옆 드롭다운)에서 고른 값 그대로 — 각 폼은 자기 제목을 보고 계산한다
+      const who = formWho();
+      const type = formType();
+      paint(document.getElementById('rtEarnPreview'), who, type, rtTitleEl ? rtTitleEl.value : '');
+      paint(document.getElementById('rdEarnPreview'), who, type, rdTitleEl ? rdTitleEl.value : '');
     }
 
     function renderReadingLogs() {
@@ -6629,6 +6636,27 @@
         render();
       }
     }, 30000);
+  </script>
+
+  <!-- 폰에서 구버전 화면이 계속 뜨지 않도록: 앱 본체는 항상 네트워크에서 새로 받고(sw.js), 오프라인일 때만 캐시를 쓴다 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).catch(function () {});
+      });
+      // 앱을 켜 둔 채로 새 버전이 설치되면 한 번만 새로고침 (첫 설치 때는 그냥 둔다)
+      var swHadController = !!navigator.serviceWorker.controller;
+      var swReloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (!swHadController) { swHadController = true; return; }
+        if (swReloaded) return;
+        // 뭔가 입력하는 중이면 방해하지 않는다
+        var ae = document.activeElement;
+        if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return;
+        swReloaded = true;
+        location.reload();
+      });
+    }
   </script>
 </body>
 </html>
