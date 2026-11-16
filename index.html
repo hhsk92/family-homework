@@ -6252,7 +6252,7 @@
         const emptyHtml = `
           <div class="rd-empty">
             <span class="rd-empty-emoji">📖</span>
-            <div class="rd-empty-title">${kindName ? escapeHtml(kindName) + '으로 적은 책이 없어요' : '읽고 있는 책을 적어보세요'}</div>
+            <div class="rd-empty-title">${kindName ? escapeHtml(readTypeRoLabel(rdKind)) + ' 적은 책이 없어요' : '읽고 있는 책을 적어보세요'}</div>
             <div class="rd-empty-sub">읽는 중인 책·읽을 책을 적어두고,<br>다 읽으면 체크만 하면 기록까지 자동이에요</div>
           </div>`;
         if (emptyHtml !== rtRenderedSig) { box.innerHTML = emptyHtml; rtRenderedSig = emptyHtml; }
