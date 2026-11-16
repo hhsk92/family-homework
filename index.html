@@ -2097,35 +2097,96 @@
       margin-bottom: 12px;
     }
 
-    .rd-summary {
-      display: flex;
-      gap: 8px;
+    /* 고른 사람 요약 카드 — 읽는 중 / 다 읽음 권수를 맨 위에 크게 보여준다 */
+    .rd-who-card {
+      border: 1.5px solid #ddd6fe;
+      background: linear-gradient(135deg, #faf5ff, #f5f3ff);
+      border-radius: 16px;
+      padding: 10px 11px;
       margin-bottom: 10px;
     }
 
-    .rd-stat {
-      flex: 1;
-      background: #ffffff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 11px 8px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    .rd-who-card.bc { border-color: #bfdbfe; background: linear-gradient(135deg, #f0f7ff, #eff6ff); }
+    .rd-who-card.mom { border-color: #fbcfe8; background: linear-gradient(135deg, #fdf2f8, #fce7f3); }
+    .rd-who-card.dad { border-color: #a7f3d0; background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+    .rd-who-card.all { border-color: #e2e8f0; background: linear-gradient(135deg, #f8fafc, #f1f5f9); }
+
+    .rd-who-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #6d28d9;
+      margin-bottom: 7px;
     }
 
-    .rd-stat-num {
-      font-size: 20px;
+    .rd-who-card.bc .rd-who-title { color: #1d4ed8; }
+    .rd-who-card.mom .rd-who-title { color: #be185d; }
+    .rd-who-card.dad .rd-who-title { color: #047857; }
+    .rd-who-card.all .rd-who-title { color: #334155; }
+
+    .rd-who-nums {
+      display: flex;
+      gap: 6px;
+    }
+
+    .rd-who-num {
+      flex: 1;
+      min-width: 0;
+      background: #ffffff;
+      border: 1.5px solid #e9d5ff;
+      border-radius: 12px;
+      padding: 6px 2px;
+      text-align: center;
+    }
+
+    .rd-who-card.bc .rd-who-num { border-color: #dbeafe; }
+    .rd-who-card.mom .rd-who-num { border-color: #fbcfe8; }
+    .rd-who-card.dad .rd-who-num { border-color: #a7f3d0; }
+    .rd-who-card.all .rd-who-num { border-color: #e2e8f0; }
+
+    .rd-who-num b {
+      display: block;
+      font-size: 17px;
       font-weight: 800;
-      color: #1d4ed8;
+      color: #0f172a;
       line-height: 1.2;
     }
 
-    .rd-stat-label {
-      font-size: 10.5px;
+    .rd-who-num span {
+      display: block;
+      font-size: 9.5px;
       font-weight: 700;
       color: #64748b;
-      margin-top: 3px;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+
+    .rd-who-break {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .rd-who-chip {
+      font-size: 10px;
+      font-weight: 800;
+      color: #475569;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 9999px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+
+    .rd-who-chip.mj { color: #6d28d9; border-color: #ddd6fe; }
+    .rd-who-chip.bc { color: #1d4ed8; border-color: #bfdbfe; }
+    .rd-who-chip.mom { color: #be185d; border-color: #fbcfe8; }
+    .rd-who-chip.dad { color: #047857; border-color: #a7f3d0; }
 
     .rd-earn-grid {
       display: flex;
@@ -2217,7 +2278,7 @@
 
     .rd-people {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 5px;
       margin-bottom: 9px;
     }
@@ -2463,6 +2524,150 @@
     }
 
     /* ===== 📖 읽고 있는 책 · 읽을 책 체크리스트 (숙제처럼 체크 · 다 읽으면 기록에 자동) ===== */
+    .rd-kinds {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      margin: -4px 0 10px;
+      scrollbar-width: none;
+    }
+
+    .rd-kinds::-webkit-scrollbar { display: none; }
+
+    .rd-kind {
+      flex: 0 0 auto;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 9999px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .rd-kind.on {
+      border-color: #0d9488;
+      background: #f0fdfa;
+      color: #0d9488;
+    }
+
+    .rd-kind b {
+      font-weight: 800;
+      color: #1d4ed8;
+      margin-left: 1px;
+    }
+
+    .rd-kind.on b { color: #0d9488; }
+
+    .rt-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .rt-group-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 3px 2px 0;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #334155;
+      line-height: 1.3;
+    }
+
+    .rt-group-head::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .rt-group-count {
+      flex: 0 0 auto;
+      font-size: 10px;
+      font-weight: 800;
+      color: #0d9488;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      padding: 1px 7px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .rt-group-head::after { order: 2; }
+    .rt-group-count { order: 3; }
+
+    .rt-more-btn {
+      width: 100%;
+      border: 1.5px dashed #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .rt-more-btn:active { transform: scale(0.99); }
+
+    /* 다 읽으면 들어올 적립금 배지 (목록 오른쪽) · 입력 중 미리보기 */
+    .rt-earn-badge {
+      flex: 0 0 auto;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #b45309;
+      background: #fffbeb;
+      border: 1.5px solid #fde68a;
+      border-radius: 9999px;
+      padding: 3px 7px;
+      white-space: nowrap;
+    }
+
+    .rt-item.done .rt-earn-badge {
+      color: #94a3b8;
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    .rd-earn-preview {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 8px;
+      padding: 7px 10px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #94a3b8;
+      background: #f8fafc;
+      border: 1.5px dashed #e2e8f0;
+    }
+
+    .rd-earn-preview.on {
+      color: #b45309;
+      background: #fffbeb;
+      border: 1.5px solid #fde68a;
+    }
+
+    .rd-earn-preview b {
+      font-size: 13px;
+      font-weight: 800;
+      color: #b45309;
+    }
+
+    .rd-earn-preview span {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
     .rt-head {
       display: flex;
       align-items: center;
@@ -2540,18 +2745,6 @@
     }
 
     .rt-add-btn:active { transform: scale(0.98); }
-
-    .rt-summary {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: #64748b;
-      margin: 0 2px 8px;
-    }
-
-    .rt-summary b { font-weight: 800; color: #0f172a; }
 
     .rt-list {
       display: flex;
@@ -2965,20 +3158,21 @@
       <span class="rd-sub-tag">숙제 아님 · 공용</span>
     </div>
     <div class="rd-view-intro">
-      누가 어떤 책을 읽었는지 같이 남겨요 📖<br>
+      사람과 책 종류를 고르면 그 책만 따로 보여요 📖<br>
       MJ·BC 기록은 토스 적립에도 함께 쌓여요
     </div>
 
-    <div class="rd-summary">
-      <div class="rd-stat">
-        <div class="rd-stat-num" id="rdTotal">0</div>
-        <div class="rd-stat-label">📚 총 읽은 권수</div>
-      </div>
-      <div class="rd-stat">
-        <div class="rd-stat-num" id="rdMonth">0</div>
-        <div class="rd-stat-label">📅 이번 달 읽은 권수</div>
-      </div>
+    <!-- 사람 탭: 독서록을 열면 지금 보고 있는 아이(MJ/BC) 목록으로 시작 -->
+    <div class="rd-filters" id="rdFilters">
+      <button class="rd-filter on" data-who="mj" onclick="setReadingFilter('mj')">💜 MJ</button>
+      <button class="rd-filter" data-who="bc" onclick="setReadingFilter('bc')">💙 BC</button>
     </div>
+
+    <!-- 책 종류 탭: 읽고 있는 책·다 읽은 책 목록이 함께 걸러진다 (권수는 JS가 채움) -->
+    <div class="rd-kinds" id="rdKindFilters"></div>
+
+    <!-- 고른 사람·종류의 권수 요약 (읽는 중·다 읽음이 먼저) -->
+    <div class="rd-who-card mj" id="rdWhoCard"></div>
 
     <div class="rd-earn-grid">
       <div class="rd-earn-box mj">
@@ -2990,15 +3184,7 @@
         <div class="rd-earn-val" id="rdEarnBc">0원</div>
       </div>
     </div>
-    <div class="rd-earn-note">아이 책은 기록하면 토스 적립에 자동으로 쌓여요 · 엄마·아빠 기록은 적립 없음</div>
-
-    <div class="rd-filters" id="rdFilters">
-      <button class="rd-filter on" data-who="all" onclick="setReadingFilter('all')">전체</button>
-      <button class="rd-filter" data-who="mj" onclick="setReadingFilter('mj')">💜 MJ</button>
-      <button class="rd-filter" data-who="bc" onclick="setReadingFilter('bc')">💙 BC</button>
-      <button class="rd-filter" data-who="mom" onclick="setReadingFilter('mom')">👩 엄마</button>
-      <button class="rd-filter" data-who="dad" onclick="setReadingFilter('dad')">👨 아빠</button>
-    </div>
+    <div class="rd-earn-note">아이 책은 다 읽으면 토스 적립에 자동으로 쌓여요 · 그리스 로마 신화 +300원 · 그 외 모든 책 +500원</div>
 
     <!-- 📖 읽고 있는 책 · 읽을 책 체크리스트 (숙제처럼 체크 · 다 읽으면 다 읽은 책 기록에 자동) -->
     <div class="rt-section">
@@ -3012,11 +3198,10 @@
         <div class="rd-people" id="rtPeople">
           <button class="rd-person on mj" data-who="mj" onclick="selectTodoWho('mj')">💜 MJ</button>
           <button class="rd-person bc" data-who="bc" onclick="selectTodoWho('bc')">💙 BC</button>
-          <button class="rd-person mom" data-who="mom" onclick="selectTodoWho('mom')">👩 엄마</button>
-          <button class="rd-person dad" data-who="dad" onclick="selectTodoWho('dad')">👨 아빠</button>
         </div>
         <div class="rt-input-row">
           <input class="rt-input" id="rtTitle" type="text" maxlength="50" autocomplete="off" placeholder="읽을 책 제목 (예: 마당을 나온 암탉)"
+                 oninput="renderEarnPreview()"
                  onkeydown="if(event.key==='Enter'){event.preventDefault();addReadingTodo();}">
           <button class="rt-add-btn" onclick="addReadingTodo()">+ 추가</button>
         </div>
@@ -3025,9 +3210,9 @@
           <button class="rd-type" data-type="en" onclick="selectTodoType('en')">영어책(AR)</button>
           <button class="rd-type" data-type="etc" onclick="selectTodoType('etc')">기타</button>
         </div>
+        <div class="rd-earn-preview" id="rtEarnPreview"></div>
       </div>
 
-      <div class="rt-summary" id="rtSummary"></div>
       <div class="rt-list" id="rtList"></div>
     </div>
 
@@ -3037,12 +3222,11 @@
       <div class="rd-people" id="rdPeople">
         <button class="rd-person on mj" data-who="mj" onclick="selectReader('mj')">💜 MJ</button>
         <button class="rd-person bc" data-who="bc" onclick="selectReader('bc')">💙 BC</button>
-        <button class="rd-person mom" data-who="mom" onclick="selectReader('mom')">👩 엄마</button>
-        <button class="rd-person dad" data-who="dad" onclick="selectReader('dad')">👨 아빠</button>
       </div>
 
       <div class="rd-label">책 제목</div>
       <input class="rd-input" id="rdTitle" type="text" maxlength="50" autocomplete="off" placeholder="예: 마당을 나온 암탉"
+             oninput="renderEarnPreview()"
              onkeydown="if(event.key==='Enter'){event.preventDefault();addReadingLog();}">
 
       <div class="rd-label" style="margin-top: 9px;">구분</div>
@@ -3064,11 +3248,13 @@
         <input class="rd-date" id="rdDate" type="date">
       </div>
 
+      <div class="rd-earn-preview" id="rdEarnPreview"></div>
+
       <button class="rd-submit" onclick="addReadingLog()">📚 기록하기</button>
     </div>
 
     <div class="rd-list" id="rdList"></div>
-    <div class="rd-note">MJ·BC 탭을 바꿔도 같은 독서기록이에요</div>
+    <div class="rd-note">가족 탭을 바꾸면 그 사람 책만 보여요 · 기록은 가족이 같이 봐요</div>
   </div> <!-- /#readingView -->
 
   <!-- Day Detail View (달력에서 지난 날짜를 누르면 열림) — 오늘의 기록과 같은 구성, 날짜만 해당 날짜 -->
@@ -3156,22 +3342,35 @@
       { key: 'en', label: '영어책(AR)' },
       { key: 'etc', label: '기타' }
     ];
-    // 1권당 독서 토스 적립 — 기존 보너스 규칙과 같은 금액 (MJ 한글 500 / 영어 500, BC 한글 200 / 영어 500)
-    const READ_EARN = {
-      mj: { ko: 500, en: 500, etc: 0 },
-      bc: { ko: 200, en: 500, etc: 0 },
-      mom: { ko: 0, en: 0, etc: 0 },
-      dad: { ko: 0, en: 0, etc: 0 }
-    };
+    // 독서기록장은 두 아이 중심으로 쓴다 (엄마·아빠 항목은 옛 기록 호환용으로만 남김)
+    const READ_KIDS = READ_PEOPLE.filter(p => p.key === 'mj' || p.key === 'bc');
+    // 1권당 독서 토스 적립 기준 — 한글·영어 모두 500원, '그리스 로마 신화'만 300원 (기타는 0원)
+
+    // 실제 적립금 계산: 아이(MJ·BC)의 한글책·영어책(AR)은 500원,
+    // 제목에 '그리스'+'신화'가 들어간 책(띄어쓰기 무관, 예: 그리스 로마 신화 37)은 300원
+    function readEarnFor(who, type, title) {
+      if (who !== 'mj' && who !== 'bc') return 0;
+      if (type !== 'ko' && type !== 'en') return 0;
+      const t = String(title || '').replace(/\s+/g, '');
+      if (t.indexOf('그리스') !== -1 && t.indexOf('신화') !== -1) return 300;
+      return 500;
+    }
+
     let rdWho = 'mj';
     let rdType = 'ko';
     let rdRating = 5;
-    let rdFilter = 'all';
+    // 사람 탭: 독서기록장을 열면 state.activeTab 아이(기본 MJ) 목록으로 시작한다
+    let rdFilter = 'mj';
+    // 책 종류 탭: 'all' | 'ko' | 'en' | 'etc' — 읽고 있는 책·다 읽은 책 목록에 함께 적용
+    let rdKind = 'all';
+    let rdKindSig = '';
     let rdRenderedSig = '';
-    // 📖 읽고 있는 책 · 읽을 책 체크리스트 입력 상태 (필터를 특정 가족으로 바꾸면 그 사람이 기본 선택)
+    // 📖 읽고 있는 책·읽을 책 체크리스트 입력 상태 (사람·종류 탭에 맞춰 기본 선택이 바뀐다)
     let rtWho = 'mj';
     let rtType = 'ko';
     let rtRenderedSig = '';
+    const RT_GROUP_LIMIT = 6;   // 묶음 하나에 한 번에 보여줄 권수 (넘으면 '더 보기')
+    let rtGroupOpen = {};       // 펼쳐 둔 묶음 키
 
     // ===== 반려식물 물주기 기본값 (숙제 아님 · 진도율 미포함 · 전 가족 공용) =====
     // owner는 '누구의 식물인지' 표시용일 뿐, 물 주기 체크는 누구나 가능하다.
@@ -4024,6 +4223,21 @@
       setCalMonth(y, m);
     }
 
+    // 독서기록장을 열면 기본값은 '전체'가 아니라 지금 보고 있는 아이(MJ/BC) 탭이다
+    function syncReadingPersonToActiveTab() {
+      const who = (s && s.activeTab === 'bc') ? 'bc' : 'mj';
+      if (rdFilter !== who) rdFilter = who;
+      rdKind = 'all';
+      rtGroupOpen = {};
+      rdWho = who;
+      rtWho = who;
+      rdType = 'ko';
+      rtType = 'ko';
+      rdKindSig = '';
+      rdRenderedSig = '';
+      rtRenderedSig = '';
+    }
+
     function switchView(view) {
       currentView = view;
       const todayEl = document.getElementById('todayView');
@@ -4058,7 +4272,7 @@
       if (view === 'day') renderDayView();
       if (view === 'plants') renderPlants();
       if (view === 'shopping') renderShopping();
-      if (view === 'reading') renderReadingLogs();
+      if (view === 'reading') { syncReadingPersonToActiveTab(); renderReadingLogs(); }
       updateDateDisplay();
       window.scrollTo({ top: 0 });
     }
@@ -5404,25 +5618,65 @@
     function selectReader(who) {
       if (!READ_PEOPLE.some(p => p.key === who)) return;
       rdWho = who;
+      rdRenderedSig = '';
       renderReadingLogs();
     }
 
     function selectBookType(type) {
       if (!READ_TYPES.some(t => t.key === type)) return;
       rdType = type;
+      rdRenderedSig = '';
       renderReadingLogs();
     }
 
     function setRating(n) {
       rdRating = Math.min(5, Math.max(1, Number(n) || 5));
+      rdRenderedSig = '';
       renderReadingLogs();
     }
 
+    // 사람 탭: 고른 사람을 읽을 책·다 읽은 책 입력폼의 기본 사람으로도 맞춘다
     function setReadingFilter(who) {
-      rdFilter = who === 'all' || READ_PEOPLE.some(p => p.key === who) ? who : 'all';
-      // 필터를 특정 가족으로 고르면 읽을 책 입력의 '읽을 사람'도 그 사람으로 맞춰준다
-      if (rdFilter !== 'all') rtWho = rdFilter;
+      rdFilter = (who === 'all' || READ_PEOPLE.some(p => p.key === who)) ? who : 'mj';
+      rdKind = 'all';
+      rtGroupOpen = {};
+      if (rdFilter !== 'all') { rdWho = rdFilter; rtWho = rdFilter; }
+      rdKindSig = '';
+      rdRenderedSig = '';
+      rtRenderedSig = '';
       renderReadingLogs();
+    }
+
+    // 책 종류 탭: 읽고 있는 책·다 읽은 책 목록을 함께 걸러내고, 입력폼 구분 기본값도 맞춘다
+    function setReadingKind(kind) {
+      rdKind = (kind === 'all' || READ_TYPES.some(t => t.key === kind)) ? kind : 'all';
+      if (rdKind !== 'all') { rdType = rdKind; rtType = rdKind; }
+      rtGroupOpen = {};
+      rdKindSig = '';
+      rdRenderedSig = '';
+      rtRenderedSig = '';
+      renderReadingLogs();
+    }
+
+    function selectTodoWho(who) {
+      if (!READ_PEOPLE.some(p => p.key === who)) return;
+      rtWho = who;
+      rtRenderedSig = '';
+      renderReadingTodo();
+    }
+
+    function selectTodoType(type) {
+      if (!READ_TYPES.some(t => t.key === type)) return;
+      rtType = type;
+      rtRenderedSig = '';
+      renderReadingTodo();
+    }
+
+    // 묶음 접기/펼치기
+    function toggleRtGroup(key) {
+      rtGroupOpen[key] = !rtGroupOpen[key];
+      rtRenderedSig = '';
+      renderReadingTodo();
     }
 
     function addReadingLog() {
@@ -5445,7 +5699,7 @@
         type: rdType,
         rating: rdRating,
         date: date,
-        earn: (READ_EARN[rdWho] || READ_EARN.mom)[rdType] || 0,
+        earn: readEarnFor(rdWho, rdType, title),
         ts: now
       });
       titleEl.value = '';
@@ -5475,8 +5729,82 @@
       }
     }
 
+    // ===== 사람·종류별 요약 (읽는 중 / 다 읽음 우선) =====
+
+    function readingTodoCounts(who, kind) {
+      const list = (s.readingTodo || []).filter(it =>
+        (who === 'all' || it.who === who) && (kind === 'all' || it.type === kind));
+      return { doing: list.filter(it => !it.done).length, done: list.filter(it => it.done).length, total: list.length };
+    }
+
+    // 책 종류 탭 (권수 표시) — 읽고 있는 책·다 읽은 책 목록이 함께 걸러진다
+    function renderReadingKindChips() {
+      const box = document.getElementById('rdKindFilters');
+      if (!box) return;
+      const base = (s.readingTodo || []).filter(it => rdFilter === 'all' || it.who === rdFilter);
+      const cnt = k => (k === 'all' ? base.length : base.filter(it => it.type === k).length);
+      const defs = [
+        { key: 'all', label: '전체' },
+        { key: 'ko', label: '🇰🇷 한글책' },
+        { key: 'en', label: '🇺🇸 영어책(AR)' },
+        { key: 'etc', label: '📦 기타' }
+      ];
+      const html = defs
+        .filter(d => d.key !== 'etc' || cnt('etc') > 0 || rdKind === 'etc')
+        .map(d => `<button class="rd-kind${rdKind === d.key ? ' on' : ''}" data-kind="${d.key}" onclick="setReadingKind('${d.key}')">${d.label}<b>${cnt(d.key)}</b></button>`)
+        .join('');
+      if (html !== rdKindSig) { box.innerHTML = html; rdKindSig = html; }
+    }
+
+    // 고른 사람(·종류)의 읽는 중 / 다 읽음 / 읽은 책 권수 카드
+    function renderReadingWhoCard() {
+      const box = document.getElementById('rdWhoCard');
+      if (!box) return;
+      const todayPrefix = getTodayDateStr().slice(0, 7);
+      const c = readingTodoCounts(rdFilter, rdKind);
+      const logs = (s.readingLogs || []).filter(it =>
+        (rdFilter === 'all' || it.who === rdFilter) && (rdKind === 'all' || it.type === rdKind));
+      const monthCount = logs.filter(it => String(it.date || '').slice(0, 7) === todayPrefix).length;
+      const kindTag = rdKind === 'all' ? '' : ' · ' + readTypeLabel(rdKind);
+      const nums = `
+        <div class="rd-who-nums">
+          <div class="rd-who-num"><b>${c.doing}</b><span>📖 읽는 중</span></div>
+          <div class="rd-who-num"><b>${c.done}</b><span>✅ 다 읽음</span></div>
+          <div class="rd-who-num"><b>${logs.length}</b><span>📚 읽은 책</span></div>
+          <div class="rd-who-num"><b>${monthCount}</b><span>📅 이번 달</span></div>
+        </div>`;
+      if (rdFilter === 'all') {
+        const chips = READ_KIDS.map(p => {
+          const pc = readingTodoCounts(p.key, rdKind);
+          return `<span class="rd-who-chip ${p.key}">${p.label} 읽는 중 ${pc.doing}권</span>`;
+        }).join('');
+        box.className = 'rd-who-card all';
+        box.innerHTML = `<div class="rd-who-title">👨‍👩‍👧‍👦 가족 전체${escapeHtml(kindTag)}</div>${nums}<div class="rd-who-break">${chips}</div>`;
+      } else {
+        box.className = 'rd-who-card ' + rdFilter;
+        box.innerHTML = `<div class="rd-who-title">${escapeHtml(readWhoLabel(rdFilter))}${escapeHtml(kindTag)}</div>${nums}`;
+      }
+    }
+
+    // 입력하는 동안 "다 읽으면 얼마 들어오는지"를 바로 보여준다
+    function renderEarnPreview() {
+      const paint = (el, who, type, title) => {
+        if (!el) return;
+        const amt = readEarnFor(who, type, title);
+        el.className = 'rd-earn-preview' + (amt > 0 ? ' on' : '');
+        el.innerHTML = amt > 0
+          ? `💰 다 읽으면 <b>+${amt.toLocaleString()}원</b> 적립`
+          : `💰 적립 없음 <span>기타 구분은 적립 없음</span>`;
+      };
+      const rtTitleEl = document.getElementById('rtTitle');
+      const rdTitleEl = document.getElementById('rdTitle');
+      paint(document.getElementById('rtEarnPreview'), rtWho, rtType, rtTitleEl ? rtTitleEl.value : '');
+      paint(document.getElementById('rdEarnPreview'), rdWho, rdType, rdTitleEl ? rdTitleEl.value : '');
+    }
+
     function renderReadingLogs() {
       ensureReadingLogs(s);
+      ensureReadingTodo(s);
       const todayStr = getTodayDateStr();
       const monthPrefix = todayStr.slice(0, 7);
 
@@ -5484,13 +5812,17 @@
       const dateEl = document.getElementById('rdDate');
       if (dateEl && !dateEl.value) dateEl.value = todayStr;
 
-      // 필터·입력 선택 상태
+      // 사람 탭·종류 탭·요약 카드
       const filtersBox = document.getElementById('rdFilters');
       if (filtersBox) {
         Array.prototype.forEach.call(filtersBox.querySelectorAll('.rd-filter'), b => {
           b.classList.toggle('on', b.getAttribute('data-who') === rdFilter);
         });
       }
+      renderReadingKindChips();
+      renderReadingWhoCard();
+
+      // 입력 선택 상태
       const peopleBox = document.getElementById('rdPeople');
       if (peopleBox) {
         Array.prototype.forEach.call(peopleBox.querySelectorAll('.rd-person'), b => {
@@ -5511,12 +5843,7 @@
       }
 
       renderReadingTodo();
-
-      const all = (s.readingLogs || []).filter(it => rdFilter === 'all' || it.who === rdFilter);
-      const totalEl = document.getElementById('rdTotal');
-      const monthEl = document.getElementById('rdMonth');
-      if (totalEl) totalEl.textContent = all.length;
-      if (monthEl) monthEl.textContent = all.filter(it => String(it.date || '').slice(0, 7) === monthPrefix).length;
+      renderEarnPreview();
 
       // 아이별 독서 적립 현황 (엄마·아빠는 적립 없음)
       const fmt = n => (Number(n) || 0).toLocaleString() + '원';
@@ -5524,6 +5851,9 @@
       const bcEl = document.getElementById('rdEarnBc');
       if (mjEl) mjEl.textContent = fmt(readingEarn('mj', 'all'));
       if (bcEl) bcEl.textContent = fmt(readingEarn('bc', 'all'));
+
+      const all = (s.readingLogs || []).filter(it =>
+        (rdFilter === 'all' || it.who === rdFilter) && (rdKind === 'all' || it.type === rdKind));
 
       const box = document.getElementById('rdList');
       if (!box) return;
@@ -5618,12 +5948,14 @@
     function selectTodoWho(who) {
       if (!READ_PEOPLE.some(p => p.key === who)) return;
       rtWho = who;
+      rtRenderedSig = '';
       renderReadingTodo();
     }
 
     function selectTodoType(type) {
       if (!READ_TYPES.some(t => t.key === type)) return;
       rtType = type;
+      rtRenderedSig = '';
       renderReadingTodo();
     }
 
@@ -5679,7 +6011,7 @@
             type: it.type,
             rating: 5,
             date: getTodayDateStr(),
-            earn: (READ_EARN[it.who] || READ_EARN.mom)[it.type] || 0,
+            earn: readEarnFor(it.who, it.type, it.title),
             ts: now,
             link: it.id
           });
@@ -5716,6 +6048,54 @@
       commit(s, true);
     }
 
+    // 제목 앞머리 권호(#12) 또는 끝 숫자(37)로 순서를 잡는다
+    function rtItemNum(it) {
+      const t = String(it.title || '');
+      const m = t.match(/#\s*(\d+)/) || t.match(/(\d+)\s*$/);
+      return m ? Number(m[1]) : null;
+    }
+
+    // 같은 앞 단어(2~5개)로 시작하는 책이 3권 이상이면 한 시리즈 묶음으로 본다
+    function rtSeriesGroups(items) {
+      const norm = it => String(it.title || '')
+        .replace(/^\s*#\s*\d+\s*/, '')
+        .toLowerCase()
+        .replace(/[^0-9a-z가-힣\s]/g, ' ')
+        .split(/\s+/).filter(Boolean);
+      const words = {};
+      items.forEach(it => { words[it.id] = norm(it); });
+      const groups = [];
+      let rest = items.slice();
+      for (let guard = 0; guard < 12; guard++) {
+        if (rest.length < 3) break;
+        const counts = {};
+        rest.forEach(it => {
+          const w = words[it.id] || [];
+          for (let n = 2; n <= Math.min(5, w.length - 1); n++) {
+            const key = w.slice(0, n).join(' ');
+            if (!counts[key]) counts[key] = { n: n, count: 0 };
+            counts[key].count++;
+          }
+        });
+        let best = null;
+        Object.keys(counts).forEach(k => {
+          const c = counts[k];
+          if (c.count < 3) return;
+          if (!best || c.count > best.count || (c.count === best.count && c.n > best.n)) best = { key: k, n: c.n, count: c.count };
+        });
+        if (!best) break;
+        const members = rest.filter(it => (words[it.id] || []).slice(0, best.n).join(' ') === best.key);
+        if (members.length < 3) break;
+        const labelWords = String(members[0].title || '')
+          .replace(/^\s*#\s*\d+\s*/, '')   // "#12 Nate the Great" → "Nate the Great"
+          .replace(/[:–—]/g, ' ')   // 콜론·대시는 띄어쓰기로
+          .replace(/\s+/g, ' ').trim().split(' ');
+        groups.push({ key: 'series:' + best.key, label: labelWords.slice(0, best.n).join(' '), items: members });
+        rest = rest.filter(it => members.indexOf(it) === -1);
+      }
+      return { groups: groups, rest: rest };
+    }
+
     function renderReadingTodo() {
       ensureReadingTodo(s);
       const peopleBox = document.getElementById('rtPeople');
@@ -5731,25 +6111,21 @@
         });
       }
 
-      const all = (s.readingTodo || []).filter(it => rdFilter === 'all' || it.who === rdFilter);
+      // 사람 탭 + 종류 탭
+      const forWho = (s.readingTodo || []).filter(it => rdFilter === 'all' || it.who === rdFilter);
+      const all = forWho.filter(it => rdKind === 'all' || it.type === rdKind);
       // 읽는 중·읽을 책(미완료)을 위로, 다 읽은 책(완료)은 아래로
       const todo = all.filter(i => !i.done).sort((a, b) => (b.ts || 0) - (a.ts || 0));
       const done = all.filter(i => i.done).sort((a, b) => (b.doneTs || b.ts || 0) - (a.doneTs || a.ts || 0));
 
-      const sumEl = document.getElementById('rtSummary');
-      if (sumEl) {
-        sumEl.innerHTML = all.length
-          ? `<span>📖 읽는 중 <b>${todo.length}</b>권</span><span>✅ 다 읽음 <b>${done.length}</b>권</span>`
-          : '';
-      }
-
       const box = document.getElementById('rtList');
       if (!box) return;
       if (!all.length) {
+        const kindName = rdKind === 'all' ? '' : readTypeLabel(rdKind);
         const emptyHtml = `
           <div class="rd-empty">
             <span class="rd-empty-emoji">📖</span>
-            <div class="rd-empty-title">읽고 있는 책을 적어보세요</div>
+            <div class="rd-empty-title">${kindName ? escapeHtml(kindName) + '으로 적은 책이 없어요' : '읽고 있는 책을 적어보세요'}</div>
             <div class="rd-empty-sub">읽는 중인 책·읽을 책을 적어두고,<br>다 읽으면 체크만 하면 기록까지 자동이에요</div>
           </div>`;
         if (emptyHtml !== rtRenderedSig) { box.innerHTML = emptyHtml; rtRenderedSig = emptyHtml; }
@@ -5757,7 +6133,8 @@
       }
 
       const row = it => {
-        const earn = (READ_EARN[it.who] || READ_EARN.mom)[it.type] || 0;
+        const earn = readEarnFor(it.who, it.type, it.title);
+        const earnBadge = earn > 0 ? `<span class="rt-earn-badge">+${earn.toLocaleString()}원</span>` : '';
         const linkedTag = it.done
           ? `<span class="rt-linked">✅ 다 읽은 책 기록${earn > 0 ? ' +' + earn.toLocaleString() + '원' : ''}</span>`
           : '';
@@ -5774,17 +6151,47 @@
               ${linkedTag}
             </div>
           </div>
+          ${earnBadge}
           <button class="shop-del" onclick="deleteReadingTodo('${escapeHtml(it.id)}')" aria-label="삭제">✕</button>
         </div>`;
       };
 
-      let html = todo.map(row).join('');
+      // 시리즈 묶음 → 남은 책은 종류별 묶음 (묶음마다 6권까지 보이고 '더 보기')
+      const grouped = rtSeriesGroups(todo);
+      const blocks = [];
+      grouped.groups.forEach(g => {
+        const nums = g.items.map(rtItemNum);
+        const items = nums.every(n => n !== null)
+          ? g.items.slice().sort((a, b) => rtItemNum(a) - rtItemNum(b))
+          : g.items.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0));
+        blocks.push({ key: g.key, label: '📚 ' + g.label, items: items });
+      });
+      READ_TYPES.forEach(t => {
+        const items = grouped.rest.filter(it => it.type === t.key);
+        if (!items.length) return;
+        const emoji = t.key === 'ko' ? '🇰🇷' : t.key === 'en' ? '🇺🇸' : '📦';
+        blocks.push({ key: 'type:' + t.key, label: emoji + ' ' + readTypeLabel(t.key), items: items });
+      });
+
+      let html = blocks.map(b => {
+        const open = !!rtGroupOpen[b.key];
+        const show = open ? b.items : b.items.slice(0, RT_GROUP_LIMIT);
+        let out = `<div class="rt-group"><div class="rt-group-head"><span>${escapeHtml(b.label)}</span><span class="rt-group-count">${b.items.length}권</span></div>`;
+        out += show.map(row).join('');
+        if (b.items.length > RT_GROUP_LIMIT) {
+          out += `<button class="rt-more-btn" onclick="toggleRtGroup('${escapeHtml(b.key).replace(/'/g, '')}')">${open ? '▴ 접기' : '＋' + (b.items.length - RT_GROUP_LIMIT) + '권 더 보기'}</button>`;
+        }
+        out += '</div>';
+        return out;
+      }).join('');
+
       if (done.length) {
-        html += `<div class="shop-divider-label">✅ 다 읽은 책 ${done.length}권</div>`;
+        if (todo.length) html += `<div class="shop-divider-label">✅ 다 읽은 책 ${done.length}권</div>`;
         html += done.map(row).join('');
       }
       // 내용이 그대로면 다시 그리지 않는다 (10초 자동 동기화 때 버튼 탭이 씹히지 않게)
       if (html !== rtRenderedSig) { box.innerHTML = html; rtRenderedSig = html; }
+      renderEarnPreview();
     }
 
     function render() {
