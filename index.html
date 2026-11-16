@@ -5659,6 +5659,14 @@
       return t ? t.label : READ_TYPES[0].label;
     }
 
+    // 받침 유무에 맞춰 '로/으로'를 붙인다 (기타로 / 한글책으로 / 영어책(AR)으로)
+    function readTypeRoLabel(key) {
+      const s = readTypeLabel(key);
+      const c = s.charCodeAt(s.length - 1);
+      const hasJong = (c >= 0xAC00 && c <= 0xD7A3) ? ((c - 0xAC00) % 28 !== 0) : true;
+      return s + (hasJong ? '으로' : '로');
+    }
+
     function readingLogClean(list) {
       const out = [];
       (Array.isArray(list) ? list : []).forEach((it, i) => {
@@ -5755,8 +5763,8 @@
       const opts = RD_KIND_DEFS.map(k =>
         `<option value="${k.key}"${k.key === rdKind ? ' selected' : ''}>${escapeHtml(k.label)}</option>`).join('');
       const hint = rdKind === 'all'
-        ? `위에서 고른 그대로 · 새 책은 ${escapeHtml(readTypeLabel(type))}으로`
-        : `위 탭과 같이 움직여요 · 새 책도 ${escapeHtml(readTypeLabel(type))}으로`;
+        ? `위에서 고른 그대로 · 새 책은 ${escapeHtml(readTypeRoLabel(type))}`
+        : `위 탭과 같이 움직여요 · 새 책도 ${escapeHtml(readTypeRoLabel(type))}`;
       const html = `<span class="rt-applied-who ${who}">${escapeHtml(p.label)}</span>`
         + `<select class="rt-applied-type" onchange="setFormType(this.value)" aria-label="책 종류">${opts}</select>`
         + `<span class="rt-applied-hint">${hint}</span>`;
