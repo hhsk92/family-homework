@@ -2845,6 +2845,7 @@
       { key: 'etc', label: '📦 기타' }
     ];
     let shopCat = 'mart';
+    let shopRenderedSig = '';
 
     const READ_PEOPLE = [
       { key: 'mj', label: '💜 MJ', badge: '💜 MJ' },
@@ -2868,6 +2869,7 @@
     let rdType = 'ko';
     let rdRating = 5;
     let rdFilter = 'all';
+    let rdRenderedSig = '';
 
     // ===== 반려식물 물주기 기본값 (숙제 아님 · 진도율 미포함 · 전 가족 공용) =====
     // owner는 '누구의 식물인지' 표시용일 뿐, 물 주기 체크는 누구나 가능하다.
@@ -4923,12 +4925,16 @@
       }
 
       if (!list.length) {
-        wrap.innerHTML = `
+        const emptyHtml = `
           <div class="shop-empty">
             <span class="shop-empty-emoji">🛍️</span>
             <div class="shop-empty-title">쇼핑리스트가 비어 있어요</div>
             <div class="shop-empty-sub">위에 살 것을 적고 <b>추가</b>를 누르면<br>가족 모두가 같이 볼 수 있어요</div>
           </div>`;
+        if (emptyHtml !== shopRenderedSig) {
+          wrap.innerHTML = emptyHtml;
+          shopRenderedSig = emptyHtml;
+        }
         return;
       }
 
@@ -4948,7 +4954,11 @@
         html += done.map(row).join('');
         html += `<button class="shop-clear-btn" onclick="clearBoughtItems()">🧹 산 것 ${done.length}개 비우기</button>`;
       }
-      wrap.innerHTML = html;
+      // 내용이 그대로면 다시 그리지 않는다 (10초 자동 동기화 때 버튼 탭이 씹히지 않게)
+      if (html !== shopRenderedSig) {
+        wrap.innerHTML = html;
+        shopRenderedSig = html;
+      }
     }
 
     // ===== 공용 독서기록장 (숙제 아님 · 아이 기록만 토스 적립에 함께 쌓임) =====
@@ -5142,12 +5152,16 @@
       const box = document.getElementById('rdList');
       if (!box) return;
       if (!all.length) {
-        box.innerHTML = `
+        const emptyHtml = `
           <div class="rd-empty">
             <span class="rd-empty-emoji">📖</span>
             <div class="rd-empty-title">아직 기록한 책이 없어요</div>
             <div class="rd-empty-sub">위에서 누가・무슨 책을 읽었는지<br>한 권씩 남겨보세요</div>
           </div>`;
+        if (emptyHtml !== rdRenderedSig) {
+          box.innerHTML = emptyHtml;
+          rdRenderedSig = emptyHtml;
+        }
         return;
       }
 
@@ -5156,7 +5170,7 @@
         return (b.ts || 0) - (a.ts || 0);
       });
 
-      box.innerHTML = list.map(it => {
+      const listHtml = list.map(it => {
         const stars = '★'.repeat(it.rating) + '☆'.repeat(5 - it.rating);
         const earnTag = it.earn > 0 ? `<span class="rd-earn-tag">+${it.earn.toLocaleString()}원</span>` : '';
         return `
@@ -5171,6 +5185,10 @@
             <div class="rd-date-line">${escapeHtml(it.date)}${earnTag}</div>
           </div>`;
       }).join('');
+      if (listHtml !== rdRenderedSig) {
+        box.innerHTML = listHtml;
+        rdRenderedSig = listHtml;
+      }
     }
 
     function render() {
