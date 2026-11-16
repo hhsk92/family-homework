@@ -2423,6 +2423,217 @@
       text-align: center;
       margin-top: 10px;
     }
+
+    /* ===== 📖 읽고 있는 책 · 읽을 책 체크리스트 (숙제처럼 체크 · 다 읽으면 기록에 자동) ===== */
+    .rt-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 9px;
+    }
+
+    .rt-head-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.2px;
+    }
+
+    .rt-head-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: #0d9488;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .rt-form {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 11px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      margin-bottom: 10px;
+    }
+
+    .rt-input-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 7px;
+    }
+
+    .rt-input {
+      flex: 1;
+      min-width: 0;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 9999px;
+      padding: 9px 13px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      background: #f8fafc;
+      font-family: inherit;
+    }
+
+    .rt-input:focus {
+      outline: none;
+      border-color: #60a5fa;
+      background: #ffffff;
+    }
+
+    .rt-add-btn {
+      flex: 0 0 auto;
+      border: none;
+      border-radius: 9999px;
+      padding: 9px 15px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(29, 78, 216, 0.2);
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .rt-add-btn:active { transform: scale(0.98); }
+
+    .rt-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #64748b;
+      margin: 0 2px 8px;
+    }
+
+    .rt-summary b { font-weight: 800; color: #0f172a; }
+
+    .rt-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .rt-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 11px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .rt-item.done {
+      border-color: #d1fae5;
+      background: #f7fffc;
+    }
+
+    .rt-check {
+      flex: 0 0 auto;
+      width: 25px;
+      height: 25px;
+      border-radius: 9999px;
+      border: 2px solid #cbd5e1;
+      background: #ffffff;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    .rt-item.done .rt-check {
+      background: #10b981;
+      border-color: #10b981;
+    }
+
+    .rt-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .rt-book-line {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .rt-book {
+      flex: 1;
+      min-width: 0;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .rt-item.done .rt-book {
+      text-decoration: line-through;
+      color: #94a3b8;
+      font-weight: 700;
+    }
+
+    .rt-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 3px;
+    }
+
+    .rt-type-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: #0d9488;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .rt-linked {
+      font-size: 10px;
+      font-weight: 800;
+      color: #b45309;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .rt-form-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 7px 1px;
+    }
+
+    .rt-form-sub {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
   </style>
 </head>
 <body>
@@ -2751,6 +2962,38 @@
       <button class="rd-filter" data-who="dad" onclick="setReadingFilter('dad')">👨 아빠</button>
     </div>
 
+    <!-- 📖 읽고 있는 책 · 읽을 책 체크리스트 (숙제처럼 체크 · 다 읽으면 다 읽은 책 기록에 자동) -->
+    <div class="rt-section">
+      <div class="rt-head">
+        <span class="rt-head-title">📖 읽고 있는 책 · 읽을 책</span>
+        <span class="rt-head-tag">체크하면 다 읽은 책 기록에 자동</span>
+      </div>
+
+      <div class="rt-form">
+        <div class="rd-label">읽을 사람</div>
+        <div class="rd-people" id="rtPeople">
+          <button class="rd-person on mj" data-who="mj" onclick="selectTodoWho('mj')">💜 MJ</button>
+          <button class="rd-person bc" data-who="bc" onclick="selectTodoWho('bc')">💙 BC</button>
+          <button class="rd-person mom" data-who="mom" onclick="selectTodoWho('mom')">👩 엄마</button>
+          <button class="rd-person dad" data-who="dad" onclick="selectTodoWho('dad')">👨 아빠</button>
+        </div>
+        <div class="rt-input-row">
+          <input class="rt-input" id="rtTitle" type="text" maxlength="50" autocomplete="off" placeholder="읽을 책 제목 (예: 마당을 나온 암탉)"
+                 onkeydown="if(event.key==='Enter'){event.preventDefault();addReadingTodo();}">
+          <button class="rt-add-btn" onclick="addReadingTodo()">+ 추가</button>
+        </div>
+        <div class="rd-types" id="rtTypes" style="margin-bottom:0;">
+          <button class="rd-type on" data-type="ko" onclick="selectTodoType('ko')">한글책</button>
+          <button class="rd-type" data-type="en" onclick="selectTodoType('en')">영어책(AR)</button>
+          <button class="rd-type" data-type="etc" onclick="selectTodoType('etc')">기타</button>
+        </div>
+      </div>
+
+      <div class="rt-summary" id="rtSummary"></div>
+      <div class="rt-list" id="rtList"></div>
+    </div>
+
+    <div class="rt-form-head">📚 다 읽은 책 바로 기록하기</div>
     <div class="rd-form">
       <div class="rd-label">읽은 사람</div>
       <div class="rd-people" id="rdPeople">
@@ -2887,6 +3130,10 @@
     let rdRating = 5;
     let rdFilter = 'all';
     let rdRenderedSig = '';
+    // 📖 읽고 있는 책 · 읽을 책 체크리스트 입력 상태 (필터를 특정 가족으로 바꾸면 그 사람이 기본 선택)
+    let rtWho = 'mj';
+    let rtType = 'ko';
+    let rtRenderedSig = '';
 
     // ===== 반려식물 물주기 기본값 (숙제 아님 · 진도율 미포함 · 전 가족 공용) =====
     // owner는 '누구의 식물인지' 표시용일 뿐, 물 주기 체크는 누구나 가능하다.
@@ -3706,6 +3953,9 @@
     if (ensureReadingLogs(s)) {
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
     }
+    if (ensureReadingTodo(s)) {
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+    }
 
     goThisMonthInit();
     function goThisMonthInit() {
@@ -4271,7 +4521,7 @@
     }
 
     async function fetchFromCloud() {
-      let rolled = false, renamed = false, dueFilled = false, plantsNeedSync = false, shoppingNeedSync = false, readingNeedSync = false;
+      let rolled = false, renamed = false, dueFilled = false, plantsNeedSync = false, shoppingNeedSync = false, readingNeedSync = false, readingTodoNeedSync = false;
       try {
         const res = await fetch(CLOUD_URL);
         if (res.ok) {
@@ -4290,6 +4540,8 @@
             shoppingNeedSync = mergeShoppingList(s, remote);
             // 독서기록 병합 (같은 규칙)
             readingNeedSync = mergeReadingLogs(s, remote);
+            // 읽고 있는 책·읽을 책 체크리스트 병합 (같은 규칙)
+            readingTodoNeedSync = mergeReadingTodo(s, remote);
             // lastDate는 뒤로 가지 않게: 이미 오늘로 넘어간 기기 기록을 어제 값으로 되돌리지 않는다
             if (remote.lastDate && String(remote.lastDate) >= String(s.lastDate || '')) s.lastDate = remote.lastDate;
             if (remote.history) {
@@ -4309,7 +4561,7 @@
       updateTodayHistory();
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
       render();
-      if (rolled || renamed || dueFilled || plantsNeedSync || shoppingNeedSync || readingNeedSync) syncToCloud();
+      if (rolled || renamed || dueFilled || plantsNeedSync || shoppingNeedSync || readingNeedSync || readingTodoNeedSync) syncToCloud();
     }
 
     function commit(next, sync = true) {
@@ -5005,7 +5257,7 @@
         const who = READ_PEOPLE.some(p => p.key === it.who) ? it.who : 'mj';
         const type = READ_TYPES.some(t => t.key === it.type) ? it.type : 'ko';
         const d = String(it.date || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        out.push({
+        const entry = {
           id: rawId || ('rl-' + i + '-' + title.length),
           who: who,
           title: title,
@@ -5014,7 +5266,11 @@
           date: d ? d[1] + '-' + d[2] + '-' + d[3] : getTodayDateStr(),
           earn: Math.max(0, Number(it.earn) || 0),
           ts: Number(it.ts) || 0
-        });
+        };
+        // 읽을 책 체크리스트에서 자동으로 만들어진 기록이면 그 항목 id를 남겨둔다 (체크 해제 시 롤백 매칭용)
+        const linkId = String(it.link || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 60);
+        if (linkId) entry.link = linkId;
+        out.push(entry);
       });
       return out;
     }
@@ -5074,6 +5330,8 @@
 
     function setReadingFilter(who) {
       rdFilter = who === 'all' || READ_PEOPLE.some(p => p.key === who) ? who : 'all';
+      // 필터를 특정 가족으로 고르면 읽을 책 입력의 '읽을 사람'도 그 사람으로 맞춰준다
+      if (rdFilter !== 'all') rtWho = rdFilter;
       renderReadingLogs();
     }
 
@@ -5162,6 +5420,8 @@
         });
       }
 
+      renderReadingTodo();
+
       const all = (s.readingLogs || []).filter(it => rdFilter === 'all' || it.who === rdFilter);
       const totalEl = document.getElementById('rdTotal');
       const monthEl = document.getElementById('rdMonth');
@@ -5215,6 +5475,226 @@
         box.innerHTML = listHtml;
         rdRenderedSig = listHtml;
       }
+    }
+
+    // ===== 📖 읽고 있는 책 · 읽을 책 체크리스트 (숙제처럼 체크 · 다 읽으면 다 읽은 책 기록에 자동) =====
+
+    function readingTodoClean(list) {
+      const out = [];
+      (Array.isArray(list) ? list : []).forEach((it, i) => {
+        if (!it || typeof it !== 'object') return;
+        const title = String(it.title || '').trim().slice(0, 50);
+        if (!title) return;
+        const rawId = String(it.id || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 60);
+        const item = {
+          id: rawId || ('rt-' + i + '-' + title.length),
+          who: READ_PEOPLE.some(p => p.key === it.who) ? it.who : 'mj',
+          title: title,
+          type: READ_TYPES.some(t => t.key === it.type) ? it.type : 'ko',
+          done: !!it.done,
+          ts: Number(it.ts) || 0
+        };
+        if (item.done) item.doneTs = Number(it.doneTs) || 0;
+        const linkId = String(it.logId || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 60);
+        if (linkId) item.logId = linkId;
+        out.push(item);
+      });
+      return out;
+    }
+
+    function ensureReadingTodo(st) {
+      if (!st) return false;
+      const had = Array.isArray(st.readingTodo) ? JSON.stringify(st.readingTodo) : null;
+      st.readingTodo = readingTodoClean(had === null ? [] : st.readingTodo);
+      return had !== JSON.stringify(st.readingTodo);
+    }
+
+    // 기기 간 병합: 클라우드 목록을 기준으로 하고, 이 기기에서 막 적었는데 아직 못 올린 항목만 살린다.
+    // (완료·삭제는 클라우드 기록을 따른다 — 지운 항목이 오래된 사본 때문에 되살아나지 않도록)
+    function mergeReadingTodo(st, remote) {
+      const hasRemote = !!(remote && Array.isArray(remote.readingTodo));
+      const pulled = readingTodoClean(hasRemote ? remote.readingTodo : []).filter(notDeleted);
+      const local = readingTodoClean(Array.isArray(st.readingTodo) ? st.readingTodo : []);
+      const ids = {};
+      pulled.forEach(it => { ids[it.id] = true; clearPendingAdd('readtodo', it.id); });
+      const extra = hasRemote
+        ? local.filter(it => !ids[it.id] && isPendingAdd('readtodo', it.id))
+        : local;
+      st.readingTodo = readingTodoClean(pulled.concat(extra));
+      const pack = list => JSON.stringify(list.slice().sort((a, b) => String(a.id).localeCompare(String(b.id))));
+      return pack(st.readingTodo) !== pack(pulled);
+    }
+
+    function selectTodoWho(who) {
+      if (!READ_PEOPLE.some(p => p.key === who)) return;
+      rtWho = who;
+      renderReadingTodo();
+    }
+
+    function selectTodoType(type) {
+      if (!READ_TYPES.some(t => t.key === type)) return;
+      rtType = type;
+      renderReadingTodo();
+    }
+
+    function addReadingTodo() {
+      const input = document.getElementById('rtTitle');
+      if (!input) return;
+      const title = String(input.value || '').trim().slice(0, 50);
+      if (!title) { input.focus(); return; }
+      ensureReadingTodo(s);
+      const now = Date.now();
+      const newId = 'rt-' + now + '-' + Math.random().toString(36).slice(2, 6);
+      s.readingTodo.push({
+        id: newId,
+        who: rtWho,
+        title: title,
+        type: rtType,
+        done: false,
+        ts: now
+      });
+      markAdded('readtodo', newId);
+      input.value = '';
+      commit(s, true);
+      input.focus();
+    }
+
+    // 이 체크리스트 항목에 연결된 다 읽은 책 기록 id (연동 ID → 옛 기록의 link 순서로 찾음)
+    function linkedReadingLogId(it) {
+      const logs = Array.isArray(s.readingLogs) ? s.readingLogs : [];
+      if (it.logId && logs.some(r => r.id === it.logId)) return it.logId;
+      const byLink = logs.find(r => r.link === it.id);
+      return byLink ? byLink.id : '';
+    }
+
+    function toggleReadingTodo(id, event) {
+      ensureReadingTodo(s);
+      ensureReadingLogs(s);
+      const it = s.readingTodo.find(x => x.id === id);
+      if (!it) return;
+      const now = Date.now();
+      if (!it.done) {
+        // 다 읽음: 오늘 날짜로 다 읽은 책 기록에도 자동 추가 (아이 책이면 토스 적립도 함께 쌓인다)
+        it.done = true;
+        it.doneTs = now;
+        // 이미 연동된 기록이 있으면 중복으로 만들지 않는다
+        let logId = linkedReadingLogId(it);
+        if (!logId) {
+          logId = 'rl-' + now + '-' + Math.random().toString(36).slice(2, 6);
+          markAdded('read', logId);
+          s.readingLogs.push({
+            id: logId,
+            who: it.who,
+            title: it.title,
+            type: it.type,
+            rating: 5,
+            date: getTodayDateStr(),
+            earn: (READ_EARN[it.who] || READ_EARN.mom)[it.type] || 0,
+            ts: now,
+            link: it.id
+          });
+        }
+        it.logId = logId;
+        if (event) triggerEmojiBurst(event.clientX, event.clientY, '📚');
+        const earnBox = it.who === 'mj' ? document.getElementById('rdEarnMj') : (it.who === 'bc' ? document.getElementById('rdEarnBc') : null);
+        if (earnBox) {
+          earnBox.style.transition = 'transform .18s ease';
+          earnBox.style.transform = 'scale(1.08)';
+          setTimeout(() => { earnBox.style.transform = 'scale(1)'; }, 180);
+        }
+      } else {
+        // 체크 해제: 자동으로 넣었던 기록도 함께 되돌린다 (토스 적립도 원복)
+        it.done = false;
+        delete it.doneTs;
+        const logId = linkedReadingLogId(it);
+        if (logId) {
+          s.readingLogs = s.readingLogs.filter(r => r.id !== logId);
+          markDeleted(logId);
+        }
+        delete it.logId;
+      }
+      commit(s, true);
+    }
+
+    function deleteReadingTodo(id) {
+      ensureReadingTodo(s);
+      const it = s.readingTodo.find(x => x.id === id);
+      if (!it) return;
+      if (it.done && !confirm('「' + it.title + '」을(를) 읽을 책 목록에서 지울까요?\n다 읽은 책 기록과 독서 적립은 그대로 남아요.')) return;
+      s.readingTodo = s.readingTodo.filter(x => x.id !== id);
+      markDeleted(id);
+      commit(s, true);
+    }
+
+    function renderReadingTodo() {
+      ensureReadingTodo(s);
+      const peopleBox = document.getElementById('rtPeople');
+      if (peopleBox) {
+        Array.prototype.forEach.call(peopleBox.querySelectorAll('.rd-person'), b => {
+          b.classList.toggle('on', b.getAttribute('data-who') === rtWho);
+        });
+      }
+      const typesBox = document.getElementById('rtTypes');
+      if (typesBox) {
+        Array.prototype.forEach.call(typesBox.querySelectorAll('.rd-type'), b => {
+          b.classList.toggle('on', b.getAttribute('data-type') === rtType);
+        });
+      }
+
+      const all = (s.readingTodo || []).filter(it => rdFilter === 'all' || it.who === rdFilter);
+      // 읽는 중·읽을 책(미완료)을 위로, 다 읽은 책(완료)은 아래로
+      const todo = all.filter(i => !i.done).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+      const done = all.filter(i => i.done).sort((a, b) => (b.doneTs || b.ts || 0) - (a.doneTs || a.ts || 0));
+
+      const sumEl = document.getElementById('rtSummary');
+      if (sumEl) {
+        sumEl.innerHTML = all.length
+          ? `<span>📖 읽는 중 <b>${todo.length}</b>권</span><span>✅ 다 읽음 <b>${done.length}</b>권</span>`
+          : '';
+      }
+
+      const box = document.getElementById('rtList');
+      if (!box) return;
+      if (!all.length) {
+        const emptyHtml = `
+          <div class="rd-empty">
+            <span class="rd-empty-emoji">📖</span>
+            <div class="rd-empty-title">읽고 있는 책을 적어보세요</div>
+            <div class="rd-empty-sub">읽는 중인 책·읽을 책을 적어두고,<br>다 읽으면 체크만 하면 기록까지 자동이에요</div>
+          </div>`;
+        if (emptyHtml !== rtRenderedSig) { box.innerHTML = emptyHtml; rtRenderedSig = emptyHtml; }
+        return;
+      }
+
+      const row = it => {
+        const earn = (READ_EARN[it.who] || READ_EARN.mom)[it.type] || 0;
+        const linkedTag = it.done
+          ? `<span class="rt-linked">✅ 다 읽은 책 기록${earn > 0 ? ' +' + earn.toLocaleString() + '원' : ''}</span>`
+          : '';
+        return `
+        <div class="rt-item ${it.done ? 'done' : ''}">
+          <button class="rt-check" onclick="toggleReadingTodo('${escapeHtml(it.id)}', event)" aria-label="다 읽음 체크">${it.done ? '✓' : ''}</button>
+          <div class="rt-main">
+            <div class="rt-book-line">
+              <span class="rd-who ${it.who}">${escapeHtml(readWhoLabel(it.who))}</span>
+              <span class="rt-book">${escapeHtml(it.title)}</span>
+            </div>
+            <div class="rt-meta">
+              <span class="rt-type-tag">${escapeHtml(readTypeLabel(it.type))}</span>
+              ${linkedTag}
+            </div>
+          </div>
+          <button class="shop-del" onclick="deleteReadingTodo('${escapeHtml(it.id)}')" aria-label="삭제">✕</button>
+        </div>`;
+      };
+
+      let html = todo.map(row).join('');
+      if (done.length) {
+        html += `<div class="shop-divider-label">✅ 다 읽은 책 ${done.length}권</div>`;
+        html += done.map(row).join('');
+      }
+      // 내용이 그대로면 다시 그리지 않는다 (10초 자동 동기화 때 버튼 탭이 씹히지 않게)
+      if (html !== rtRenderedSig) { box.innerHTML = html; rtRenderedSig = html; }
     }
 
     function render() {
