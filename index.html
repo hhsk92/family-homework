@@ -2982,12 +2982,16 @@
       const dateLabel = document.getElementById('dayDateLabel');
       if (dateLabel) dateLabel.textContent = koreanFullDate(dStr);
 
-      const { rec, list } = getDayItems(child, dStr);
+      const dayItems = getDayItems(child, dStr);
+      const rec = dayItems.rec;
+      // 저장된 항목 스냅샷이 있는 날은 그 기록만 보여준다(지금 루틴을 덧붙이면 그날 달성률이 왜곡됨)
+      const savedCount = (rec && Array.isArray(rec.items)) ? rec.items.length : 0;
+      const list = savedCount ? dayItems.list.slice(0, savedCount) : dayItems.list;
       const indexed = list.map((it, i) => Object.assign({}, it, { idx: i }));
       const total = list.length;
       const doneCount = list.filter(i => i.d).length;
       const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
-      const hasSnapshot = !!(rec && Array.isArray(rec.items) && rec.items.length);
+      const hasSnapshot = savedCount > 0;
       const recDone = !!(rec && rec.done);
       const allDone = total > 0 && doneCount === total;
 
