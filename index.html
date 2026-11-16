@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>⭐ 우리 가족 숙제 모음</title>
+  <title>📒 우리 가족 기록장</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-512.png">
@@ -12,8 +12,40 @@
   <meta name="theme-color" content="#0064FF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="우리 가족 숙제 모음">
+  <meta name="apple-mobile-web-app-title" content="우리 가족 기록장">
   <meta name="mobile-web-app-capable" content="yes">
+  <script>
+    /* ===== 한국 시간(Asia/Seoul) 기준 오늘 날짜 =====
+       앱 전체(헤더 날짜·D-day·달력·식물 물주기)가 이 세 함수만 쓴다.
+       기기 시간대나 PWA 캐시와 상관없이 항상 한국 날짜로 계산한다. */
+    function kstTodayParts() {
+      try {
+        const p = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit'
+        }).formatToParts(new Date());
+        const pick = t => { const f = p.find(x => x.type === t); return f ? Number(f.value) : 0; };
+        const y = pick('year'), m = pick('month'), d = pick('day');
+        if (y && m && d) return { y: y, m: m, d: d };
+      } catch (e) { /* Intl 미지원 기기 */ }
+      const n = new Date();  // 마지막 수단: 기기 시간대
+      return { y: n.getFullYear(), m: n.getMonth() + 1, d: n.getDate() };
+    }
+    function kstTodayStr() {
+      const t = kstTodayParts();
+      const p2 = v => String(v).padStart(2, '0');
+      return t.y + '-' + p2(t.m) + '-' + p2(t.d);
+    }
+    function kstDateLabel() {
+      const t = kstTodayParts();
+      const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+      const wd = new Date(Date.UTC(t.y, t.m - 1, t.d)).getUTCDay();
+      return t.y + '년 ' + t.m + '월 ' + t.d + '일 ' + days[wd];
+    }
+    function paintHeaderDate() {
+      const el = document.getElementById('currentDate');
+      if (el) el.textContent = kstDateLabel();
+    }
+  </script>
   <style>
     :root {
       --app-purple: #8b5cf6;
@@ -620,19 +652,56 @@
       border-color: #eab308;
       box-shadow: 0 4px 14px rgba(234, 179, 8, 0.3);
     }
+    .chick-stage-box.stage-2 {
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      border-color: #93c5fd;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.16);
+    }
+    .chick-stage-box.stage-2 .chick-name { color: #1d4ed8; }
+    .chick-stage-box.stage-2 .chick-speech { color: #1e40af; }
     .chick-avatar {
-      font-size: 38px;
-      line-height: 1;
-      width: 50px;
-      height: 50px;
+      width: 58px;
+      height: 58px;
+      padding: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #ffffff;
+      background: radial-gradient(circle at 50% 32%, #ffffff 0%, #f1f5fb 100%);
       border-radius: 50%;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       flex-shrink: 0;
       transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .chick-avatar .mascot-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+    .mascot-pct {
+      font-size: 10.5px;
+      font-weight: 800;
+      background: #eef2ff;
+      color: #4338ca;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+    .chick-avatar.pop {
+      animation: mascotPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .chick-avatar.poke {
+      animation: mascotPoke 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes mascotPop {
+      0% { transform: scale(0.82); }
+      60% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+    @keyframes mascotPoke {
+      0% { transform: scale(1) rotate(0deg); }
+      28% { transform: scale(1.22) rotate(-9deg); }
+      62% { transform: scale(0.94) rotate(7deg); }
+      100% { transform: scale(1) rotate(0deg); }
     }
     .chick-avatar.wiggle {
       animation: chickWiggle 1.8s ease-in-out infinite;
@@ -642,8 +711,8 @@
     }
     @keyframes chickWiggle {
       0%, 100% { transform: rotate(0deg); }
-      20% { transform: rotate(-10deg) scale(1.05); }
-      40% { transform: rotate(10deg) scale(1.05); }
+      20% { transform: rotate(-6deg) scale(1.04); }
+      40% { transform: rotate(6deg) scale(1.04); }
       60% { transform: rotate(0deg); }
     }
     @keyframes chickJump {
@@ -1477,14 +1546,15 @@
 
   <div class="header">
     <div class="title-group">
-      <h1>⭐ 우리 가족 숙제 모음</h1>
-      <div class="date-badge" id="currentDate">2026년 11월 10일 화요일</div>
+      <h1>📒 우리 가족 기록장</h1>
+      <div class="date-badge" id="currentDate"></div>
     </div>
     <div class="sync-status" id="syncStatus">
       <div class="sync-dot"></div>
       <span id="syncText">실시간 동기화</span>
     </div>
   </div>
+  <script>paintHeaderDate();</script>  <!-- DOM 파싱 즉시 오늘 날짜로 채운다 (본 스크립트보다 먼저) -->
 
   <!-- PWA Quick Install Banner -->
   <div id="installBanner" style="display:none; margin-bottom: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 12px 14px; border-radius: 16px; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
@@ -1501,7 +1571,7 @@
   <!-- View Switcher (Today's Tasks vs Monthly Achievement) -->
   <div class="view-switcher">
     <button class="view-btn active" id="viewBtnToday" onclick="switchView('today')">
-      <span>📝 오늘 숙제</span>
+      <span>📝 오늘의 기록</span>
     </button>
     <button class="view-btn" id="viewBtnMonth" onclick="switchView('month')">
       <span>📅 한 달 성취표</span>
@@ -1534,23 +1604,23 @@
       <div class="banner-stamp" id="bannerStamp">🌟 0%</div>
     </div>
 
-  <!-- Progress Bar & Chick Incubator -->
+  <!-- Progress Bar & 먼작귀 스테이지 -->
   <div class="progress-card">
     <div class="chick-stage-box" id="chickBox" onclick="pokeChick(event)">
-      <div class="chick-avatar" id="chickAvatar">🥚</div>
+      <div class="chick-avatar" id="chickAvatar"></div>
       <div class="chick-info">
-        <div class="chick-name" id="chickName">신비한 잠자는 알</div>
-        <div class="chick-speech" id="chickSpeech">"오늘치 숙제를 시작하면 내가 깨어날지도 몰라... 쿨쿨 zZ"</div>
+        <div class="chick-name" id="chickName">치이카와 <span class="mascot-pct">0%</span></div>
+        <div class="chick-speech" id="chickSpeech">"에…? 오늘 기록이 아직 텅 비었어… 같이 하나씩 해볼까?"</div>
       </div>
     </div>
     <div class="progress-header">
-      <span class="progress-title">⚡ 오늘 꼭 해야 하는 숙제 달성률</span>
+      <span class="progress-title">⚡ 오늘 할 일 달성률</span>
       <span class="progress-count" id="progressCount">0 / 0 (0%)</span>
     </div>
     <div class="progress-bar-bg">
       <div class="progress-bar-fill" id="progressBar"></div>
     </div>
-    <div class="all-done-banner" id="doneBanner">🎉 와아! 오늘 숙제 100% 올클리어! 삐약이가 태어났어요! 🐥👑 (+100원 획득)</div>
+    <div class="all-done-banner" id="doneBanner">🎉 우라~! 오늘 기록 100% 올클리어! 치이카와·하치와레·우사기 셋이 다 모였어요 (+100원 적립)</div>
   </div>
 
   <!-- Section 1: School Homework -->
@@ -1571,7 +1641,7 @@
       <option value="school">📌 일반 숙제</option>
       <option value="routine">✨ 매일 루틴</option>
     </select>
-    <input type="text" id="quickInput" class="quick-add-input" placeholder="새 숙제나 할 일 직접 추가..." onkeypress="handleEnter(event)">
+    <input type="text" id="quickInput" class="quick-add-input" placeholder="새 기록이나 할 일 직접 추가..." onkeypress="handleEnter(event)">
     <button class="quick-add-btn" onclick="addCustomTask()">+ 추가</button>
   </div>
 
@@ -1583,7 +1653,7 @@
       <span class="plant-sub-tag">숙제 아님</span>
     </div>
     <div class="plant-list" id="plantList"></div>
-    <div class="plant-note">물주기는 숙제 진도율·토스 적립과 따로 계산돼요</div>
+    <div class="plant-note">물주기는 오늘 할 일 달성률·토스 적립과 따로 계산돼요</div>
   </div>
 
   <!-- Section 5: Toss Extra Bonus -->
@@ -1641,8 +1711,8 @@
       </div>
       
       <div style="margin-top:14px; font-size:11.5px; color:#64748b; text-align:center; background:#f8fafc; padding:10px; border-radius:12px; line-height: 1.5;">
-        💡 <b>날짜 칸을 누르면</b> 그날의 숙제를 확인하고 체크할 수 있어요.<br>
-        오늘 칸은 오늘 숙제 화면으로 이동해요. 한 번 체크한 숙제를 해제할 땐 한 번 더 물어봐요.
+        💡 <b>날짜 칸을 누르면</b> 그날의 기록을 확인하고 체크할 수 있어요.<br>
+        오늘 칸은 오늘의 기록 화면으로 이동해요. 한 번 체크한 기록을 해제할 땐 한 번 더 물어봐요.
       </div>
     </div>
 
@@ -1701,7 +1771,7 @@
 
     <div style="margin-top: 14px; text-align: center;">
       <button class="back-to-today-btn" onclick="switchView('today')">
-        📝 오늘 숙제 체크하러 가기
+        📝 오늘 기록하러 가기
       </button>
     </div>
   </div> <!-- /#monthView -->
@@ -1711,7 +1781,7 @@
     <div class="calendar-card">
       <div class="calendar-header">
         <div class="calendar-title">
-          <span id="dayViewTitle">📅 숙제 체크</span>
+          <span id="dayViewTitle">📅 기록 보기</span>
         </div>
         <div class="child-indicator mj" id="dayChildLabel">💜 MJ (4학년)</div>
       </div>
@@ -1719,7 +1789,7 @@
     </div>
     <div style="display:flex; gap:8px; margin-top:14px;">
       <button class="day-nav-btn" onclick="switchView('month')">← 성취 달력</button>
-      <button class="back-to-today-btn" style="width:auto; flex:1.4;" onclick="switchView('today')">📝 오늘 숙제 체크하러 가기</button>
+      <button class="back-to-today-btn" style="width:auto; flex:1.4;" onclick="switchView('today')">📝 오늘 기록하러 가기</button>
     </div>
   </div> <!-- /#dayView -->
 
@@ -1785,22 +1855,36 @@
       return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
 
+    // 오늘 날짜는 언제나 한국 시간(Asia/Seoul) 기준 — 기기 시간대가 달라도, 자정을 넘겨도 하루가 정확히 바뀐다
     function getTodayDateStr() {
-      const now = new Date();
-      return makeDateStr(now.getFullYear(), now.getMonth() + 1, now.getDate());
+      return kstTodayStr();
     }
 
     function getFormattedDateKorean() {
-      const todayStr = getTodayDateStr();
-      const [y, m, d] = todayStr.split('-').map(Number);
-      const targetDate = new Date(y, m - 1, d);
-      const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-      return `${y}년 ${m}월 ${d}일 ${days[targetDate.getDay()]}`;
+      return kstDateLabel();
     }
 
     function updateDateDisplay() {
       const el = document.getElementById('currentDate');
       if (el) el.textContent = getFormattedDateKorean();
+    }
+
+    // 헤더 날짜 갱신 + 날짜가 바뀌었으면 하루 넘김(어제 기록은 history에 그대로 두고, 오늘 매일 루틴 체크만 초기화)까지 한 번에 처리한다.
+    // 부팅 직후, 클라우드 동기화 직후, 앱이 다시 화면에 올라올 때(visibilitychange·focus·pageshow), 30초 주기 점검에서 모두 이 함수를 부른다.
+    // 오늘 이미 체크한 내역은 건드리지 않는다(날짜가 실제로 바뀌었을 때만 초기화).
+    function refreshTodayState(opts) {
+      const options = opts || {};
+      updateDateDisplay();
+      if (!s || !s.tasks) return false;
+      let changed = false;
+      if (checkAndApplyDailyRollover(s)) changed = true;
+      if (ensureTaskDueDates(s)) changed = true;
+      if (changed) {
+        updateTodayHistory();
+        localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+        if (options.sync !== false) syncToCloud();
+      }
+      return changed;
     }
 
     // ===== D-Day 실시간 계산 =====
@@ -2569,7 +2653,7 @@
     function openDay(day) {
       const todayNum = getTodayDayNum();
       if (day > todayNum) {
-        alert("아직 다가오지 않은 날짜예요! 오늘 숙제부터 차근차근 해봐요 😊");
+        alert("아직 다가오지 않은 날짜예요! 오늘 기록부터 차근차근 채워봐요 😊");
         return;
       }
       if (day === todayNum) {
@@ -2605,7 +2689,7 @@
       }
       const dow = ['일', '월', '화', '수', '목', '금', '토'][new Date(calYear, calMonth - 1, selectedDay).getDay()];
       const title = document.getElementById('dayViewTitle');
-      if (title) title.textContent = `📅 ${calYear}년 ${calMonth}월 ${selectedDay}일 (${dow}) 숙제 체크`;
+      if (title) title.textContent = `📅 ${calYear}년 ${calMonth}월 ${selectedDay}일 (${dow}) 기록 보기`;
 
       const { rec, list } = getDayItems(child, ymd(selectedDay));
       let html = '';
@@ -2639,7 +2723,7 @@
       const target = list[idx];
       if (!target) return;
 
-      if (target.d && !confirm('이미 체크한 숙제예요.\\n체크를 해제할까요?')) return;
+      if (target.d && !confirm('이미 체크한 항목이에요.\n체크를 해제할까요?')) return;
 
       if (!s.history) s.history = { mj: {}, bc: {} };
       if (!s.history[child]) s.history[child] = {};
@@ -2742,13 +2826,13 @@
           const record = h[dStr];
           if (record && record.done) {
             classes.push('completed');
-            stamp = '🐥👑';
+            stamp = '🌟';
             pctLabel = '100% 완료!';
           } else if (record && record.pct > 0) {
-            stamp = '🐣';
+            stamp = '🌗';
             pctLabel = `${record.pct}% 진행`;
           } else {
-            stamp = '🥚';
+            stamp = '⏳';
             pctLabel = '오늘 대기';
           }
         } else {
@@ -2789,7 +2873,7 @@
       }
 
       if (!names.length) {
-        body.innerHTML = '<div class="rs-empty">아직 매일 루틴 항목이 없어요.<br>숙제에서 "🔁 매일 루틴으로"를 눌러 추가해 보세요.</div>';
+        body.innerHTML = '<div class="rs-empty">아직 매일 루틴 항목이 없어요.<br>기록에서 "🔁 매일 루틴으로"를 눌러 추가해 보세요.</div>';
         return;
       }
 
@@ -2840,8 +2924,8 @@
 
       const badges = [
         {
-          icon: '🐣',
-          name: '첫 걸음 달성!',
+          icon: '🌱',
+          name: '첫 기록 달성!',
           desc: `${calMonth}월 100% 올클리어 첫 날 달성`,
           achieved: completedDays >= 1,
           progress: `${Math.min(completedDays, 1)} / 1`
@@ -2870,7 +2954,7 @@
         {
           icon: '👑',
           name: `${calMonth}월 올클리어 마스터 킹`,
-          desc: `한 달 ${CAL_DAYS}일 전체 100% 숙제 올클리어!`,
+          desc: `한 달 ${CAL_DAYS}일 전체 100% 기록 올클리어!`,
           achieved: completedDays >= CAL_DAYS,
           progress: `${completedDays} / ${CAL_DAYS}`
         }
@@ -2941,36 +3025,41 @@
     }
 
     async function fetchFromCloud() {
+      let rolled = false, renamed = false, dueFilled = false, plantsNeedSync = false;
       try {
-        let plantsNeedSync = false;
         const res = await fetch(CLOUD_URL);
         if (res.ok) {
           const remote = await res.json();
           if (remote && remote.tasks) {
-            const rolled = checkAndApplyDailyRollover(remote);
-            const renamed = applyTitleRenames(remote);
-            const dueFilled = ensureTaskDueDates(remote);
+            rolled = checkAndApplyDailyRollover(remote) || rolled;
+            renamed = applyTitleRenames(remote);
+            dueFilled = ensureTaskDueDates(remote);
             s.tasks = remote.tasks;
             if (remote.bonus) s.bonus = remote.bonus;
             if (remote.deposits) s.deposits = remote.deposits;
             ensureDeposits(s);
             // 식물 물주기 기록 병합 (클라우드에 아직 없으면 이 기기 기록을 올린다)
             plantsNeedSync = mergePlants(s, remote);
-            if (remote.lastDate) s.lastDate = remote.lastDate;
+            // lastDate는 뒤로 가지 않게: 이미 오늘로 넘어간 기기 기록을 어제 값으로 되돌리지 않는다
+            if (remote.lastDate && String(remote.lastDate) >= String(s.lastDate || '')) s.lastDate = remote.lastDate;
             if (remote.history) {
               s.history = remote.history;
             } else if (!s.history) {
               s.history = getDefaultHistory();
+              plantsNeedSync = true;
             }
-            updateTodayHistory();
-            localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
-            render();
-            if (rolled || renamed || dueFilled || !remote.history || plantsNeedSync) syncToCloud();
           }
         }
       } catch (e) {
+        // 오프라인·서버 지연이어도 아래 날짜 처리와 화면 갱신은 그대로 진행한다
         console.warn('Cloud fetch error', e);
       }
+      // 클라우드 응답과 상관없이 날짜 표시·하루 넘김은 항상 다시 확인한다
+      if (refreshTodayState({ sync: false })) rolled = true;
+      updateTodayHistory();
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+      render();
+      if (rolled || renamed || dueFilled || plantsNeedSync) syncToCloud();
     }
 
     function commit(next, sync = true) {
@@ -2994,7 +3083,7 @@
       const task = curList.find(t => t.id === id);
       if (!task) return;
 
-      if (task.done && !confirm('이미 체크한 숙제예요.\n체크를 해제할까요?')) return;
+      if (task.done && !confirm('이미 체크한 항목이에요.\n체크를 해제할까요?')) return;
 
       task.done = !task.done;
       if (task.done) {
@@ -3211,6 +3300,69 @@
       commit(s, true);
     }
 
+    // ===== 먼작귀(치이카와·하치와레·우사기) 인라인 SVG 캐릭터 =====
+    // 이미지 파일 없이 그려서 폰 화면에서도 선명하고, 로딩 없이 바로 뜬다.
+    function mascotChiikawa() {
+      return '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" class="mascot-svg" role="img" aria-label="치이카와">'
+        + '<ellipse cx="36" cy="41" rx="13" ry="12" fill="#ffffff" stroke="#ddd8e8" stroke-width="3"/>'
+        + '<ellipse cx="84" cy="41" rx="13" ry="12" fill="#ffffff" stroke="#ddd8e8" stroke-width="3"/>'
+        + '<ellipse cx="36" cy="41" rx="6" ry="5.5" fill="#ffd6e0"/>'
+        + '<ellipse cx="84" cy="41" rx="6" ry="5.5" fill="#ffd6e0"/>'
+        + '<ellipse cx="60" cy="73" rx="40" ry="32" fill="#ffffff" stroke="#ddd8e8" stroke-width="3"/>'
+        + '<ellipse cx="28" cy="83" rx="8" ry="5.5" fill="#ffc4d4"/>'
+        + '<ellipse cx="92" cy="83" rx="8" ry="5.5" fill="#ffc4d4"/>'
+        + '<ellipse cx="46" cy="69" rx="4.2" ry="5.6" fill="#3f3b4a"/>'
+        + '<ellipse cx="74" cy="69" rx="4.2" ry="5.6" fill="#3f3b4a"/>'
+        + '<circle cx="47.6" cy="67" r="1.5" fill="#ffffff"/>'
+        + '<circle cx="75.6" cy="67" r="1.5" fill="#ffffff"/>'
+        + '<path d="M55 80 q5 6 10 0" fill="none" stroke="#3f3b4a" stroke-width="2.8" stroke-linecap="round"/>'
+        + '</svg>';
+    }
+
+    function mascotHachiwari() {
+      return '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" class="mascot-svg" role="img" aria-label="하치와레">'
+        + '<path d="M30 50 L22 14 L56 34 Z" fill="#ffffff" stroke="#cbd7ea" stroke-width="3" stroke-linejoin="round"/>'
+        + '<path d="M90 50 L98 14 L64 34 Z" fill="#ffffff" stroke="#cbd7ea" stroke-width="3" stroke-linejoin="round"/>'
+        + '<path d="M33 44 L28 25 L47 36 Z" fill="#c9e8fb"/>'
+        + '<path d="M87 44 L92 25 L73 36 Z" fill="#c9e8fb"/>'
+        + '<ellipse cx="60" cy="74" rx="38" ry="31" fill="#ffffff" stroke="#cbd7ea" stroke-width="3"/>'
+        + '<path d="M46 41 L40 56" stroke="#5eb9ef" stroke-width="7" stroke-linecap="round"/>'
+        + '<path d="M70 41 L79 56" stroke="#5eb9ef" stroke-width="7" stroke-linecap="round"/>'
+        + '<ellipse cx="31" cy="84" rx="7.5" ry="5" fill="#ffc4d4"/>'
+        + '<ellipse cx="89" cy="84" rx="7.5" ry="5" fill="#ffc4d4"/>'
+        + '<ellipse cx="47" cy="70" rx="4" ry="5.4" fill="#3f3b4a"/>'
+        + '<ellipse cx="73" cy="70" rx="4" ry="5.4" fill="#3f3b4a"/>'
+        + '<circle cx="48.4" cy="68" r="1.4" fill="#ffffff"/>'
+        + '<circle cx="74.4" cy="68" r="1.4" fill="#ffffff"/>'
+        + '<path d="M48 78 q12 14 24 0" fill="#ffa7ba" stroke="#3f3b4a" stroke-width="2.6" stroke-linejoin="round"/>'
+        + '</svg>';
+    }
+
+    function mascotUsagi() {
+      return '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" class="mascot-svg" role="img" aria-label="우사기">'
+        + '<g transform="rotate(-16 38 44)"><ellipse cx="38" cy="42" rx="9.5" ry="24" fill="#ffe066" stroke="#e6b52f" stroke-width="3"/><ellipse cx="38" cy="42" rx="4.5" ry="15" fill="#ffc4d4"/></g>'
+        + '<g transform="rotate(16 82 44)"><ellipse cx="82" cy="42" rx="9.5" ry="24" fill="#ffe066" stroke="#e6b52f" stroke-width="3"/><ellipse cx="82" cy="42" rx="4.5" ry="15" fill="#ffc4d4"/></g>'
+        + '<path d="M45 32 L42 8 L55 19 L60 4 L65 19 L78 8 L75 32 Z" fill="#ffd23f" stroke="#e0a800" stroke-width="2.6" stroke-linejoin="round"/>'
+        + '<circle cx="60" cy="24" r="2.8" fill="#ff7fa8"/>'
+        + '<ellipse cx="60" cy="79" rx="34" ry="30" fill="#ffe066" stroke="#e6b52f" stroke-width="3"/>'
+        + '<ellipse cx="26" cy="84" rx="7" ry="4.8" fill="#ffa9c0"/>'
+        + '<ellipse cx="94" cy="84" rx="7" ry="4.8" fill="#ffa9c0"/>'
+        + '<path d="M46 64 L48.4 69.6 L54 72 L48.4 74.4 L46 80 L43.6 74.4 L38 72 L43.6 69.6 Z" fill="#6b4a00"/>'
+        + '<path d="M74 64 L76.4 69.6 L82 72 L76.4 74.4 L74 80 L71.6 74.4 L66 72 L71.6 69.6 Z" fill="#6b4a00"/>'
+        + '<ellipse cx="60" cy="90" rx="11" ry="8" fill="#ff7f95" stroke="#3f3b4a" stroke-width="2.4"/>'
+        + '<ellipse cx="60" cy="93" rx="5.5" ry="3.6" fill="#ff4d6d"/>'
+        + '<path d="M99 41 L100.8 45.2 L105 47 L100.8 48.8 L99 53 L97.2 48.8 L93 47 L97.2 45.2 Z" fill="#ffcf33" stroke="#e0a800" stroke-width="1.6" stroke-linejoin="round"/>'
+        + '<path d="M21 47 L22.4 50.3 L25.7 51.7 L22.4 53.1 L21 56.4 L19.6 53.1 L16.3 51.7 L19.6 50.3 Z" fill="#ffcf33" stroke="#e0a800" stroke-width="1.4" stroke-linejoin="round"/>'
+        + '</svg>';
+    }
+
+    // 달성률 단계: 치이카와(0~39%) → 하치와레(40~99%) → 우사기(100%)
+    function mascotStage(pct) {
+      if (pct >= 100) return { key: 'usagi', no: 3, name: '우사기', tag: 'うさぎ', svg: mascotUsagi };
+      if (pct >= 40) return { key: 'hachiware', no: 2, name: '하치와레', tag: 'ハチワレ', svg: mascotHachiwari };
+      return { key: 'chiikawa', no: 1, name: '치이카와', tag: 'ちいかわ', svg: mascotChiikawa };
+    }
+
     function pokeChick(event) {
       event.stopPropagation();
       const curList = s.tasks[s.activeTab];
@@ -3218,31 +3370,34 @@
       const doneMandatory = mandatoryTasks.filter(t => t.done).length;
       const totalMandatory = mandatoryTasks.length;
       const pct = totalMandatory > 0 ? Math.round((doneMandatory / totalMandatory) * 100) : 0;
+      const stage = mascotStage(pct);
 
-      triggerEmojiBurst(event.clientX, event.clientY, pct === 100 ? '🐥' : (pct >= 50 ? '🐣' : '✨'));
+      triggerEmojiBurst(event.clientX, event.clientY, stage.key === 'usagi' ? '💛' : (stage.key === 'hachiware' ? '💙' : '✨'));
+
+      // 통통 튀는 애니메이션 (다시 누를 때도 처음부터)
+      const chickAvatar = document.getElementById('chickAvatar');
+      if (chickAvatar) {
+        chickAvatar.classList.remove('poke');
+        void chickAvatar.offsetWidth;
+        chickAvatar.classList.add('poke');
+        setTimeout(() => chickAvatar.classList.remove('poke'), 650);
+      }
 
       const chickSpeech = document.getElementById('chickSpeech');
       if (!chickSpeech) return;
-      const messages = pct === 100
-        ? ['"삐약삐약! 오늘 100% 해낸 네가 최고야! 💖"', '"황금 왕관 선물 삐약! 토스 100원 챙겼지? 👑"', '"내일도 나랑 같이 놀자 삐약! 🐥"']
-        : (pct >= 50
-          ? ['"껍질 밀어내는 중이야! 힘을 줘 삐약! 🐣"', '"조금만 더 하면 부화 성공이야! 🔥"', '"삐약! 밖이 조금 보인다!"']
-          : ['"알 속이 따뜻해... 얼른 숙제해줘! 🥚"', '"톡톡! 누가 밖에서 부르는 거야?"', '"꼬물꼬물... 힘을 내는 중이야!"']);
-
-      chickSpeech.textContent = messages[Math.floor(Math.random() * messages.length)];
+      const lines = {
+        chiikawa: ['"에…?"', '"해냈어…!"', '"어… 나 조금 용기 냈어…"', '"톡톡… 나 불렀어…?"', '"조금만 더 하면 돼… 아마도…"'],
+        hachiware: ['"야하~!"', '"냐~! 오늘도 화이팅이야!"', '"하치와레가 응원하고 있어! 야하!"', '"반 넘었어! 이대로 쭉 가자!"'],
+        usagi: ['"우라!"', '"크왕! 완전 해냈어!"', '"우사기는 지금 기분이 아주 좋아! 우라~!"', '"별이 다섯 개야! 크왕!"']
+      }[stage.key];
+      chickSpeech.textContent = lines[Math.floor(Math.random() * lines.length)];
     }
 
     // ===== 반려식물 물주기 =====
     // 숙제(s.tasks)와 완전히 분리된 데이터. 진도율·토스 적립 계산에 포함되지 않는다.
     // 오늘 날짜(한국 시간 기준, YYYY-MM-DD)
     function getTodayKstStr() {
-      try {
-        const parts = new Intl.DateTimeFormat('en-CA', {
-          timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit'
-        }).format(new Date());
-        if (/^\d{4}-\d{2}-\d{2}$/.test(parts)) return parts;
-      } catch (e) { /* Intl 미지원 시 기기 시간대 */ }
-      return getTodayDateStr();
+      return getTodayDateStr();   // 앱 전체가 한국 시간 기준 한 함수만 쓴다
     }
 
     function addDaysToYmd(ymdStr, days) {
@@ -3423,7 +3578,7 @@
 
       let countHtml = `${doneMandatory} / ${totalMandatory} (${pct}%)`;
       if (doneFuture > 0) {
-        countHtml += ` <span style="font-size:11px; color:#10b981; font-weight:700;">+미리한 숙제 ${doneFuture}개 👏</span>`;
+        countHtml += ` <span style="font-size:11px; color:#10b981; font-weight:700;">+미리한 기록 ${doneFuture}개 👏</span>`;
       }
       progressCount.innerHTML = countHtml;
       progressCount.style.color = isMj ? 'var(--app-purple)' : 'var(--app-blue)';
@@ -3436,37 +3591,39 @@
 
       doneBanner.style.display = toss.isAllDone ? 'block' : 'none';
 
-      // Chick Incubator Stage
+      // ===== 먼작귀 스테이지: 치이카와(0~39%) → 하치와레(40~99%) → 우사기(100%) =====
       const chickBox = document.getElementById('chickBox');
       const chickAvatar = document.getElementById('chickAvatar');
       const chickName = document.getElementById('chickName');
       const chickSpeech = document.getElementById('chickSpeech');
 
       if (chickBox && chickAvatar && chickName && chickSpeech) {
-        chickAvatar.className = 'chick-avatar';
-        chickBox.className = 'chick-stage-box';
+        const stage = mascotStage(pct);
 
-        if (pct === 0) {
-          chickAvatar.textContent = '🥚';
-          chickAvatar.classList.add('wiggle');
-          chickName.innerHTML = '잠자는 알 <span style="font-size:10.5px; font-weight:700; background:#fef3c7; color:#92400e; padding:1px 6px; border-radius:10px;">0%</span>';
-          chickSpeech.textContent = '"오늘치 숙제를 시작하면 내가 깨어날지도 몰라... 쿨쿨 zZ"';
-        } else if (pct < 50) {
-          chickAvatar.textContent = '🥚💥';
-          chickAvatar.classList.add('wiggle');
-          chickName.innerHTML = '금이 가기 시작한 알! <span style="font-size:10.5px; font-weight:700; background:#fed7aa; color:#9a3412; padding:1px 6px; border-radius:10px;">' + pct + '%</span>';
-          chickSpeech.textContent = '"우와! 숙제하니까 알에 금이 쩍쩍 가고 있어! 꼬물꼬물..."';
-        } else if (pct < 100) {
-          chickAvatar.textContent = '🐣';
-          chickAvatar.classList.add('jump');
-          chickName.innerHTML = '빼꼼 나온 아기 병아리! <span style="font-size:10.5px; font-weight:700; background:#fef08a; color:#854d0e; padding:1px 6px; border-radius:10px;">' + pct + '%</span>';
-          chickSpeech.textContent = '"거의 다 왔어 삐약! 조금만 더 하면 세상 밖으로 나갈래!"';
+        // 캐릭터가 바뀔 때만 SVG를 새로 그린다 (같은 캐릭터면 애니메이션이 끊기지 않게)
+        if (chickAvatar.dataset.mascot !== stage.key) {
+          chickAvatar.dataset.mascot = stage.key;
+          chickAvatar.innerHTML = stage.svg();
+          chickAvatar.classList.remove('pop');
+          void chickAvatar.offsetWidth;
+          chickAvatar.classList.add('pop');
+        }
+        chickAvatar.classList.toggle('jump', stage.key === 'usagi');
+        chickAvatar.classList.toggle('wiggle', stage.key !== 'usagi');
+        chickBox.className = 'chick-stage-box stage-' + stage.no;
+
+        chickName.innerHTML = stage.name
+          + ' <span class="mascot-pct">' + pct + '%</span>'
+          + ' <span style="font-size:10px; font-weight:700; color:#94a3b8;">' + stage.tag + '</span>';
+
+        if (stage.key === 'usagi') {
+          chickSpeech.textContent = '"우라~! 오늘 기록 100% 완성! 크왕! 최고야!"';
+        } else if (stage.key === 'hachiware') {
+          chickSpeech.textContent = '"야하~! 반 넘었어! 이 기세로 쭉 가자!"';
+        } else if (pct > 0) {
+          chickSpeech.textContent = '"해냈어…! 하나 끝냈어… 이대로 조금씩 가보자…"';
         } else {
-          chickAvatar.textContent = '🐥👑';
-          chickAvatar.classList.add('jump');
-          chickBox.classList.add('stage-3');
-          chickName.innerHTML = '✨ 축 부화! 황금 왕관 삐약이 ✨';
-          chickSpeech.textContent = '"만세! 오늘 숙제 100% 올클리어! 삐약이가 태어났어요! 💛"';
+          chickSpeech.textContent = '"에…? 오늘 기록이 아직 텅 비었어… 같이 하나씩 해볼까?"';
         }
       }
 
@@ -3643,25 +3800,31 @@
     });
 
     render();
+    refreshTodayState();   // 시작하자마자 오늘 날짜·하루 넘김을 한 번 더 확실히 맞춘다
     fetchFromCloud();
 
     // 클라우드 상태 주기적 확인 (10초)
     setInterval(fetchFromCloud, 10000);
+
+    // 앱이 다시 화면에 올라오면(아침에 폰 열기, 앱 전환, 뒤로가기 복원) 날짜부터 다시 맞추고 새로 그린다
+    function onAppResume() {
+      refreshTodayState();
+      render();
+      fetchFromCloud();
+    }
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') fetchFromCloud();
+      if (document.visibilityState === 'visible') onAppResume();
     });
+    window.addEventListener('focus', onAppResume);
+    window.addEventListener('pageshow', onAppResume);
 
     // 날짜가 바뀌면(자정 넘김·장시간 켜둔 앱) 헤더 날짜와 매일 루틴을 스스로 넘긴다
     let bootDateStr = getTodayDateStr();
     setInterval(() => {
-      updateDateDisplay();
+      const rolled = refreshTodayState();
       const todayStr = getTodayDateStr();
-      if (todayStr !== bootDateStr) {
+      if (rolled || todayStr !== bootDateStr) {
         bootDateStr = todayStr;
-        if (checkAndApplyDailyRollover(s)) {
-          localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
-          syncToCloud();
-        }
         render();
       }
     }, 30000);
