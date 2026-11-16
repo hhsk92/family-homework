@@ -1040,6 +1040,19 @@
       border-radius: 6px;
       background: #fee2e2;
       color: #dc2626;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    /* 이미 끝낸 항목은 급한 빨강 대신 차분한 회색 */
+    .dday-chip.done {
+      background: #eef2f7;
+      color: #64748b;
+    }
+
+    .sub-note {
+      flex: 1 1 auto;
+      min-width: 0;
     }
 
     .dday-chip.urgent {
@@ -2051,7 +2064,7 @@
     function getDdayLabel(task) {
       const diff = getFinishDiff(task);
       if (diff === null) return task.dday || '';
-      if (task.done) return '완료';
+      if (task.done) return '✓ 완료';
       if (diff > 0) return `D-${diff} 마무리`;
       if (diff === 0) return 'D-DAY 마무리';
       if (getDueDiff(task) === 0) return '오늘 제출!';
@@ -3351,7 +3364,8 @@
         if (hasDueDate || task.note || isRoutine) {
           let ddayTag = '';
           if (hasDueDate) {
-            ddayTag = `<span class="${isDdayUrgent(task) ? 'dday-chip urgent' : 'dday-chip'}">${escapeHtml(getDdayLabel(task))}</span>`;
+            const chipClass = isDdayUrgent(task) ? 'dday-chip urgent' : (task.done ? 'dday-chip done' : 'dday-chip');
+            ddayTag = `<span class="${chipClass}">${escapeHtml(getDdayLabel(task))}</span>`;
           } else if (isRoutine) {
             ddayTag = `<span class="routine-chip">✨ 오늘 매일 루틴</span>`;
           }
