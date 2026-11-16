@@ -3333,6 +3333,9 @@
 
   <script>
     const CLOUD_URL = 'https://mantledb.sh/v2/hhsk92-family-homework/state';
+    // 앱을 열자마자 이 기기의 오래된 기록을 클라우드에 덮어쓰지 않도록,
+    // 첫 클라우드 읽기가 끝나기 전에는 올리지 않는다
+    let cloudReady = false;
     const EMOJI_OPTIONS = ['💖', '👏', '🔥', '💯', '⭐', '👑', '👍'];
 
     // ===== 공용 탭 공통 설정 (init 코드보다 먼저 선언되어야 함: 초기 상태 정리에서 바로 쓰인다) =====
@@ -4865,6 +4868,8 @@
     }
 
     async function syncToCloud() {
+      // 첫 읽기 전에는 올리지 않는다 (오래된 기기 기록이 최신 클라우드를 덮어쓰는 사고 방지)
+      if (!cloudReady) return;
       try {
         const syncDot = document.querySelector('.sync-dot');
         if (syncDot) syncDot.style.background = '#f59e0b';
@@ -4919,6 +4924,7 @@
       }
       // 클라우드 응답과 상관없이 날짜 표시·하루 넘김은 항상 다시 확인한다
       if (refreshTodayState({ sync: false })) rolled = true;
+      cloudReady = true;   // 첫 읽기가 끝났으니 이제부터는 올려도 된다
       updateTodayHistory();
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
       render();
