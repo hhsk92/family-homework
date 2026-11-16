@@ -4292,17 +4292,19 @@
       return had !== JSON.stringify(st.shoppingList);
     }
 
-    // 기기 간 병합: 같은 항목(id)은 더 최근에 바뀐(ts) 기록을 남기고, 이 기기에만 있는 항목도 합친다
+    // 기기 간 병합: 클라우드 목록을 기준으로 하고, 이 기기에서 막 적었는데 아직 못 올린 항목만 살린다.
+    // (완료·삭제는 클라우드 기록을 따른다 — 지운 항목이 오래된 사본 때문에 되살아나지 않도록)
     function mergeShoppingList(st, remote) {
-      const pulled = shopClean(remote && Array.isArray(remote.shoppingList) ? remote.shoppingList : []);
+      const hasRemote = !!(remote && Array.isArray(remote.shoppingList));
+      const pulled = shopClean(hasRemote ? remote.shoppingList : []);
       const local = shopClean(Array.isArray(st.shoppingList) ? st.shoppingList : []);
-      const byId = {};
-      pulled.forEach(it => { byId[it.id] = it; });
-      local.forEach(it => {
-        const cur = byId[it.id];
-        if (!cur || it.ts > cur.ts) byId[it.id] = it;
-      });
-      st.shoppingList = shopClean(Object.keys(byId).map(k => byId[k]));
+      const ids = {};
+      pulled.forEach(it => { ids[it.id] = true; });
+      const maxRemoteTs = pulled.reduce((m, it) => Math.max(m, it.ts), 0);
+      const extra = hasRemote
+        ? local.filter(it => !ids[it.id] && it.ts > maxRemoteTs)
+        : local;
+      st.shoppingList = shopClean(pulled.concat(extra));
       const pack = list => JSON.stringify(list.slice().sort((a, b) => String(a.id).localeCompare(String(b.id))));
       return pack(st.shoppingList) !== pack(pulled);
     }
