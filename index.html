@@ -2857,6 +2857,13 @@
       return !t || (Date.now() - t) > 5 * 60 * 1000;
     }
 
+    // 이 기기에서 방금 추가했는데 아직 클라우드에서 확인하지 못한 항목 id.
+    // 병합할 때 이 항목만 살리고 나머지는 클라우드 기록을 따른다 (지운 항목이 다른 기기 사본으로 되살아나는 것을 막는다).
+    const pendingAdds = {};
+    function markAdded(kind, id) { if (id) pendingAdds[kind + ':' + String(id)] = true; }
+    function isPendingAdd(kind, id) { return !!pendingAdds[kind + ':' + String(id)]; }
+    function clearPendingAdd(kind, id) { delete pendingAdds[kind + ':' + String(id)]; }
+
     const READ_PEOPLE = [
       { key: 'mj', label: '💜 MJ', badge: '💜 MJ' },
       { key: 'bc', label: '💙 BC', badge: '💙 BC' },
@@ -4847,10 +4854,9 @@
       const pulled = shopClean(hasRemote ? remote.shoppingList : []).filter(notDeleted);
       const local = shopClean(Array.isArray(st.shoppingList) ? st.shoppingList : []);
       const ids = {};
-      pulled.forEach(it => { ids[it.id] = true; });
-      const maxRemoteTs = pulled.reduce((m, it) => Math.max(m, it.ts), 0);
+      pulled.forEach(it => { ids[it.id] = true; clearPendingAdd('shop', it.id); });
       const extra = hasRemote
-        ? local.filter(it => !ids[it.id] && it.ts > maxRemoteTs)
+        ? local.filter(it => !ids[it.id] && isPendingAdd('shop', it.id))
         : local;
       st.shoppingList = shopClean(pulled.concat(extra));
       const pack = list => JSON.stringify(list.slice().sort((a, b) => String(a.id).localeCompare(String(b.id))));
@@ -4870,13 +4876,15 @@
       if (!name) { input.focus(); return; }
       ensureShoppingList(s);
       const now = Date.now();
+      const newId = 'sl-' + now + '-' + Math.random().toString(36).slice(2, 6);
       s.shoppingList.push({
-        id: 'sl-' + now + '-' + Math.random().toString(36).slice(2, 6),
+        id: newId,
         name: name,
         cat: shopCat,
         done: false,
         ts: now
       });
+      markAdded('shop', newId);
       input.value = '';
       commit(s, true);
       input.focus();
@@ -5023,10 +5031,9 @@
       const pulled = readingLogClean(hasRemote ? remote.readingLogs : []).filter(notDeleted);
       const local = readingLogClean(Array.isArray(st.readingLogs) ? st.readingLogs : []);
       const ids = {};
-      pulled.forEach(it => { ids[it.id] = true; });
-      const maxRemoteTs = pulled.reduce((m, it) => Math.max(m, it.ts), 0);
+      pulled.forEach(it => { ids[it.id] = true; clearPendingAdd('read', it.id); });
       const extra = hasRemote
-        ? local.filter(it => !ids[it.id] && it.ts > maxRemoteTs)
+        ? local.filter(it => !ids[it.id] && isPendingAdd('read', it.id))
         : local;
       st.readingLogs = readingLogClean(pulled.concat(extra));
       const pack = list => JSON.stringify(list.slice().sort((a, b) => String(a.id).localeCompare(String(b.id))));
@@ -5081,8 +5088,10 @@
       const date = /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : todayStr;
       ensureReadingLogs(s);
       const now = Date.now();
+      const newReadingId = 'rl-' + now + '-' + Math.random().toString(36).slice(2, 6);
+      markAdded('read', newReadingId);
       s.readingLogs.push({
-        id: 'rl-' + now + '-' + Math.random().toString(36).slice(2, 6),
+        id: newReadingId,
         who: rdWho,
         title: title,
         type: rdType,
