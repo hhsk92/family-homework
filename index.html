@@ -1011,6 +1011,12 @@
       gap: 3px;
     }
 
+    .routine-chip.weekly {
+      background: #fffbeb;
+      color: #b45309;
+      border-color: #fde68a;
+    }
+
     .task-item.today-routine .task-checkbox {
       background: #ffffff !important;
       border: 2px solid #facc15 !important;
@@ -2746,6 +2752,49 @@
 
     .rt-add-btn:active { transform: scale(0.98); }
 
+    /* 입력폼에 위 탭 선택이 그대로 적용된다는 걸 보여주는 한 줄 (중복 선택 버튼 없음) */
+    .rt-applied {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 7px;
+    }
+
+    .rt-applied-who {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 9999px;
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569;
+      white-space: nowrap;
+    }
+
+    .rt-applied-who.mj { border-color: #c4b5fd; background: #f5f3ff; color: #6d28d9; }
+    .rt-applied-who.bc { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+
+    .rt-applied-type {
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      color: #0d9488;
+      background: #f0fdfa;
+      border: 1.5px solid #5eead4;
+      border-radius: 9999px;
+      padding: 4px 6px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .rt-applied-hint {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+
     .rt-list {
       display: flex;
       flex-direction: column;
@@ -3194,21 +3243,13 @@
       </div>
 
       <div class="rt-form">
-        <div class="rd-label">읽을 사람</div>
-        <div class="rd-people" id="rtPeople">
-          <button class="rd-person on mj" data-who="mj" onclick="selectTodoWho('mj')">💜 MJ</button>
-          <button class="rd-person bc" data-who="bc" onclick="selectTodoWho('bc')">💙 BC</button>
-        </div>
+        <!-- 위 사람 탭·책 종류 탭 선택이 그대로 적용된다 (아래 중복 선택 없음) -->
+        <div class="rt-applied" id="rtApplied"></div>
         <div class="rt-input-row">
           <input class="rt-input" id="rtTitle" type="text" maxlength="50" autocomplete="off" placeholder="읽을 책 제목 (예: 마당을 나온 암탉)"
                  oninput="renderEarnPreview()"
                  onkeydown="if(event.key==='Enter'){event.preventDefault();addReadingTodo();}">
           <button class="rt-add-btn" onclick="addReadingTodo()">+ 추가</button>
-        </div>
-        <div class="rd-types" id="rtTypes" style="margin-bottom:0;">
-          <button class="rd-type on" data-type="ko" onclick="selectTodoType('ko')">한글책</button>
-          <button class="rd-type" data-type="en" onclick="selectTodoType('en')">영어책(AR)</button>
-          <button class="rd-type" data-type="etc" onclick="selectTodoType('etc')">기타</button>
         </div>
         <div class="rd-earn-preview" id="rtEarnPreview"></div>
       </div>
@@ -3218,25 +3259,15 @@
 
     <div class="rt-form-head">📚 다 읽은 책 바로 기록하기</div>
     <div class="rd-form">
-      <div class="rd-label">읽은 사람</div>
-      <div class="rd-people" id="rdPeople">
-        <button class="rd-person on mj" data-who="mj" onclick="selectReader('mj')">💜 MJ</button>
-        <button class="rd-person bc" data-who="bc" onclick="selectReader('bc')">💙 BC</button>
-      </div>
+      <!-- 위 사람 탭·책 종류 탭 선택이 그대로 적용된다 (아래 중복 선택 없음) -->
+      <div class="rt-applied" id="rdApplied"></div>
 
       <div class="rd-label">책 제목</div>
       <input class="rd-input" id="rdTitle" type="text" maxlength="50" autocomplete="off" placeholder="예: 마당을 나온 암탉"
              oninput="renderEarnPreview()"
              onkeydown="if(event.key==='Enter'){event.preventDefault();addReadingLog();}">
 
-      <div class="rd-label" style="margin-top: 9px;">구분</div>
-      <div class="rd-types" id="rdTypes">
-        <button class="rd-type on" data-type="ko" onclick="selectBookType('ko')">한글책</button>
-        <button class="rd-type" data-type="en" onclick="selectBookType('en')">영어책(AR)</button>
-        <button class="rd-type" data-type="etc" onclick="selectBookType('etc')">기타</button>
-      </div>
-
-      <div class="rd-label">별점 · 날짜</div>
+      <div class="rd-label" style="margin-top: 9px;">별점 · 날짜</div>
       <div class="rd-row">
         <div class="rd-stars" id="rdStars">
           <button class="rd-star on" data-n="1" onclick="setRating(1)" aria-label="1점">★</button>
@@ -3490,6 +3521,7 @@
       let changed = false;
       if (checkAndApplyDailyRollover(s)) changed = true;
       if (ensureTaskDueDates(s)) changed = true;
+      if (ensureWeeklyTasks(s)) changed = true;
       if (changed) {
         updateTodayHistory();
         localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
@@ -4370,7 +4402,7 @@
       const rec = (s.history && s.history[child]) ? s.history[child][dStr] : null;
       const saved = (rec && Array.isArray(rec.items)) ? rec.items : [];
       const list = saved.map(it => ({ t: it.t, d: it.d ? 1 : 0, r: it.r ? 1 : 0, saved: true }));
-      ((s.tasks && s.tasks[child]) || []).filter(t => t.section === 'routine').forEach(t => {
+      ((s.tasks && s.tasks[child]) || []).filter(t => t.section === 'routine' && isTaskActiveToday(t, dStr)).forEach(t => {
         const name = String(t.title || '').slice(0, 40);
         if (!list.some(i => i.t === name)) list.push({ t: name, d: 0, r: 1, saved: false });
       });
@@ -4632,7 +4664,7 @@
       // 이번 달 기록 + 현재 루틴 목록에서 항목 이름 수집
       const names = [];
       const addName = n => { if (n && !names.includes(n)) names.push(n); };
-      ((s.tasks && s.tasks[child]) || []).filter(t => t.section === 'routine').forEach(t => addName(String(t.title || '').slice(0, 40)));
+      ((s.tasks && s.tasks[child]) || []).filter(t => t.section === 'routine' && !t.weeklyWeekday).forEach(t => addName(String(t.title || '').slice(0, 40)));
       for (let d = 1; d <= CAL_DAYS; d++) {
         const rec = h[ymd(d)];
         if (rec && Array.isArray(rec.items)) rec.items.forEach(i => { if (i.r) addName(i.t); });
@@ -4738,7 +4770,59 @@
       `).join('');
     }
 
+    // 매주 특정 요일만 하는 항목(weeklyWeekday: 0=일 ~ 6=토)은 그 요일에만 목록에 나오고 달성률 모수에도 들어간다
+    // (when을 안 주면 오늘, 'YYYY-MM-DD'를 주면 그 날짜 기준 — 날짜별 기록 보기에 쓴다)
+    function isTaskActiveToday(task, when) {
+      const wd = Number(task && task.weeklyWeekday);
+      if (!(wd >= 0 && wd <= 6)) return true;
+      let dt;
+      if (typeof when === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(when)) {
+        const p = when.split('-').map(Number);
+        dt = new Date(p[0], p[1] - 1, p[2]);
+      } else if (when instanceof Date) {
+        dt = when;
+      } else {
+        dt = new Date();
+      }
+      return dt.getDay() === wd;
+    }
+
+    // 매주 월요일 반복 항목(눈높이)을 두 아이 모두에게 한 번 넣어둔다.
+    // weeklySeeded에 아이별로 표시해 두므로, 혜형 님이 직접 지우면 다시 살리지 않는다.
+    const WEEKLY_TASK_SEEDS = [
+      { child: 'mj', id: 'mj-weekly-nunnoi', icon: '🔁', title: '눈높이 (매주 월요일)', weekday: 1 },
+      { child: 'bc', id: 'bc-weekly-nunnoi', icon: '🔁', title: '눈높이 (매주 월요일)', weekday: 1 }
+    ];
+
+    function ensureWeeklyTasks(st) {
+      if (!st || !st.tasks) return false;
+      if (!st.weeklySeeded || typeof st.weeklySeeded !== 'object') st.weeklySeeded = {};
+      let changed = false;
+      WEEKLY_TASK_SEEDS.forEach(seed => {
+        // 혜형 님이 직접 지운 경우('deleted')에만 다시 넣지 않는다
+        if (st.weeklySeeded[seed.child] === 'deleted') return;
+        const list = st.tasks[seed.child];
+        if (!Array.isArray(list)) return;
+        const exists = list.some(t => Number(t.weeklyWeekday) === seed.weekday
+          && String(t.title || '').indexOf('눈높이') !== -1);
+        if (!exists) {
+          list.push({
+            id: seed.id,
+            section: 'routine',
+            title: seed.title,
+            icon: seed.icon,
+            done: false,
+            reactions: {},
+            weeklyWeekday: seed.weekday
+          });
+          changed = true;
+        }
+      });
+      return changed;
+    }
+
     function isTodayMandatory(task) {
+      if (!isTaskActiveToday(task)) return false;
       if (task.section === 'routine') return true;
       // 마무리 목표일(제출 하루 전)이 오늘이거나 이미 지난 항목 = 오늘 밤까지 끝내야 하는 항목
       // (글자로 된 D-day를 읽지 않고 오늘 날짜와의 차이로 판정하므로 날짜가 바뀌면 자동 반영)
@@ -4796,7 +4880,7 @@
     }
 
     async function fetchFromCloud() {
-      let rolled = false, renamed = false, dueFilled = false, plantsNeedSync = false, shoppingNeedSync = false, readingNeedSync = false, readingTodoNeedSync = false;
+      let rolled = false, renamed = false, dueFilled = false, plantsNeedSync = false, shoppingNeedSync = false, readingNeedSync = false, readingTodoNeedSync = false, weeklyNeedSync = false;
       try {
         const res = await fetch(CLOUD_URL);
         if (res.ok) {
@@ -4806,6 +4890,8 @@
             renamed = applyTitleRenames(remote);
             dueFilled = ensureTaskDueDates(remote);
             s.tasks = remote.tasks;
+            // 매주 월요일 눈높이 항목이 클라우드에 없으면(아이나 새 기기에서 지워졌으면) 다시 넣어 맞춘다
+            if (ensureWeeklyTasks(s)) weeklyNeedSync = true;
             if (remote.bonus) s.bonus = remote.bonus;
             if (remote.deposits) s.deposits = remote.deposits;
             ensureDeposits(s);
@@ -4836,7 +4922,7 @@
       updateTodayHistory();
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
       render();
-      if (rolled || renamed || dueFilled || plantsNeedSync || shoppingNeedSync || readingNeedSync || readingTodoNeedSync) syncToCloud();
+      if (rolled || renamed || dueFilled || plantsNeedSync || shoppingNeedSync || readingNeedSync || readingTodoNeedSync || weeklyNeedSync) syncToCloud();
     }
 
     function commit(next, sync = true) {
@@ -5024,7 +5110,10 @@
             const chipClass = isDdayUrgent(task) ? 'dday-chip urgent' : (task.done ? 'dday-chip done' : 'dday-chip');
             ddayTag = `<span class="${chipClass}">${escapeHtml(getDdayLabel(task))}</span>`;
           } else if (isRoutine) {
-            ddayTag = `<span class="routine-chip">✨ 오늘 매일 루틴</span>`;
+            const wd = Number(task.weeklyWeekday);
+            ddayTag = (wd >= 0 && wd <= 6)
+              ? `<span class="routine-chip weekly">🔁 매주 ${WEEKDAYS_KO[wd]}요일</span>`
+              : `<span class="routine-chip">✨ 오늘 매일 루틴</span>`;
           }
           const noteTag = task.note ? `<span class="sub-note">${task.note}</span>` : '';
           metaHtml = `
@@ -5102,6 +5191,11 @@
       if (!task) return;
       if (!confirm(`"${task.title}" 매일 루틴을 삭제할까요?\n(지난 기록과 통계는 그대로 남아요)`)) return;
       s.tasks[s.activeTab] = list.filter(t => t.id !== id);
+      // 매주 반복 항목을 직접 지우면 다시 자동으로 살아나지 않게 표시해 둔다
+      if (task.weeklyWeekday !== undefined && task.weeklyWeekday !== null) {
+        if (!s.weeklySeeded || typeof s.weeklySeeded !== 'object') s.weeklySeeded = {};
+        s.weeklySeeded[s.activeTab] = 'deleted';
+      }
       commit(s, true);
     }
 
@@ -5115,6 +5209,7 @@
         if (!confirm(`"${task.title}"을(를) 매일 루틴에서 빼고 일반 숙제로 바꿀까요?\n(더 이상 매일 자동으로 초기화되지 않아요)`)) return;
         task.section = (task.origSection && task.origSection !== 'routine') ? task.origSection : 'school';
         delete task.origSection;
+        delete task.weeklyWeekday;
       } else {
         task.origSection = task.section || 'school';
         task.section = 'routine';
@@ -5615,18 +5710,49 @@
       }, 0);
     }
 
-    function selectReader(who) {
-      if (!READ_PEOPLE.some(p => p.key === who)) return;
-      rdWho = who;
+    // 입력폼(읽을 책 · 다 읽은 책)은 위 사람 탭·책 종류 탭 선택을 그대로 쓴다 — 폼 안에 같은 선택 버튼을 두지 않는다
+    function formWho() {
+      if (READ_PEOPLE.some(p => p.key === rdFilter)) return rdFilter;
+      return READ_PEOPLE.some(p => p.key === rdWho) ? rdWho : 'mj';
+    }
+
+    function formType() {
+      return READ_TYPES.some(t => t.key === rdType) ? rdType : 'ko';
+    }
+
+    // 폼 옆 작은 종류 배지(▾)로 바꾸면 두 입력폼의 종류가 함께 바뀐다
+    // (위 종류 탭이 특정 종류를 고른 상태면 그 탭도 따라서 바뀌어 목록과 어긋나지 않는다)
+    function setFormType(type) {
+      if (!READ_TYPES.some(t => t.key === type)) return;
+      rdType = type;
+      rtType = type;
+      if (rdKind !== 'all') rdKind = type;
+      rdKindSig = '';
       rdRenderedSig = '';
+      rtRenderedSig = '';
       renderReadingLogs();
     }
 
-    function selectBookType(type) {
-      if (!READ_TYPES.some(t => t.key === type)) return;
-      rdType = type;
-      rdRenderedSig = '';
-      renderReadingLogs();
+    // 두 입력폼 위에 "지금 이 사람 · 이 종류로 들어간다"를 한 줄로 보여준다
+    let appliedRowsSig = '';
+    function renderAppliedRows() {
+      const who = formWho();
+      const type = formType();
+      const p = READ_PEOPLE.find(x => x.key === who) || READ_PEOPLE[0];
+      rdWho = who;
+      rtWho = who;
+      const opts = READ_TYPES.map(t =>
+        `<option value="${t.key}"${t.key === type ? ' selected' : ''}>${escapeHtml(t.label)}</option>`).join('');
+      const html = `<span class="rt-applied-who ${who}">${escapeHtml(p.label)}</span>`
+        + `<select class="rt-applied-type" onchange="setFormType(this.value)" aria-label="책 종류">${opts}</select>`
+        + `<span class="rt-applied-hint">위에서 고른 그대로</span>`;
+      // 10초 자동 동기화 때도 내용이 그대로면 다시 그리지 않는다 (고르던 선택지·탭이 끊기지 않게)
+      if (html === appliedRowsSig) return;
+      ['rtApplied', 'rdApplied'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+      });
+      appliedRowsSig = html;
     }
 
     function setRating(n) {
@@ -5650,26 +5776,14 @@
     // 책 종류 탭: 읽고 있는 책·다 읽은 책 목록을 함께 걸러내고, 입력폼 구분 기본값도 맞춘다
     function setReadingKind(kind) {
       rdKind = (kind === 'all' || READ_TYPES.some(t => t.key === kind)) ? kind : 'all';
+      // 종류를 골랐으면 두 입력폼의 종류도 그 종류로, '전체'면 기본 한글책으로 돌린다
       if (rdKind !== 'all') { rdType = rdKind; rtType = rdKind; }
+      else { rdType = 'ko'; rtType = 'ko'; }
       rtGroupOpen = {};
       rdKindSig = '';
       rdRenderedSig = '';
       rtRenderedSig = '';
       renderReadingLogs();
-    }
-
-    function selectTodoWho(who) {
-      if (!READ_PEOPLE.some(p => p.key === who)) return;
-      rtWho = who;
-      rtRenderedSig = '';
-      renderReadingTodo();
-    }
-
-    function selectTodoType(type) {
-      if (!READ_TYPES.some(t => t.key === type)) return;
-      rtType = type;
-      rtRenderedSig = '';
-      renderReadingTodo();
     }
 
     // 묶음 접기/펼치기
@@ -5684,6 +5798,13 @@
       if (!titleEl) return;
       const title = String(titleEl.value || '').trim().slice(0, 50);
       if (!title) { titleEl.focus(); return; }
+      // 위 탭에서 고른 사람·종류가 그대로 들어간다 (폼에 따로 선택할 게 없다)
+      const who = formWho();
+      const type = formType();
+      rdWho = who;
+      rdType = type;
+      rtWho = who;
+      rtType = type;
       const dateEl = document.getElementById('rdDate');
       const todayStr = getTodayDateStr();
       const rawDate = dateEl && dateEl.value ? String(dateEl.value) : '';
@@ -5694,20 +5815,23 @@
       markAdded('read', newReadingId);
       s.readingLogs.push({
         id: newReadingId,
-        who: rdWho,
+        who: who,
         title: title,
-        type: rdType,
+        type: type,
         rating: rdRating,
         date: date,
-        earn: readEarnFor(rdWho, rdType, title),
+        earn: readEarnFor(who, type, title),
         ts: now
       });
       titleEl.value = '';
       if (dateEl) dateEl.value = todayStr;
+      if (rdKind !== 'all' && rdKind !== type) { rdKind = 'all'; rdKindSig = ''; }
+      rdRenderedSig = '';
+      rtRenderedSig = '';
       commit(s, true);
       titleEl.focus();
-      if (rdWho === 'mj' || rdWho === 'bc') {
-        const box = document.getElementById('rdEarn' + (rdWho === 'mj' ? 'Mj' : 'Bc'));
+      if (who === 'mj' || who === 'bc') {
+        const box = document.getElementById('rdEarn' + (who === 'mj' ? 'Mj' : 'Bc'));
         if (box) {
           box.style.transition = 'transform .18s ease';
           box.style.transform = 'scale(1.08)';
@@ -5822,19 +5946,8 @@
       renderReadingKindChips();
       renderReadingWhoCard();
 
-      // 입력 선택 상태
-      const peopleBox = document.getElementById('rdPeople');
-      if (peopleBox) {
-        Array.prototype.forEach.call(peopleBox.querySelectorAll('.rd-person'), b => {
-          b.classList.toggle('on', b.getAttribute('data-who') === rdWho);
-        });
-      }
-      const typesBox = document.getElementById('rdTypes');
-      if (typesBox) {
-        Array.prototype.forEach.call(typesBox.querySelectorAll('.rd-type'), b => {
-          b.classList.toggle('on', b.getAttribute('data-type') === rdType);
-        });
-      }
+      // 입력 선택 상태 (위 탭 선택이 그대로 적용된다 — 폼 안 중복 버튼은 없음)
+      renderAppliedRows();
       const starsBox = document.getElementById('rdStars');
       if (starsBox) {
         Array.prototype.forEach.call(starsBox.querySelectorAll('.rd-star'), b => {
@@ -5945,38 +6058,33 @@
       return pack(st.readingTodo) !== pack(pulled);
     }
 
-    function selectTodoWho(who) {
-      if (!READ_PEOPLE.some(p => p.key === who)) return;
-      rtWho = who;
-      rtRenderedSig = '';
-      renderReadingTodo();
-    }
-
-    function selectTodoType(type) {
-      if (!READ_TYPES.some(t => t.key === type)) return;
-      rtType = type;
-      rtRenderedSig = '';
-      renderReadingTodo();
-    }
-
     function addReadingTodo() {
       const input = document.getElementById('rtTitle');
       if (!input) return;
       const title = String(input.value || '').trim().slice(0, 50);
       if (!title) { input.focus(); return; }
+      // 위 탭에서 고른 사람·종류가 그대로 들어간다 (폼에 따로 선택할 게 없다)
+      const who = formWho();
+      const type = formType();
+      rdWho = who;
+      rtWho = who;
       ensureReadingTodo(s);
       const now = Date.now();
       const newId = 'rt-' + now + '-' + Math.random().toString(36).slice(2, 6);
       s.readingTodo.push({
         id: newId,
-        who: rtWho,
+        who: who,
         title: title,
-        type: rtType,
+        type: type,
         done: false,
         ts: now
       });
       markAdded('readtodo', newId);
       input.value = '';
+      // 지금 종류 탭이 다른 종류로 걸려 있으면 새로 넣은 책이 안 보이므로 전체로 풀어 보여준다
+      if (rdKind !== 'all' && rdKind !== type) { rdKind = 'all'; rdKindSig = ''; }
+      rdRenderedSig = '';
+      rtRenderedSig = '';
       commit(s, true);
       input.focus();
     }
@@ -6106,18 +6214,8 @@
 
     function renderReadingTodo() {
       ensureReadingTodo(s);
-      const peopleBox = document.getElementById('rtPeople');
-      if (peopleBox) {
-        Array.prototype.forEach.call(peopleBox.querySelectorAll('.rd-person'), b => {
-          b.classList.toggle('on', b.getAttribute('data-who') === rtWho);
-        });
-      }
-      const typesBox = document.getElementById('rtTypes');
-      if (typesBox) {
-        Array.prototype.forEach.call(typesBox.querySelectorAll('.rd-type'), b => {
-          b.classList.toggle('on', b.getAttribute('data-type') === rtType);
-        });
-      }
+      // 사람·종류는 위 탭 선택을 따른다 (renderAppliedRows가 rdWho·rtWho를 맞춘다)
+      if (document.getElementById('rtApplied')) renderAppliedRows();
 
       // 사람 탭 + 종류 탭
       const forWho = (s.readingTodo || []).filter(it => rdFilter === 'all' || it.who === rdFilter);
@@ -6323,9 +6421,10 @@
         }
       }
 
-      const schoolTasks = curTasks.filter(t => t.section === 'school');
-      const academyTasks = curTasks.filter(t => t.section === 'academy');
-      const routineTasks = curTasks.filter(t => t.section === 'routine' || !t.section);
+      const activeTasks = curTasks.filter(t => isTaskActiveToday(t));
+      const schoolTasks = activeTasks.filter(t => t.section === 'school');
+      const academyTasks = activeTasks.filter(t => t.section === 'academy');
+      const routineTasks = activeTasks.filter(t => t.section === 'routine' || !t.section);
 
       renderTaskList('schoolTaskList', schoolTasks);
       renderTaskList('academyTaskList', academyTasks);
