@@ -229,7 +229,7 @@
     /* View Switcher */
     .view-switcher {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 5px;
       background: #e2e8f0;
       padding: 4px;
@@ -256,13 +256,25 @@
       white-space: nowrap;
     }
 
-    /* 좁은 폰 화면에서는 상단 버튼이 두 줄로 찢어지지 않게 */
+    /* 좁은 폰 화면: 탭이 4개라 한 줄에 넣으면 글자가 잘리므로 2×2로 접어 크게 보여준다 */
     @media (max-width: 600px) {
       .streak-badge { display: none; }
+      .view-switcher {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        padding: 5px;
+        border-radius: 18px;
+      }
+      .view-btn {
+        border-radius: 13px;
+        padding: 10px 6px;
+        font-size: 12.5px;
+        gap: 4px;
+      }
     }
 
     @media (max-width: 430px) {
-      .view-btn { font-size: 11.5px; padding: 10px 4px; gap: 3px; letter-spacing: -0.4px; }
+      .view-btn { padding: 10px 6px; gap: 4px; letter-spacing: -0.4px; }
       .title-group h1 { font-size: 18px; }
       .chick-avatar { width: 52px; height: 52px; }
       .chick-name { font-size: 12.5px; gap: 4px; }
@@ -1720,6 +1732,287 @@
       text-align: center;
       margin-top: 9px;
     }
+
+    /* ===== 공용 쇼핑리스트 (숙제 아님 · 진도율·토스 적립 미포함) ===== */
+    .shop-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.2px;
+      margin-bottom: 10px;
+    }
+
+    .shop-sub-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #b45309;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .shop-view-intro {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #9a3412;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 14px;
+      padding: 11px 12px;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
+    .shop-add-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 11px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      margin-bottom: 12px;
+    }
+
+    .shop-cats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .shop-cat {
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 8px 6px;
+      border-radius: 11px;
+      cursor: pointer;
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: inherit;
+    }
+
+    .shop-cat.on {
+      border-color: #f59e0b;
+      background: #fffbeb;
+      color: #b45309;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15);
+    }
+
+    .shop-input-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .shop-input {
+      flex: 1;
+      min-width: 0;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #0f172a;
+      background: #f8fafc;
+      font-family: inherit;
+    }
+
+    .shop-input:focus {
+      outline: none;
+      border-color: #f59e0b;
+      background: #ffffff;
+    }
+
+    .shop-add-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 0 18px;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(234, 88, 12, 0.22);
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .shop-add-btn:active { transform: scale(0.98); }
+
+    .shop-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 8px;
+      padding: 0 2px;
+    }
+
+    .shop-summary b { font-weight: 800; color: #0f172a; }
+
+    .shop-list-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .shop-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 11px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .shop-check {
+      flex: 0 0 auto;
+      width: 25px;
+      height: 25px;
+      border-radius: 9999px;
+      border: 2px solid #cbd5e1;
+      background: #ffffff;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    .shop-item.done .shop-check {
+      background: #10b981;
+      border-color: #10b981;
+    }
+
+    .shop-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .shop-name {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .shop-item.done .shop-name {
+      text-decoration: line-through;
+      color: #94a3b8;
+      font-weight: 700;
+    }
+
+    .shop-meta {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .shop-item.done .shop-meta { color: #cbd5e1; }
+
+    .shop-del {
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 9999px;
+      border: none;
+      background: #f1f5f9;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .shop-divider-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #94a3b8;
+      margin: 10px 2px 0;
+    }
+
+    .shop-divider-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .shop-clear-btn {
+      width: 100%;
+      margin-top: 4px;
+      border: 1.5px dashed #cbd5e1;
+      background: #ffffff;
+      color: #64748b;
+      border-radius: 14px;
+      padding: 11px;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .shop-clear-btn:active { transform: scale(0.99); }
+
+    .shop-empty {
+      text-align: center;
+      padding: 30px 16px;
+      background: #ffffff;
+      border: 1.5px dashed #e2e8f0;
+      border-radius: 18px;
+    }
+
+    .shop-empty-emoji {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+      margin-bottom: 9px;
+    }
+
+    .shop-empty-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #64748b;
+    }
+
+    .shop-empty-sub {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-top: 5px;
+      line-height: 1.6;
+    }
+
+    .shop-note {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -1752,7 +2045,7 @@
     <button id="installBtn" style="background: white; color: #065f46; border: none; padding: 7px 14px; border-radius: 9999px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">설치</button>
   </div>
 
-  <!-- View Switcher (Today's Tasks vs Monthly Achievement vs 공용 식물 물주기) -->
+  <!-- View Switcher (Today's Tasks vs Monthly Achievement vs 공용 식물 물주기 vs 공용 쇼핑리스트) -->
   <div class="view-switcher">
     <button class="view-btn active" id="viewBtnToday" onclick="switchView('today')">
       <span>📝 오늘의 기록</span>
@@ -1763,6 +2056,9 @@
     </button>
     <button class="view-btn" id="viewBtnPlants" onclick="switchView('plants')">
       <span>🪴 식물 물주기</span>
+    </button>
+    <button class="view-btn" id="viewBtnShopping" onclick="switchView('shopping')">
+      <span>🛒 쇼핑리스트</span>
     </button>
   </div>
 
@@ -1970,6 +2266,35 @@
     <div class="plant-list" id="plantList"></div>
     <div class="plant-note">MJ·BC 탭을 바꿔도 같은 식물 목록이에요</div>
   </div> <!-- /#plantsView -->
+
+  <!-- Shopping View: 공용 쇼핑리스트 (숙제 아님 · 누가 샀는지 상관없이 다 같이 보고 지움) -->
+  <div id="shoppingView" style="display:none;">
+    <div class="shop-title" style="margin-bottom: 8px;">
+      <span>🛒 우리 가족 쇼핑리스트</span>
+      <span class="shop-sub-tag">숙제 아님 · 공용</span>
+    </div>
+    <div class="shop-view-intro">
+      사야 할 걸 적어두면 가족 누구나 보고 지울 수 있어요 🛍️<br>
+      체크한 건 아래로 내려가고, 숙제 달성률·토스 적립과는 따로 계산돼요
+    </div>
+
+    <div class="shop-add-card">
+      <div class="shop-cats" id="shopCats">
+        <button class="shop-cat on" data-cat="mart" onclick="selectShopCat('mart')">🛒 마트/식품</button>
+        <button class="shop-cat" data-cat="living" onclick="selectShopCat('living')">🧴 생필품</button>
+        <button class="shop-cat" data-cat="kids" onclick="selectShopCat('kids')">🎒 아이들/준비물</button>
+        <button class="shop-cat" data-cat="etc" onclick="selectShopCat('etc')">📦 기타</button>
+      </div>
+      <div class="shop-input-row">
+        <input class="shop-input" id="shopInput" type="text" maxlength="40" autocomplete="off" placeholder="살 것 적기 (예: 우유)" onkeydown="if(event.key==='Enter'){event.preventDefault();addShoppingItem();}">
+        <button class="shop-add-btn" onclick="addShoppingItem()">추가</button>
+      </div>
+    </div>
+
+    <div class="shop-summary" id="shopSummary"></div>
+    <div class="shop-list-wrap" id="shopListWrap"></div>
+    <div class="shop-note">MJ·BC 탭을 바꿔도 같은 쇼핑리스트예요</div>
+  </div> <!-- /#shoppingView -->
 
   <!-- Day Detail View (달력에서 지난 날짜를 누르면 열림) — 오늘의 기록과 같은 구성, 날짜만 해당 날짜 -->
   <div id="dayView" style="display:none;">
@@ -2828,6 +3153,9 @@
     if (ensurePlants(s)) {
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
     }
+    if (ensureShoppingList(s)) {
+      localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
+    }
 
     goThisMonthInit();
     function goThisMonthInit() {
@@ -2841,25 +3169,30 @@
       const monthEl = document.getElementById('monthView');
       const dayEl = document.getElementById('dayView');
       const plantsEl = document.getElementById('plantsView');
+      const shoppingEl = document.getElementById('shoppingView');
       const childTabs = document.getElementById('childTabs');
       const btnToday = document.getElementById('viewBtnToday');
       const btnMonth = document.getElementById('viewBtnMonth');
       const btnPlants = document.getElementById('viewBtnPlants');
+      const btnShopping = document.getElementById('viewBtnShopping');
 
       todayEl.style.display = view === 'today' ? 'block' : 'none';
       monthEl.style.display = view === 'month' ? 'block' : 'none';
       if (dayEl) dayEl.style.display = view === 'day' ? 'block' : 'none';
       if (plantsEl) plantsEl.style.display = view === 'plants' ? 'block' : 'none';
-      // 식물 물주기는 공용이라 아이 탭(MJ/BC)을 숨긴다
-      if (childTabs) childTabs.style.display = view === 'plants' ? 'none' : 'grid';
+      if (shoppingEl) shoppingEl.style.display = view === 'shopping' ? 'block' : 'none';
+      // 식물 물주기·쇼핑리스트는 공용이라 아이 탭(MJ/BC)을 숨긴다
+      if (childTabs) childTabs.style.display = (view === 'plants' || view === 'shopping') ? 'none' : 'grid';
 
       btnToday.classList.toggle('active', view === 'today');
       btnMonth.classList.toggle('active', view === 'month' || view === 'day');
       if (btnPlants) btnPlants.classList.toggle('active', view === 'plants');
+      if (btnShopping) btnShopping.classList.toggle('active', view === 'shopping');
 
       if (view === 'month') renderCalendar();
       if (view === 'day') renderDayView();
       if (view === 'plants') renderPlants();
+      if (view === 'shopping') renderShopping();
       updateDateDisplay();
       window.scrollTo({ top: 0 });
     }
@@ -3378,7 +3711,7 @@
     }
 
     async function fetchFromCloud() {
-      let rolled = false, renamed = false, dueFilled = false, plantsNeedSync = false;
+      let rolled = false, renamed = false, dueFilled = false, plantsNeedSync = false, shoppingNeedSync = false;
       try {
         const res = await fetch(CLOUD_URL);
         if (res.ok) {
@@ -3393,6 +3726,8 @@
             ensureDeposits(s);
             // 식물 물주기 기록 병합 (클라우드에 아직 없으면 이 기기 기록을 올린다)
             plantsNeedSync = mergePlants(s, remote);
+            // 쇼핑리스트 병합 (가족 공용 · 다른 기기에서 들어온 항목도 살린다)
+            shoppingNeedSync = mergeShoppingList(s, remote);
             // lastDate는 뒤로 가지 않게: 이미 오늘로 넘어간 기기 기록을 어제 값으로 되돌리지 않는다
             if (remote.lastDate && String(remote.lastDate) >= String(s.lastDate || '')) s.lastDate = remote.lastDate;
             if (remote.history) {
@@ -3412,7 +3747,7 @@
       updateTodayHistory();
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
       render();
-      if (rolled || renamed || dueFilled || plantsNeedSync) syncToCloud();
+      if (rolled || renamed || dueFilled || plantsNeedSync || shoppingNeedSync) syncToCloud();
     }
 
     function commit(next, sync = true) {
@@ -3917,6 +4252,167 @@
       }).join('');
     }
 
+    // ===== 공용 쇼핑리스트 (숙제 아님 · 달성률·토스 적립과 무관) =====
+    const SHOP_CATS = [
+      { key: 'mart', label: '🛒 마트/식품' },
+      { key: 'living', label: '🧴 생필품' },
+      { key: 'kids', label: '🎒 아이들/준비물' },
+      { key: 'etc', label: '📦 기타' }
+    ];
+    let shopCat = 'mart';
+
+    function shopCatLabel(key) {
+      const c = SHOP_CATS.find(x => x.key === key);
+      return c ? c.label : SHOP_CATS[0].label;
+    }
+
+    // 쇼핑리스트 배열 정리: 잘못된 값 버리기 + 필드 보장 (기기 병합과 클라우드 비교에 같은 규칙 사용)
+    function shopClean(list) {
+      const out = [];
+      (Array.isArray(list) ? list : []).forEach((it, i) => {
+        if (!it || typeof it !== 'object') return;
+        const name = String(it.name || '').trim().slice(0, 40);
+        if (!name) return;
+        const rawId = String(it.id || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 60);
+        out.push({
+          id: rawId || ('sl-' + i + '-' + name.length + '-' + name.charCodeAt(0)),
+          name: name,
+          cat: SHOP_CATS.some(c => c.key === it.cat) ? it.cat : 'mart',
+          done: it.done === true || it.done === 1,
+          ts: Number(it.ts) || 0
+        });
+      });
+      return out;
+    }
+
+    function ensureShoppingList(st) {
+      if (!st) return false;
+      const had = Array.isArray(st.shoppingList) ? JSON.stringify(st.shoppingList) : null;
+      st.shoppingList = shopClean(had === null ? [] : st.shoppingList);
+      return had !== JSON.stringify(st.shoppingList);
+    }
+
+    // 기기 간 병합: 같은 항목(id)은 더 최근에 바뀐(ts) 기록을 남기고, 이 기기에만 있는 항목도 합친다
+    function mergeShoppingList(st, remote) {
+      const pulled = shopClean(remote && Array.isArray(remote.shoppingList) ? remote.shoppingList : []);
+      const local = shopClean(Array.isArray(st.shoppingList) ? st.shoppingList : []);
+      const byId = {};
+      pulled.forEach(it => { byId[it.id] = it; });
+      local.forEach(it => {
+        const cur = byId[it.id];
+        if (!cur || it.ts > cur.ts) byId[it.id] = it;
+      });
+      st.shoppingList = shopClean(Object.keys(byId).map(k => byId[k]));
+      const pack = list => JSON.stringify(list.slice().sort((a, b) => String(a.id).localeCompare(String(b.id))));
+      return pack(st.shoppingList) !== pack(pulled);
+    }
+
+    function selectShopCat(key) {
+      if (!SHOP_CATS.some(c => c.key === key)) return;
+      shopCat = key;
+      renderShopping();
+    }
+
+    function addShoppingItem() {
+      const input = document.getElementById('shopInput');
+      if (!input) return;
+      const name = String(input.value || '').trim().slice(0, 40);
+      if (!name) { input.focus(); return; }
+      ensureShoppingList(s);
+      const now = Date.now();
+      s.shoppingList.push({
+        id: 'sl-' + now + '-' + Math.random().toString(36).slice(2, 6),
+        name: name,
+        cat: shopCat,
+        done: false,
+        ts: now
+      });
+      input.value = '';
+      commit(s, true);
+      input.focus();
+    }
+
+    function toggleShopItem(id, event) {
+      ensureShoppingList(s);
+      const it = s.shoppingList.find(x => x.id === id);
+      if (!it) return;
+      it.done = !it.done;
+      it.ts = Date.now();
+      if (it.done && event) triggerEmojiBurst(event.clientX, event.clientY, '🛍️');
+      commit(s, true);
+    }
+
+    function deleteShopItem(id) {
+      ensureShoppingList(s);
+      const before = s.shoppingList.length;
+      s.shoppingList = s.shoppingList.filter(x => x.id !== id);
+      if (s.shoppingList.length !== before) commit(s, true);
+    }
+
+    function clearBoughtItems() {
+      ensureShoppingList(s);
+      const n = s.shoppingList.filter(x => x.done).length;
+      if (!n) return;
+      if (!confirm('산 것 ' + n + '개를 목록에서 비울까요?')) return;
+      s.shoppingList = s.shoppingList.filter(x => !x.done);
+      commit(s, true);
+    }
+
+    function renderShopping() {
+      ensureShoppingList(s);
+      const catsBox = document.getElementById('shopCats');
+      if (catsBox) {
+        Array.prototype.forEach.call(catsBox.querySelectorAll('.shop-cat'), b => {
+          b.classList.toggle('on', b.getAttribute('data-cat') === shopCat);
+        });
+      }
+      const wrap = document.getElementById('shopListWrap');
+      const sumEl = document.getElementById('shopSummary');
+      if (!wrap) return;
+
+      // 사야 할 것(미완료)을 위로, 산 것(완료)은 아래로. 같은 묶음 안에서는 최근에 적은 것이 위로.
+      const list = (s.shoppingList || []).slice().sort((a, b) => {
+        if (!!a.done !== !!b.done) return a.done ? 1 : -1;
+        return (b.ts || 0) - (a.ts || 0);
+      });
+      const todo = list.filter(i => !i.done);
+      const done = list.filter(i => i.done);
+
+      if (sumEl) {
+        sumEl.innerHTML = list.length
+          ? `<span>🛒 살 것 <b>${todo.length}</b>개</span><span>✅ 산 것 <b>${done.length}</b>개</span>`
+          : '';
+      }
+
+      if (!list.length) {
+        wrap.innerHTML = `
+          <div class="shop-empty">
+            <span class="shop-empty-emoji">🛍️</span>
+            <div class="shop-empty-title">쇼핑리스트가 비어 있어요</div>
+            <div class="shop-empty-sub">위에 살 것을 적고 <b>추가</b>를 누르면<br>가족 모두가 같이 볼 수 있어요</div>
+          </div>`;
+        return;
+      }
+
+      const row = it => `
+        <div class="shop-item ${it.done ? 'done' : ''}">
+          <button class="shop-check" onclick="toggleShopItem('${escapeHtml(it.id)}', event)" aria-label="산 것 체크">${it.done ? '✓' : ''}</button>
+          <div class="shop-main">
+            <div class="shop-name">${escapeHtml(it.name)}</div>
+            <div class="shop-meta">${escapeHtml(shopCatLabel(it.cat))}</div>
+          </div>
+          <button class="shop-del" onclick="deleteShopItem('${escapeHtml(it.id)}')" aria-label="삭제">✕</button>
+        </div>`;
+
+      let html = todo.map(row).join('');
+      if (done.length) {
+        html += `<div class="shop-divider-label">✅ 산 것 ${done.length}개</div>`;
+        html += done.map(row).join('');
+        html += `<button class="shop-clear-btn" onclick="clearBoughtItems()">🧹 산 것 ${done.length}개 비우기</button>`;
+      }
+      wrap.innerHTML = html;
+    }
+
     function render() {
       updateDateDisplay();
       updateTodayHistory();
@@ -3925,6 +4421,9 @@
       }
       if (currentView === 'day') {
         renderDayView();
+      }
+      if (currentView === 'shopping') {
+        renderShopping();
       }
       const isMj = s.activeTab === 'mj';
       const curTasks = s.tasks[s.activeTab];
