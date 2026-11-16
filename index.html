@@ -1736,6 +1736,43 @@
       cursor: default;
     }
 
+    /* 단계 전환 버튼 (방울토마토: 발아기 ↔ 싹 난 뒤) */
+    .plant-stage-btn {
+      width: 100%;
+      margin-top: 8px;
+      border: 1.5px solid #86efac;
+      border-radius: 12px;
+      padding: 10px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #047857;
+      background: #ecfdf5;
+      cursor: pointer;
+    }
+
+    .plant-stage-btn:active { transform: scale(0.98); }
+
+    .plant-stage-btn.revert {
+      border-color: #e2e8f0;
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 11.5px;
+      padding: 8px;
+    }
+
+    .plant-stage {
+      margin-left: 5px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #0d9488;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
     .plant-note {
       font-size: 11px;
       color: #94a3b8;
@@ -3142,9 +3179,30 @@
       { id: 'ionantha', name: '이오난사', emoji: '🌿', owner: 'BC', kind: '공기식물', intervalDays: 5, lastWatered: '2026-11-15', tip: '물에 20~30분 담갔다 거꾸로 털어 말리기' },
       { id: 'cactus', name: '선인장', emoji: '🌵', owner: 'BC', kind: '', intervalDays: 30, lastWatered: '2026-11-15', tip: '흙이 속까지 바짝 마른 뒤 주기 (겨울엔 월 1회)' },
       { id: 'berry', name: '베리', emoji: '🫐', owner: 'MJ', kind: '', intervalDays: 7, lastWatered: '2026-11-15', tip: '일주일에 한 번, 흙이 마르면 화분 밑으로 물이 나올 만큼 듬뿍 주기' },
-      // 다이소 방울토마토 키트 (가족 공용 · 2026-11-16 추가)
-      { id: 'tomato', name: '방울토마토', emoji: '🍅', owner: 'ALL', kind: '다이소 키트', intervalDays: 2, lastWatered: '2026-11-14', tip: '싹 나기 전엔 매일 1~2번 분무기로 촉촉히, 싹 난 뒤엔 겉흙 마르면 2~3일마다 듬뿍' }
+      // 다이소 방울토마토 키트 (가족 공용 · 2026-11-16 추가 · 발아기 1일 주기로 시작)
+      { id: 'tomato', name: '방울토마토', emoji: '🍅', owner: 'ALL', kind: '다이소 키트', intervalDays: 1, lastWatered: '2026-11-15', tip: '싹 나기 전엔 매일 1~2번 분무기로 촉촉히, 싹 난 뒤엔 겉흙 마르면 2~3일마다 듬뿍' }
     ];
+
+    // ===== 단계 전환 (발아기 ↔ 싹 난 뒤) =====
+    // 재배 단계에 따라 물 주는 주기가 달라지는 식물만 둔다. 카드 안 버튼으로 단계를 바꾼다.
+    const PLANT_STAGES = {
+      tomato: {
+        fast: 1, slow: 2,
+        fastStage: '발아기', slowStage: '싹 난 뒤',
+        toSlowLabel: '🌱 싹 났어요! (2일 주기로 전환)',
+        toFastLabel: '↩️ 발아기(1일)로 되돌리기',
+        fastTip: '싹 나기 전 · 하루 1~2번 분무기로 촉촉히',
+        slowTip: '싹 난 뒤 · 겉흙 마르면 2~3일마다 듬뿍'
+      }
+    };
+
+    // 지금 이 식물이 어느 단계인지 (단계 설정이 없는 식물은 null)
+    function plantStageInfo(p) {
+      const cfg = (p && p.id) ? PLANT_STAGES[p.id] : null;
+      if (!cfg) return null;
+      const slow = Number(p.intervalDays) >= Number(cfg.slow);
+      return { cfg: cfg, slow: slow, label: slow ? cfg.slowStage : cfg.fastStage, tip: slow ? cfg.slowTip : cfg.fastTip };
+    }
 
     // ===== 달력 설정 (한 달 성취표: 달 이동 가능) =====
     function pad2(n) { return String(n).padStart(2, '0'); }
@@ -4975,6 +5033,12 @@
       st.plants = PLANT_DEFAULTS.map(d => {
         const cur = existing[d.id] || {};
         const p = Object.assign({}, d, cur);
+        // 옛 기본값(2일 · 11-14)으로 저장된 방울토마토는 발아기(1일 · 11-15)로 옮긴다
+        // (단계 전환 버튼이 생기기 전 기록이라 사용자가 고른 2일이 아니다 — stageTs 없음으로 구분)
+        if (d.id === 'tomato' && !cur.stageTs && Number(cur.intervalDays) === 2) {
+          p.intervalDays = 1;
+          if (String(p.lastWatered || '') === '2026-11-14') p.lastWatered = '2026-11-15';
+        }
         p.intervalDays = Math.max(1, Number(p.intervalDays) || d.intervalDays);
         if (!p.lastWatered) p.lastWatered = d.lastWatered;
         if (!p.name) p.name = d.name;
@@ -4994,7 +5058,11 @@
       pulled.forEach(rp => {
         if (!rp || !rp.id) return;
         const lp = byId[rp.id];
-        if (!lp || String(rp.lastWatered || '') > String(lp.lastWatered || '')) byId[rp.id] = rp;
+        if (!lp) { byId[rp.id] = rp; return; }
+        const lwL = String(lp.lastWatered || ''), lwR = String(rp.lastWatered || '');
+        if (lwR > lwL) { byId[rp.id] = rp; return; }
+        // 물 준 날이 같으면 단계(주기)를 나중에 바꾼 쪽을 따른다 — 예전 사본이 1일로 되돌리지 않도록
+        if (lwR === lwL && (Number(rp.stageTs) || 0) > (Number(lp.stageTs) || 0)) byId[rp.id] = rp;
       });
       st.plants = Object.keys(byId).map(k => byId[k]);
       const normalized = ensurePlants(st);
@@ -5016,6 +5084,19 @@
       const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
       const dow = ['일', '월', '화', '수', '목', '금', '토'][d.getUTCDay()];
       return `${+m[2]}월 ${+m[3]}일 (${dow})`;
+    }
+
+    // 단계 전환 (싹 났어요 ↔ 발아기로 되돌리기) — 주기만 바꾸고 다음 물 주는 날을 다시 계산한다
+    function togglePlantStage(id, event) {
+      if (!Array.isArray(s.plants)) ensurePlants(s);
+      const p = (s.plants || []).find(x => x.id === id);
+      const info = plantStageInfo(p);
+      if (!p || !info) return;
+      p.intervalDays = info.slow ? Number(info.cfg.fast) : Number(info.cfg.slow);
+      p.nextDue = addDaysToYmd(p.lastWatered || getTodayKstStr(), p.intervalDays);
+      p.stageTs = Date.now();   // 기기 병합에서 주기 변경이 물 주기 기록에 묻히지 않게
+      if (event) triggerEmojiBurst(event.clientX, event.clientY, info.slow ? '💧' : '🌱');
+      commit(s, true);
     }
 
     function waterPlant(id, event) {
@@ -5047,6 +5128,7 @@
         const diff = diffDaysFromToday(p.nextDue);
         const cardCls = 'plant-card' + (diff === null ? '' : (diff < 0 ? ' overdue' : (diff === 0 ? ' due' : '')));
         const wateredToday = p.lastWatered === todayStr;
+        const stageInfo = plantStageInfo(p);
         const owner = String(p.owner || '').toUpperCase();
         const ownerBadge = owner === 'MJ'
           ? '<span class="plant-owner mj">💜 MJ</span>'
@@ -5059,7 +5141,7 @@
               <span class="plant-emoji">${p.emoji || '🪴'}</span>
               <div>
                 <div class="plant-name">${escapeHtml(p.name)}${ownerBadge}${p.kind ? `<span class="plant-kind">${escapeHtml(p.kind)}</span>` : ''}</div>
-                <div class="plant-cycle">${p.intervalDays}일마다 물 주기</div>
+                <div class="plant-cycle">${p.intervalDays}일마다 물 주기${stageInfo ? `<span class="plant-stage">${stageInfo.label}</span>` : ''}</div>
               </div>
               <span class="plant-dday ${info.cls}">${info.label}</span>
             </div>
@@ -5067,8 +5149,9 @@
               <span>💧 마지막 물: ${koreanYmdLabel(p.lastWatered)}</span>
               <span>📅 다음 물: ${koreanYmdLabel(p.nextDue)}</span>
             </div>
-            <div class="plant-tip">💡 ${escapeHtml(p.tip || '')}</div>
+            <div class="plant-tip">💡 ${escapeHtml(stageInfo ? stageInfo.tip : (p.tip || ''))}</div>
             <button class="plant-water-btn ${wateredToday ? 'done' : ''}" ${wateredToday ? 'disabled' : ''} onclick="waterPlant('${p.id}', event)">${wateredToday ? '✅ 오늘 물 줬어요' : '💧 물 줬어요'}</button>
+            ${stageInfo ? `<button class="plant-stage-btn ${stageInfo.slow ? 'revert' : ''}" onclick="togglePlantStage('${p.id}', event)">${stageInfo.slow ? stageInfo.cfg.toFastLabel : stageInfo.cfg.toSlowLabel}</button>` : ''}
           </div>`;
       }).join('');
     }
