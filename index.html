@@ -1657,6 +1657,7 @@
 
     .plant-owner.mj { color: #6d28d9; background: #f5f3ff; border-color: #ddd6fe; }
     .plant-owner.bc { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .plant-owner.all { color: #047857; background: #ecfdf5; border-color: #a7f3d0; }
 
     .plant-view-intro {
       font-size: 11.5px;
@@ -3140,7 +3141,9 @@
     const PLANT_DEFAULTS = [
       { id: 'ionantha', name: '이오난사', emoji: '🌿', owner: 'BC', kind: '공기식물', intervalDays: 5, lastWatered: '2026-11-15', tip: '물에 20~30분 담갔다 거꾸로 털어 말리기' },
       { id: 'cactus', name: '선인장', emoji: '🌵', owner: 'BC', kind: '', intervalDays: 30, lastWatered: '2026-11-15', tip: '흙이 속까지 바짝 마른 뒤 주기 (겨울엔 월 1회)' },
-      { id: 'berry', name: '베리', emoji: '🫐', owner: 'MJ', kind: '', intervalDays: 7, lastWatered: '2026-11-15', tip: '일주일에 한 번, 흙이 마르면 화분 밑으로 물이 나올 만큼 듬뿍 주기' }
+      { id: 'berry', name: '베리', emoji: '🫐', owner: 'MJ', kind: '', intervalDays: 7, lastWatered: '2026-11-15', tip: '일주일에 한 번, 흙이 마르면 화분 밑으로 물이 나올 만큼 듬뿍 주기' },
+      // 다이소 방울토마토 키트 (가족 공용 · 2026-11-16 추가)
+      { id: 'tomato', name: '방울토마토', emoji: '🍅', owner: 'ALL', kind: '다이소 키트', intervalDays: 2, lastWatered: '2026-11-14', tip: '싹 나기 전엔 매일 1~2번 분무기로 촉촉히, 싹 난 뒤엔 겉흙 마르면 2~3일마다 듬뿍' }
     ];
 
     // ===== 달력 설정 (한 달 성취표: 달 이동 가능) =====
@@ -5045,7 +5048,11 @@
         const cardCls = 'plant-card' + (diff === null ? '' : (diff < 0 ? ' overdue' : (diff === 0 ? ' due' : '')));
         const wateredToday = p.lastWatered === todayStr;
         const owner = String(p.owner || '').toUpperCase();
-        const ownerBadge = owner ? `<span class="plant-owner ${owner === 'MJ' ? 'mj' : 'bc'}">${owner === 'MJ' ? '💜 MJ' : '💙 BC'}</span>` : '';
+        const ownerBadge = owner === 'MJ'
+          ? '<span class="plant-owner mj">💜 MJ</span>'
+          : (owner === 'BC'
+            ? '<span class="plant-owner bc">💙 BC</span>'
+            : (owner ? '<span class="plant-owner all">🌱 공용</span>' : ''));
         return `
           <div class="${cardCls}">
             <div class="plant-head">
