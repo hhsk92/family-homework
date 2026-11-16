@@ -6086,11 +6086,19 @@
         if (!best) break;
         const members = rest.filter(it => (words[it.id] || []).slice(0, best.n).join(' ') === best.key);
         if (members.length < 3) break;
+        // 보여줄 이름: 묶인 책들이 실제로 같이 쓰는 앞 단어까지 늘린다 (예: Nate the → Nate the Great)
+        let common = best.n;
+        const shortest = members.reduce((m, it) => Math.min(m, (words[it.id] || []).length), 99);
+        while (common < Math.min(6, shortest)) {
+          const w = words[members[0].id][common];
+          if (!w || members.some(it => words[it.id][common] !== w)) break;
+          common++;
+        }
         const labelWords = String(members[0].title || '')
           .replace(/^\s*#\s*\d+\s*/, '')   // "#12 Nate the Great" → "Nate the Great"
           .replace(/[:–—]/g, ' ')   // 콜론·대시는 띄어쓰기로
           .replace(/\s+/g, ' ').trim().split(' ');
-        groups.push({ key: 'series:' + best.key, label: labelWords.slice(0, best.n).join(' '), items: members });
+        groups.push({ key: 'series:' + best.key, label: labelWords.slice(0, common).join(' '), items: members });
         rest = rest.filter(it => members.indexOf(it) === -1);
       }
       return { groups: groups, rest: rest };
