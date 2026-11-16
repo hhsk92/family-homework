@@ -94,6 +94,72 @@
       color: #64748b;
       margin-top: 2px;
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* 과거 기록을 보는 중이라는 표시 (상단 날짜 배지 옆) */
+    .past-chip {
+      display: none;
+      align-items: center;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #b45309;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      padding: 2px 7px;
+      border-radius: 9999px;
+    }
+
+    .past-chip.on { display: inline-flex; }
+
+    /* 날짜별 기록 화면 (오늘의 기록과 같은 구성 + 그 날짜 표시) */
+    .past-date-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: -4px 4px 10px;
+    }
+
+    .past-date-main {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+    }
+
+    .past-date-chip {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #b45309;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .day-section-title {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #475569;
+      margin: 16px 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .day-section-title .day-section-count {
+      margin-left: auto;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #64748b;
+      background: #f1f5f9;
+      border-radius: 9999px;
+      padding: 2px 8px;
     }
 
     .sync-status {
@@ -163,8 +229,8 @@
     /* View Switcher */
     .view-switcher {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
       background: #e2e8f0;
       padding: 4px;
       border-radius: 9999px;
@@ -173,9 +239,11 @@
 
     .view-btn {
       border: none;
-      padding: 10px 14px;
+      padding: 10px 8px;
       border-radius: 9999px;
-      font-size: 13.5px;
+      font-size: 13px;
+      letter-spacing: -0.3px;
+      min-width: 0;
       font-weight: 800;
       background: transparent;
       color: #64748b;
@@ -190,7 +258,7 @@
 
     /* 좁은 폰 화면에서는 상단 버튼이 두 줄로 찢어지지 않게 */
     @media (max-width: 430px) {
-      .view-btn { font-size: 12.5px; padding: 10px 8px; gap: 4px; }
+      .view-btn { font-size: 11.5px; padding: 10px 4px; gap: 3px; letter-spacing: -0.4px; }
       .streak-badge { display: none; }
       .title-group h1 { font-size: 18px; }
       .chick-avatar { width: 52px; height: 52px; }
@@ -1552,6 +1620,31 @@
       border-radius: 9999px;
     }
 
+    /* 누구의 식물인지 (MJ / BC) — 체크는 누구나 가능한 공용 */
+    .plant-owner {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .plant-owner.mj { color: #6d28d9; background: #f5f3ff; border-color: #ddd6fe; }
+    .plant-owner.bc { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+
+    .plant-view-intro {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #0f766e;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      border-radius: 14px;
+      padding: 11px 12px;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
     .plant-cycle {
       font-size: 11.5px;
       font-weight: 700;
@@ -1632,7 +1725,10 @@
   <div class="header">
     <div class="title-group">
       <h1>📒 우리 가족 기록장</h1>
-      <div class="date-badge" id="currentDate"></div>
+      <div class="date-badge">
+        <span id="currentDate"></span>
+        <span class="past-chip" id="pastModeChip">과거 기록 보기</span>
+      </div>
     </div>
     <div class="sync-status" id="syncStatus">
       <div class="sync-dot"></div>
@@ -1653,7 +1749,7 @@
     <button id="installBtn" style="background: white; color: #065f46; border: none; padding: 7px 14px; border-radius: 9999px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">설치</button>
   </div>
 
-  <!-- View Switcher (Today's Tasks vs Monthly Achievement) -->
+  <!-- View Switcher (Today's Tasks vs Monthly Achievement vs 공용 식물 물주기) -->
   <div class="view-switcher">
     <button class="view-btn active" id="viewBtnToday" onclick="switchView('today')">
       <span>📝 오늘의 기록</span>
@@ -1662,9 +1758,12 @@
       <span>📅 한 달 성취표</span>
       <span class="streak-badge" id="navStreakBadge">🔥 8일 연속</span>
     </button>
+    <button class="view-btn" id="viewBtnPlants" onclick="switchView('plants')">
+      <span>🪴 식물 물주기</span>
+    </button>
   </div>
 
-  <div class="tab-container">
+  <div class="tab-container" id="childTabs">
     <button class="tab-btn active mj" id="tabMj" onclick="switchTab('mj')">
       <span>💜 MJ</span>
       <span style="font-size: 11px; opacity: 0.8;">(4학년)</span>
@@ -1735,18 +1834,7 @@
     </label>
   </div>
 
-  <!-- Section 4: BC 반려식물 물주기 (숙제 아님 · 숙제 진도율에 포함되지 않음) -->
-  <div id="plantSection" style="display:none;">
-    <div class="plant-divider"></div>
-    <div class="plant-title">
-      <span>🪴 병찬이 식물 물주기</span>
-      <span class="plant-sub-tag">숙제 아님</span>
-    </div>
-    <div class="plant-list" id="plantList"></div>
-    <div class="plant-note">물주기는 오늘 할 일 달성률·토스 적립과 따로 계산돼요</div>
-  </div>
-
-  <!-- Section 5: Toss Extra Bonus -->
+  <!-- Section 4: Toss Extra Bonus -->
   <div class="section-title" style="margin-top: 24px;">💰 추가 토스 보너스 적립 (화이트보드)</div>
   <div id="bonusSection"></div>
 
@@ -1866,7 +1954,21 @@
     </div>
   </div> <!-- /#monthView -->
 
-  <!-- Day Detail View (달력에서 지난 날짜를 누르면 열림) -->
+  <!-- Plants View: 공용 식물 물주기 (숙제 아님 · 누가 했는지 상관없이 다 같이 체크) -->
+  <div id="plantsView" style="display:none;">
+    <div class="plant-title" style="margin-bottom: 8px;">
+      <span>🪴 우리 가족 식물 물주기</span>
+      <span class="plant-sub-tag">숙제 아님 · 공용</span>
+    </div>
+    <div class="plant-view-intro">
+      누가 했는지 상관없이 다 같이 보고 체크해요 🌱<br>
+      물주기는 오늘 할 일 달성률·토스 적립과 따로 계산돼요
+    </div>
+    <div class="plant-list" id="plantList"></div>
+    <div class="plant-note">MJ·BC 탭을 바꿔도 같은 식물 목록이에요</div>
+  </div> <!-- /#plantsView -->
+
+  <!-- Day Detail View (달력에서 지난 날짜를 누르면 열림) — 오늘의 기록과 같은 구성, 날짜만 해당 날짜 -->
   <div id="dayView" style="display:none;">
     <div class="calendar-card">
       <div class="calendar-header">
@@ -1875,11 +1977,37 @@
         </div>
         <div class="child-indicator mj" id="dayChildLabel">💜 MJ (4학년)</div>
       </div>
-      <div id="dayViewBody"></div>
+      <div class="past-date-line">
+        <span class="past-date-main" id="dayDateLabel">-</span>
+        <span class="past-date-chip">과거 기록 보기</span>
+      </div>
+      <div class="day-summary" id="daySummary">-</div>
+      <div class="day-note" id="dayNote" style="display:none;"></div>
     </div>
+
+    <!-- 그날의 달성률 & 먼작귀 캐릭터 (오늘의 기록과 같은 구성) -->
+    <div class="progress-card" id="dayProgressCard">
+      <div class="chick-stage-box" id="dayChickBox">
+        <div class="chick-avatar" id="dayChickAvatar"></div>
+        <div class="chick-info">
+          <div class="chick-name" id="dayChickName">치이카와 <span class="mascot-pct">0%</span></div>
+          <div class="chick-speech" id="dayChickSpeech">"이 날 기록을 보고 있어요"</div>
+        </div>
+      </div>
+      <div class="progress-header">
+        <span class="progress-title">⚡ 그날의 달성률</span>
+        <span class="progress-count" id="dayProgressCount">0 / 0 (0%)</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="dayProgressBar"></div>
+      </div>
+    </div>
+
+    <div id="dayViewBody"></div>
+
     <div style="display:flex; gap:8px; margin-top:14px;">
       <button class="day-nav-btn" onclick="switchView('month')">← 성취 달력</button>
-      <button class="back-to-today-btn" style="width:auto; flex:1.4;" onclick="switchView('today')">📝 오늘 기록하러 가기</button>
+      <button class="back-to-today-btn" style="width:auto; flex:1.4;" onclick="switchView('today')">📝 오늘로 돌아가기</button>
     </div>
   </div> <!-- /#dayView -->
 
@@ -1887,10 +2015,12 @@
     const CLOUD_URL = 'https://mantledb.sh/v2/hhsk92-family-homework/state';
     const EMOJI_OPTIONS = ['💖', '👏', '🔥', '💯', '⭐', '👑', '👍'];
 
-    // ===== 반려식물 물주기 기본값 (숙제 아님 · 진도율 미포함) =====
+    // ===== 반려식물 물주기 기본값 (숙제 아님 · 진도율 미포함 · 전 가족 공용) =====
+    // owner는 '누구의 식물인지' 표시용일 뿐, 물 주기 체크는 누구나 가능하다.
     const PLANT_DEFAULTS = [
-      { id: 'ionantha', name: '이오난사', emoji: '🌿', kind: '공기식물', intervalDays: 5, lastWatered: '2026-11-15', tip: '물에 20~30분 담갔다 거꾸로 털어 말리기' },
-      { id: 'cactus', name: '선인장', emoji: '🌵', kind: '', intervalDays: 30, lastWatered: '2026-11-15', tip: '흙이 속까지 바짝 마른 뒤 주기 (겨울엔 월 1회)' }
+      { id: 'ionantha', name: '이오난사', emoji: '🌿', owner: 'BC', kind: '공기식물', intervalDays: 5, lastWatered: '2026-11-15', tip: '물에 20~30분 담갔다 거꾸로 털어 말리기' },
+      { id: 'cactus', name: '선인장', emoji: '🌵', owner: 'BC', kind: '', intervalDays: 30, lastWatered: '2026-11-15', tip: '흙이 속까지 바짝 마른 뒤 주기 (겨울엔 월 1회)' },
+      { id: 'berry', name: '베리', emoji: '🫐', owner: 'MJ', kind: '', intervalDays: 7, lastWatered: '2026-11-15', tip: '일주일에 한 번, 흙이 마르면 화분 밑으로 물이 나올 만큼 듬뿍 주기' }
     ];
 
     // ===== 달력 설정 (한 달 성취표: 달 이동 가능) =====
@@ -1956,7 +2086,18 @@
 
     function updateDateDisplay() {
       const el = document.getElementById('currentDate');
-      if (el) el.textContent = getFormattedDateKorean();
+      const chip = document.getElementById('pastModeChip');
+      const isPast = (typeof currentView !== 'undefined') && currentView === 'day' && selectedDay;
+      if (el) el.textContent = isPast ? koreanFullDate(ymd(selectedDay)) : getFormattedDateKorean();
+      if (chip) chip.classList.toggle('on', !!isPast);
+    }
+
+    // 'YYYY-MM-DD' → '2026년 11월 12일 목요일'
+    function koreanFullDate(ymdStr) {
+      const m = String(ymdStr || '').match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (!m) return ymdStr || '';
+      const dow = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'][new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).getUTCDay()];
+      return `${+m[1]}년 ${+m[2]}월 ${+m[3]}일 ${dow}`;
     }
 
     // 헤더 날짜 갱신 + 날짜가 바뀌었으면 하루 넘김(어제 기록은 history에 그대로 두고, 오늘 매일 루틴 체크만 초기화)까지 한 번에 처리한다.
@@ -2651,6 +2792,10 @@
 };
     }
 
+    // 화면 상태 (오늘의 기록 / 한 달 성취표 / 날짜별 기록 / 식물 물주기)
+    let currentView = 'today';
+    let selectedDay = null;
+
     updateDateDisplay();
 
     const saved = localStorage.getItem('family_integrated_homework_state');
@@ -2681,8 +2826,6 @@
       localStorage.setItem('family_integrated_homework_state', JSON.stringify(s));
     }
 
-    let currentView = 'today';
-    let selectedDay = null;
     goThisMonthInit();
     function goThisMonthInit() {
       const [y, m] = getTodayDateStr().split('-').map(Number);
@@ -2694,17 +2837,27 @@
       const todayEl = document.getElementById('todayView');
       const monthEl = document.getElementById('monthView');
       const dayEl = document.getElementById('dayView');
+      const plantsEl = document.getElementById('plantsView');
+      const childTabs = document.getElementById('childTabs');
       const btnToday = document.getElementById('viewBtnToday');
       const btnMonth = document.getElementById('viewBtnMonth');
+      const btnPlants = document.getElementById('viewBtnPlants');
 
       todayEl.style.display = view === 'today' ? 'block' : 'none';
       monthEl.style.display = view === 'month' ? 'block' : 'none';
       if (dayEl) dayEl.style.display = view === 'day' ? 'block' : 'none';
+      if (plantsEl) plantsEl.style.display = view === 'plants' ? 'block' : 'none';
+      // 식물 물주기는 공용이라 아이 탭(MJ/BC)을 숨긴다
+      if (childTabs) childTabs.style.display = view === 'plants' ? 'none' : 'grid';
+
       btnToday.classList.toggle('active', view === 'today');
-      btnMonth.classList.toggle('active', view !== 'today');
+      btnMonth.classList.toggle('active', view === 'month' || view === 'day');
+      if (btnPlants) btnPlants.classList.toggle('active', view === 'plants');
 
       if (view === 'month') renderCalendar();
       if (view === 'day') renderDayView();
+      if (view === 'plants') renderPlants();
+      updateDateDisplay();
       window.scrollTo({ top: 0 });
     }
 
@@ -2813,6 +2966,7 @@
       if (!body || !selectedDay) return;
       const child = s.activeTab || 'mj';
       const isMj = child === 'mj';
+      const dStr = ymd(selectedDay);
 
       const label = document.getElementById('dayChildLabel');
       if (label) {
@@ -2821,29 +2975,88 @@
       }
       const dow = ['일', '월', '화', '수', '목', '금', '토'][new Date(calYear, calMonth - 1, selectedDay).getDay()];
       const title = document.getElementById('dayViewTitle');
-      if (title) title.textContent = `📅 ${calYear}년 ${calMonth}월 ${selectedDay}일 (${dow}) 기록 보기`;
+      if (title) title.textContent = `📅 ${calMonth}월 ${selectedDay}일 (${dow}) 기록 보기`;
+      const dateLabel = document.getElementById('dayDateLabel');
+      if (dateLabel) dateLabel.textContent = koreanFullDate(dStr);
 
-      const { rec, list } = getDayItems(child, ymd(selectedDay));
+      const { rec, list } = getDayItems(child, dStr);
+      const indexed = list.map((it, i) => Object.assign({}, it, { idx: i }));
+      const total = list.length;
+      const doneCount = list.filter(i => i.d).length;
+      const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+      const hasSnapshot = !!(rec && Array.isArray(rec.items) && rec.items.length);
+      const recDone = !!(rec && rec.done);
+
+      const sum = document.getElementById('daySummary');
+      if (sum) sum.textContent = total ? `${doneCount} / ${total} 완료 (${pct}%)${recDone ? ' · 🌟 100% 올클리어' : ''}` : '이 날은 남겨진 기록이 없어요';
+      const note = document.getElementById('dayNote');
+      if (note) {
+        if (!hasSnapshot) {
+          note.style.display = 'block';
+          note.innerHTML = '이 날은 항목별 기록이 남아 있지 않아요.<br>그날 기준 매일 루틴만 보여주고, 전체 올클리어 여부는 아래에서 직접 고칠 수 있어요.';
+        } else if (rec.legacy) {
+          note.style.display = 'block';
+          note.innerHTML = '이 날은 매일 루틴 항목만 기록돼 있어요.';
+        } else {
+          note.style.display = 'none';
+        }
+      }
+
+      // ===== 그날의 먼작귀 캐릭터 (오늘의 기록과 같은 구성) =====
+      const card = document.getElementById('dayProgressCard');
+      if (card) card.style.display = total > 0 ? 'block' : 'none';
+      if (total > 0) {
+        const stage = mascotStage(pct);
+        const box = document.getElementById('dayChickBox');
+        if (box) box.className = 'chick-stage-box stage-' + stage.no;
+        const av = document.getElementById('dayChickAvatar');
+        if (av && av.dataset.mascot !== stage.key) {
+          av.dataset.mascot = stage.key;
+          av.innerHTML = stage.svg();
+          av.classList.add('pop');
+        }
+        const nm = document.getElementById('dayChickName');
+        if (nm) nm.innerHTML = stage.name + ' <span class="mascot-pct">' + pct + '%</span>';
+        const sp = document.getElementById('dayChickSpeech');
+        if (sp) sp.textContent = pct >= 100 ? '"이 날은 100% 올클리어! 완벽한 하루였어! 🌟"'
+          : pct >= 40 ? '"이 날도 반 넘게 해냈어! 대단해!"'
+          : pct > 0 ? '"이 날도 하나씩 해냈어… 기억나지?"'
+          : (hasSnapshot ? '"이 날은 아직 채운 기록이 없어… 같이 돌아보자"' : '"이 날은 남긴 기록이 없어서 그날 루틴만 보여줄게"');
+        const pc = document.getElementById('dayProgressCount');
+        if (pc) {
+          pc.textContent = `${doneCount} / ${total} (${pct}%)`;
+          pc.style.color = isMj ? 'var(--app-purple)' : 'var(--app-blue)';
+        }
+        const bar = document.getElementById('dayProgressBar');
+        if (bar) {
+          bar.style.width = pct + '%';
+          bar.classList.toggle('bc-theme', !isMj);
+        }
+      }
+
+      // ===== 그날의 할 일 목록 (숙제·준비물 / 매일 루틴) =====
+      const groups = [
+        { title: '🎒 그날의 숙제·준비물', items: indexed.filter(i => !i.r) },
+        { title: '✨ 매일 필수 루틴', items: indexed.filter(i => i.r) }
+      ];
       let html = '';
-
-      if (list.length) {
-        const doneCount = list.filter(i => i.d).length;
-        const pct = Math.round((doneCount / list.length) * 100);
-        if (!rec || !rec.items || rec.legacy) html += '<div class="day-note">이 날은 매일 루틴 항목만 기록할 수 있어요.<br>빠뜨린 루틴은 지금 체크해서 채워 넣을 수 있어요.</div>';
-        html += `<div class="day-summary">${doneCount} / ${list.length} 완료 (${pct}%)${(rec && rec.done) ? ' · 🌟 100% 올클리어' : ''}</div>`;
-        html += '<div class="task-list">' + list.map((it, i) => `
+      groups.forEach(g => {
+        if (!g.items.length) return;
+        const gDone = g.items.filter(i => i.d).length;
+        html += `<div class="day-section-title">${g.title}<span class="day-section-count">${gDone} / ${g.items.length}</span></div>`;
+        html += '<div class="task-list">' + g.items.map(it => `
           <div class="task-item ${it.d ? 'completed' : ''} ${isMj ? '' : 'bc-theme'}">
-            <div class="task-main-row" onclick="toggleDayItem(${i})">
+            <div class="task-main-row" onclick="toggleDayItem(${it.idx})">
               <div class="task-checkbox">
                 <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </div>
               <div class="task-content"><div class="task-title">${it.r ? '🔁 ' : ''}${escapeHtml(it.t)}</div></div>
             </div>
           </div>`).join('') + '</div>';
-      } else {
-        const done = !!(rec && rec.done);
-        html += `<div class="day-note">이 날은 숙제 항목별 기록이 없어요.<br>대신 전체 올클리어 여부를 직접 고칠 수 있어요.</div>
-          <button class="day-toggle-btn ${done ? 'on' : ''}" onclick="toggleDayManual()">${done ? '🌟 100% 올클리어 · 눌러서 해제' : '⏳ 미완료 · 눌러서 100% 올클리어로 기록'}</button>`;
+      });
+      if (!html) html += '<div class="day-note">이 날은 보여줄 항목이 없어요.</div>';
+      if (!hasSnapshot) {
+        html += `<button class="day-toggle-btn ${recDone ? 'on' : ''}" style="margin-top:12px;" onclick="toggleDayManual()">${recDone ? '🌟 100% 올클리어 · 눌러서 해제' : '⏳ 미완료 · 눌러서 100% 올클리어로 기록'}</button>`;
       }
       body.innerHTML = html;
     }
@@ -3605,6 +3818,8 @@
         p.intervalDays = Math.max(1, Number(p.intervalDays) || d.intervalDays);
         if (!p.lastWatered) p.lastWatered = d.lastWatered;
         if (!p.name) p.name = d.name;
+        if (!p.owner) p.owner = d.owner;
+        p.owner = String(p.owner || '').toUpperCase();
         p.nextDue = addDaysToYmd(p.lastWatered, p.intervalDays);
         return p;
       });
@@ -3656,28 +3871,30 @@
     }
 
     function renderPlants() {
-      const sec = document.getElementById('plantSection');
       const box = document.getElementById('plantList');
-      if (!sec || !box) return;
-      // 병찬이(BC) 탭에서만 보인다
-      if (s.activeTab !== 'bc') {
-        sec.style.display = 'none';
-        return;
-      }
-      sec.style.display = 'block';
+      if (!box) return;
       ensurePlants(s);
       const todayStr = getTodayKstStr();
-      box.innerHTML = (s.plants || []).map(p => {
+      // 지금 물 줘야 하는 식물이 위로 오게 (다음 물 주는 날 빠른 순)
+      const sorted = (s.plants || []).slice().sort((a, b) => {
+        const da = diffDaysFromToday(a.nextDue), db = diffDaysFromToday(b.nextDue);
+        if (da === null) return 1;
+        if (db === null) return -1;
+        return da - db;
+      });
+      box.innerHTML = sorted.map(p => {
         const info = plantDdayInfo(p);
         const diff = diffDaysFromToday(p.nextDue);
         const cardCls = 'plant-card' + (diff === null ? '' : (diff < 0 ? ' overdue' : (diff === 0 ? ' due' : '')));
         const wateredToday = p.lastWatered === todayStr;
+        const owner = String(p.owner || '').toUpperCase();
+        const ownerBadge = owner ? `<span class="plant-owner ${owner === 'MJ' ? 'mj' : 'bc'}">${owner === 'MJ' ? '💜 MJ' : '💙 BC'}</span>` : '';
         return `
           <div class="${cardCls}">
             <div class="plant-head">
               <span class="plant-emoji">${p.emoji || '🪴'}</span>
               <div>
-                <div class="plant-name">${escapeHtml(p.name)}${p.kind ? `<span class="plant-kind">${escapeHtml(p.kind)}</span>` : ''}</div>
+                <div class="plant-name">${escapeHtml(p.name)}${ownerBadge}${p.kind ? `<span class="plant-kind">${escapeHtml(p.kind)}</span>` : ''}</div>
                 <div class="plant-cycle">${p.intervalDays}일마다 물 주기</div>
               </div>
               <span class="plant-dday ${info.cls}">${info.label}</span>
