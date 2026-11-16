@@ -1174,7 +1174,68 @@
     .quick-add-box {
       margin-top: 12px;
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
+    }
+
+    .quick-add-date-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 2px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+
+    .quick-add-date {
+      flex: 0 0 auto;
+      width: 148px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      border: 1px dashed #cbd5e1;
+      background: #ffffff;
+      font-size: 12px;
+      color: #475569;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .quick-add-date:focus {
+      border-color: var(--toss-blue);
+      border-style: solid;
+    }
+
+    .section-hint {
+      margin: -2px 0 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+      line-height: 1.45;
+    }
+
+    .section-hint b {
+      color: #64748b;
+      font-weight: 800;
+    }
+
+    .due-inline {
+      font-size: 11px;
+      font-weight: 600;
+      color: #7c8798;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+    }
+
+    .task-item.today-urgent .due-inline {
+      color: #be123c !important;
+      font-weight: 700;
+    }
+
+    .task-item.completed .due-inline {
+      color: #a8b3c2;
     }
 
     .quick-add-input {
@@ -1636,6 +1697,7 @@
 
   <!-- Section 1: School Homework -->
   <div class="section-title">🎒 학교 숙제 & 준비물 (이번 주)</div>
+  <div class="section-hint">D-Day는 <b>제출 하루 전 마무리</b> 기준이에요 · 괄호 안 날짜가 실제 제출·지참일</div>
   <div class="task-list" id="schoolTaskList"></div>
 
   <!-- Section 2: Academy & Study -->
@@ -1648,12 +1710,16 @@
 
   <!-- Quick Add Custom Task -->
   <div class="quick-add-box">
-    <select id="quickType" class="quick-add-select" aria-label="추가할 종류">
+    <select id="quickType" class="quick-add-select" aria-label="추가할 종류" onchange="toggleQuickDue()">
       <option value="school">📌 일반 숙제</option>
       <option value="routine">✨ 매일 루틴</option>
     </select>
     <input type="text" id="quickInput" class="quick-add-input" placeholder="새 기록이나 할 일 직접 추가..." onkeypress="handleEnter(event)">
     <button class="quick-add-btn" onclick="addCustomTask()">+ 추가</button>
+    <label class="quick-add-date-row" id="quickDueRow">
+      <span>📅 제출·지참일 (넣으면 D-Day 자동)</span>
+      <input type="date" id="quickDue" class="quick-add-date">
+    </label>
   </div>
 
   <!-- Section 4: BC 반려식물 물주기 (숙제 아님 · 숙제 진도율에 포함되지 않음) -->
@@ -1899,13 +1965,18 @@
     }
 
     // ===== D-Day 실시간 계산 =====
-    // 마감일은 task.due(YYYY-MM-DD)에 저장하고, 없으면 dday 문자열의 (MM/DD) 표기를 읽는다.
+    // 실제 학교 제출일은 task.due(YYYY-MM-DD, dueDate도 허용)에 그대로 두고, 없으면 dday 문자열의 (MM/DD) 표기를 읽는다.
     // 화면에 그릴 때마다 오늘 날짜와 비교해 D-N / D-Day / D+N을 새로 계산하므로 날짜가 바뀌어도 자동으로 갱신된다.
     const WEEKDAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
 
+    // 제출일 당일 아침에 일어나서 끝내는 건 불가능하므로,
+    // D-Day는 '제출 하루 전 = 마무리 목표일'을 기준으로 센다. 실제 제출일은 카드에 따로 표시한다.
+    const FINISH_LEAD_DAYS = 1;
+
     function parseDueYmd(task) {
-      if (task && task.due) {
-        const m = String(task.due).match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+      const rawDue = task ? (task.due || task.dueDate) : null;
+      if (rawDue) {
+        const m = String(rawDue).match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
         if (m) return { y: +m[1], m: +m[2], d: +m[3] };
       }
       if (task && task.dday) {
@@ -1924,37 +1995,74 @@
       return null;
     }
 
-    function getDdayDiff(task) {
+    function ymdToUtc(o) { return Date.UTC(o.y, o.m - 1, o.d); }
+
+    function todayUtc() {
+      const now = new Date();
+      return Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    // 실제 제출일까지 남은 날 (0 = 오늘 제출, -1 = 어제 제출)
+    function getDueDiff(task) {
       const due = parseDueYmd(task);
       if (!due) return null;
-      const now = new Date();
-      const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-      const target = Date.UTC(due.y, due.m - 1, due.d);
-      return Math.round((target - today) / 86400000);
+      return Math.round((ymdToUtc(due) - todayUtc()) / 86400000);
     }
 
+    // 마무리 목표일 = 실제 제출일 - FINISH_LEAD_DAYS(1일)
+    function getFinishYmd(task) {
+      const due = parseDueYmd(task);
+      if (!due) return null;
+      const t = new Date(ymdToUtc(due));
+      t.setUTCDate(t.getUTCDate() - FINISH_LEAD_DAYS);
+      return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate() };
+    }
+
+    // 마무리 목표일까지 남은 날 (0 = 오늘 마무리, -1 = 어제 마무리였음)
+    function getFinishDiff(task) {
+      const f = getFinishYmd(task);
+      if (!f) return null;
+      return Math.round((ymdToUtc(f) - todayUtc()) / 86400000);
+    }
+
+    // 앱 전체가 쓰는 D-day 값 = 마무리 목표일 기준
+    function getDdayDiff(task) { return getFinishDiff(task); }
+
+    // 실제 제출일 표기 (예: '11/17 화')
+    function getDueDateText(task) {
+      const due = parseDueYmd(task);
+      if (!due) return '';
+      const wd = WEEKDAYS_KO[new Date(ymdToUtc(due)).getUTCDay()];
+      return `${due.m}/${due.d} ${wd}`;
+    }
+
+    // 제출일 옆에 붙는 말은 원래 dday 문자열의 성격(지참·확인·시험 등)을 살린다
+    function getDueActionWord(task) {
+      const hay = String((task && task.dday) || '') + ' ' + String((task && task.title) || '');
+      if (/지참|챙기/.test(hay)) return '지참';
+      if (/본선|발표/.test(hay)) return '본선';
+      if (/시험|평가/.test(hay)) return '시험';
+      if (/확인/.test(hay)) return '확인';
+      if (/예정|행사/.test(hay)) return '예정';
+      return '제출';
+    }
+
+    // 카드 배지: 마무리 목표일 기준 D-day
     function getDdayLabel(task) {
-      const diff = getDdayDiff(task);
-      const stored = task.dday || '';
-      if (diff === null) return stored;
-      let rest = String(stored)
-        .replace(/^\s*D\s*[-–+]?\s*(?:Day|day|\d+)\s*/i, '')
-        .replace(/^\s*(?:완료|✓)\s*/, '')
-        .replace(/^\s*(?:오늘|내일|모레)\s*/, '')
-        .replace(/^(\(\s*)(?:오늘|내일|모레)\s*/, '$1')
-        .replace(/\s+/g, ' ')
-        .trim();
-      let prefix;
-      if (diff > 0) prefix = `D-${diff}`;
-      else if (diff === 0) prefix = 'D-Day';
-      else prefix = task.done ? '완료' : `D+${-diff}`;
-      return rest ? `${prefix} ${rest}` : prefix;
+      const diff = getFinishDiff(task);
+      if (diff === null) return task.dday || '';
+      if (task.done) return '완료';
+      if (diff > 0) return `D-${diff} 마무리`;
+      if (diff === 0) return 'D-DAY 마무리';
+      if (getDueDiff(task) === 0) return '오늘 제출!';
+      return `D+${-diff}`;
     }
 
+    // 오늘 밤까지 끝내야 하는 항목: 마무리 목표일이 오늘이거나 이미 지난 경우
     function isDdayUrgent(task) {
       const diff = getDdayDiff(task);
       if (diff === null) return !!task.urgent;
-      return !task.done && diff <= 1;
+      return !task.done && diff <= 0;
     }
 
     // dday 문자열만 있는 예전 데이터에 마감일(due)을 채워 넣는다
@@ -2985,10 +3093,10 @@
 
     function isTodayMandatory(task) {
       if (task.section === 'routine') return true;
-      // 오늘 마감(D-Day)과 내일 마감(D-1)은 오늘 밤까지 끝내야 하므로 오늘 필수
-      // (D-day 숫자를 글자로 읽지 않고 오늘 날짜와의 차이로 판정하므로 날짜가 바뀌면 자동 반영)
+      // 마무리 목표일(제출 하루 전)이 오늘이거나 이미 지난 항목 = 오늘 밤까지 끝내야 하는 항목
+      // (글자로 된 D-day를 읽지 않고 오늘 날짜와의 차이로 판정하므로 날짜가 바뀌면 자동 반영)
       const diff = getDdayDiff(task);
-      if (diff !== null) return diff <= 1;
+      if (diff !== null) return diff <= 0;
       return true;
     }
 
@@ -3137,16 +3245,32 @@
 
       const typeSel = document.getElementById('quickType');
       const isRoutineType = typeSel && typeSel.value === 'routine';
-      s.tasks[s.activeTab].push({
+      const dueEl = document.getElementById('quickDue');
+      const dueVal = (!isRoutineType && dueEl && dueEl.value) ? dueEl.value : '';
+      const newTask = {
         id: 'custom-' + Date.now(),
         section: isRoutineType ? 'routine' : 'school',
         title: text,
         icon: isRoutineType ? '✨' : '📌',
         done: false,
         reactions: {}
-      });
+      };
+      if (dueVal) {
+        // 실제 제출·지참일만 저장한다. D-Day는 화면에서 (제출일 - 1일) 마무리 기준으로 자동 계산된다.
+        newTask.due = dueVal;
+      }
+      s.tasks[s.activeTab].push(newTask);
       input.value = '';
+      if (dueEl) dueEl.value = '';
       commit(s, true);
+    }
+
+    // 매일 루틴에는 제출일이 없으므로 날짜 칸을 잠근다
+    function toggleQuickDue() {
+      const sel = document.getElementById('quickType');
+      const row = document.getElementById('quickDueRow');
+      if (!sel || !row) return;
+      row.style.display = sel.value === 'routine' ? 'none' : 'flex';
     }
 
     function handleEnter(e) {
@@ -3171,11 +3295,26 @@
     }
 
     function getDueDateWeight(task) {
-      if (!task.dday && !task.due) return 999;
+      if (!parseDueYmd(task)) return 999;
       const diff = getDdayDiff(task);
       if (diff === null) return task.urgent ? 1 : 100;
-      if (diff < 0) return 90 + Math.min(9, -diff); // 기한 지난 항목은 뒤로
-      return 1 + diff;                              // 오늘=1, D-1=2, D-2=3 ...
+      if (diff >= 0) return 1 + diff;                // 오늘 마무리=1, 내일=2, 모레=3 ...
+      if (getDueDiff(task) === 0) return 0;          // 오늘 제출 = 맨 위
+      return 90 + Math.min(9, -diff - 1);            // 제출일이 지난 항목은 뒤로
+    }
+
+    // 제목 뒤에 실제 제출일을 붙인다. 제목에 이미 같은 날짜가 적혀 있으면 중복해서 붙이지 않는다.
+    function titleHasDueDate(task) {
+      const due = parseDueYmd(task);
+      if (!due) return false;
+      const re = new RegExp('(^|[^0-9])' + due.m + '\\s*[\\/.월]\\s*' + due.d + '([^0-9]|$)');
+      return re.test(String(task.title || ''));
+    }
+
+    function dueInlineHtml(task) {
+      const dueText = getDueDateText(task);
+      if (!dueText || titleHasDueDate(task)) return '';
+      return ` <span class="due-inline">(${dueText} ${getDueActionWord(task)})</span>`;
     }
 
     function renderTaskList(containerId, list) {
@@ -3186,8 +3325,9 @@
       const sortedList = [...list].sort((a, b) => getDueDateWeight(a) - getDueDateWeight(b));
 
       sortedList.forEach(task => {
-        const isTodayDue = !!task.dday && isDdayUrgent(task);
-        const isRoutine = task.section === 'routine' || (!task.section && !task.dday);
+        const hasDueDate = !!parseDueYmd(task);
+        const isTodayDue = hasDueDate && isDdayUrgent(task);
+        const isRoutine = task.section === 'routine' || (!task.section && !hasDueDate);
         const item = document.createElement('div');
         let classes = ['task-item'];
         if (task.done) classes.push('completed');
@@ -3208,9 +3348,9 @@
         `;
 
         let metaHtml = '';
-        if (task.dday || task.due || task.note || isRoutine) {
+        if (hasDueDate || task.note || isRoutine) {
           let ddayTag = '';
-          if (task.dday || task.due) {
+          if (hasDueDate) {
             ddayTag = `<span class="${isDdayUrgent(task) ? 'dday-chip urgent' : 'dday-chip'}">${escapeHtml(getDdayLabel(task))}</span>`;
           } else if (isRoutine) {
             ddayTag = `<span class="routine-chip">✨ 오늘 매일 루틴</span>`;
@@ -3249,7 +3389,7 @@
         if (task.section === 'routine') {
           cheersHtml += `<button class="routine-toggle-btn" onclick="editRoutine('${task.id}', event)">✏️ 내용 바꾸기</button>`;
           cheersHtml += `<button class="routine-toggle-btn" style="margin-left:4px;" onclick="deleteRoutine('${task.id}', event)">🗑</button>`;
-        } else if (!task.dday) {
+        } else if (!hasDueDate) {
           cheersHtml += `<button class="routine-toggle-btn" onclick="toggleRoutine('${task.id}', event)">🔁 매일 루틴으로</button>`;
         }
         cheersHtml += `</div>`;
@@ -3258,7 +3398,7 @@
           <div class="task-main-row" onclick="toggleTask('${task.id}', event)">
             ${checkIcon}
             <div class="task-content">
-              <div class="task-title">${task.icon ? task.icon + ' ' : ''}${task.title}</div>
+              <div class="task-title">${task.icon ? task.icon + ' ' : ''}${task.title}${dueInlineHtml(task)}</div>
               ${metaHtml}
             </div>
           </div>
