@@ -5,7 +5,7 @@
  *  - 캐시 이름에 버전을 넣고, 새 버전이 뜨면 옛 캐시는 전부 지운다.
  * 배포할 때 아래 VERSION만 올리면 폰에 쌓인 옛 캐시가 자동으로 정리된다.
  */
-const VERSION = 'fh-2026-11-16-5';
+const VERSION = 'fh-2026-11-25-1';
 const CACHE = VERSION;
 
 self.addEventListener('install', (event) => {
